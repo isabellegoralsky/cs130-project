@@ -149,6 +149,7 @@ router.get('/template/:uid', async (req, res) => {
     const templateExists = await Template.findOne({
         userId: req.params.uid
     });
+    res.set('Access-Control-Allow-Origin', '*');
     if (templateExists === null){
         return res.status(400).send("Template does not exist.");
     }
