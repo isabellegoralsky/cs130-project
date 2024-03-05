@@ -145,15 +145,15 @@ router.post('/deletetemplate', async (req, res) => {
     });
 });
 
-router.get('/template', async (req, res) => {
+router.get('/template/:uid', async (req, res) => {
     const templateExists = await Template.findOne({
-        userId: req.body.userId
+        userId: req.params.uid
     });
     if (templateExists === null){
         return res.status(400).send("Template does not exist.");
     }
     else{
-        return res.status(200).send(templateExists);
+        return res.json(templateExists);
     }
 });
 
