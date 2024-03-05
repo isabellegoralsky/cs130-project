@@ -1,32 +1,22 @@
-const express = require('express');
 const router = require('express').Router();
-const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { TargetGoal, ConsistencyGoal } = require('../models/Goal');
-const Post = require('../models/Post')
+const { PRGoal, ConsistencyGoal } = require('../models/Goal');
+// const Post = require('../models/Post')
 
-async function getUserFromCookie(req){
+function getUserIdFromCookie(req){
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
-    var userId = decoded.id;
-    const user = await User.findOne({
-        _id: userId
-    });
-    return user
-}
-function validateConsistencyGoal(){
-    return true;
-}
-function validateTargetGoal(){
-    return true;
+    return decoded.id;
 }
 
 router.post("/addConsistencyGoal", async (req, res) => {
-    const user = await getUserFromCookie(req);
-    if (!user) return res.status(400).send('User is not found.');
+    const user_id = await getUserIdFromCookie(req);
+    if(!user_id){
+        res.status(400).json({error: "No user info"});
+        return;
+    }
     const goal = new ConsistencyGoal({
-        email: user.email,
+        user_id,
         startDate: new Date(),
         ...req.body
     });
@@ -38,62 +28,84 @@ router.post("/addConsistencyGoal", async (req, res) => {
         console.log("Failed to create goal");
         res.status(400).send(err);
     }
-
 });
 
-router.post("/addTargetGoal", async (req, res) => {
-    const user = await getUserFromCookie(req);
-    if (!user) return res.status(400).send('User is not found.');
-    const goal = new ConsistencyGoal({
-        email: user.email,
+router.post("/addPRGoal", async (req, res) => {
+    const user_id = getUserIdFromCookie(req);
+    if(!user_id){
+        res.status(400).json({error: "No user info"});
+        return;
+    }
+    const goal = new PRGoal({
+        user_id,
         startDate: new Date(),
         ...req.body
     });
     try {
         const saveGoal = await goal.save();
-        console.log("Successfully created consistency goal");
-        res.status(200).send("Successfully created consistency goal")
+        console.log("Successfully created PR goal");
+        res.status(200).send("Successfully created PR goal")
     } catch (err) {
         console.log("Failed to create goal");
         res.status(400).send(err);
     }
-
 });
 
 router.post("/deleteConsistencyGoal", async (req, res) => {
-
+    try {
+        await ConsistencyGoal.findByIdAndDelete(req.body.id)
+        console.log("Successfully deleted consistency goal");
+        res.status(200).send("Successfully deleted consistency goal")
+    } catch (err) {
+        console.log("Failed to delete goal");
+        res.status(400).send(err);
+    }
 });
 
-router.post("/deleteTargetGoal", async (req, res) => {
-
+router.post("/deletePRGoal", async (req, res) => {
+    try {
+        await PRGoal.findByIdAndDelete(req.body.id)
+        console.log("Successfully deleted PR goal");
+        res.status(200).send("Successfully deleted PR goal")
+    } catch (err) {
+        console.log("Failed to delete goal");
+        res.status(400).send(err);
+    }
 });
 
-
-
-router.get("/getTargetGoals", async (req, res) => {
-    const user = await getUserFromCookie(req);
-    if (!user) return res.status(400).send('User is not found.');
-    const targetGoals = TargetGoal.find({
-        email: user.email
-    });
+//returns all goals with progress for a user
+router.get("/getPRGoals", async (req, res) => {
+    const user_id = await getUserIdFromCookie(req);
+    if(!user_id){
+        res.status(400).json({error: "No user info"});
+        return;
+    }
+    try {
+        const prGoals = await PRGoal.find({ user_id });
+        res.status(400).json({
+            goals: prGoals
+        });
+    } catch (err) {
+        res.status(200).json({ error: err })
+    }
 });
 
 router.get("/getConsistencyGoals", async (req, res) => {
-    const user = await getUserFromCookie(req);
-    if (!user) return res.status(400).send('User is not found.');
-    const consistencyGoals = await ConsistencyGoal.find({
-        email: user.email
-    });
-    // consistencyGoals.map(goal => {
-    //     if(goal.per == 'DAY'){
-    //         Post.find({
-    //             date: 
-    //         })
-    //     } else if()
-
-    //     return {
-    //         ...goal,
-    //         progress:
-    //     }
-    // })
+    const user_id = await getUserIdFromCookie(req);
+    if(!user_id){
+        res.status(400).json({error: "No user info"});
+        return;
+    }
+    try {
+        const consistencyGoals = await ConsistencyGoal.find({
+            user_id
+        });
+        res.status(400).json({
+            goals: consistencyGoals
+        });
+    } catch (err) {
+        res.status(200).json({ error: err })
+    }
 })
+
+module.exports = router;

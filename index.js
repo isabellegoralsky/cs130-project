@@ -29,6 +29,9 @@ app.get("/api", (req, res) => {
 const userRoute = require('./routes/userRoute');
 app.use('/user', userRoute);
 
+const goalRoute = require('./routes/goalRoute');
+app.use('/goal', goalRoute);
+
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
