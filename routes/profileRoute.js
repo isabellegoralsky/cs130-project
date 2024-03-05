@@ -160,6 +160,7 @@ router.get('/template/:uid', async (req, res) => {
     else{
         console.log("exists")
         console.log(templateExists);
+
         return res.json(templateExists);
     }
 });
