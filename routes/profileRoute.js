@@ -145,4 +145,23 @@ router.post('/deletetemplate', async (req, res) => {
     });
 });
 
+router.get('/template/:uid', async (req, res) => {
+    const templateExists = await Template.findOne({
+        userId: req.params.uid
+    });
+    res.set({
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+    });
+    if (templateExists === null){
+        console.log("null")
+        return res.status(400).send("Template does not exist.");
+    }
+    else{
+        console.log("exists")
+        console.log(templateExists);
+        return res.json(templateExists);
+    }
+});
+
 module.exports = router;
