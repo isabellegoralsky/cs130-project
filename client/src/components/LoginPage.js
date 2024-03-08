@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './LoginReg.css'
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -65,6 +66,7 @@ const LoginPage = () => {
         <div class="button-div">
           <button type="submit" class="bold-text signin-button">sign in</button>
         </div>
+        <div id="login-reg-link">New Here?&nbsp;<Link to="/register" id="sign-up-link">Sign Up</Link></div>
       </form>
     </div>
   );

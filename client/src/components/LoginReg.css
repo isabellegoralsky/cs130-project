@@ -70,3 +70,27 @@
     height: 3px;
     background-color: #ebebeb;
 }
+
+#login-reg-link{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#sign-up-link{
+    text-decoration: none;
+    color:#FF5A13;
+}
+
+#sign-up-link:visited{
+    text-decoration: none;
+    color:#FF5A13;
+}
+
+#sign-up-link:hover{
+    text-decoration: none;
+    font-weight: bold;
+}
+

@@ -4,16 +4,13 @@ import './Navbar.css'
 export default function Navbar() {
   return (
     <nav className="nav">
-      <Link to="/" className="site-title">
-        Home
-      </Link>
-      <div id="nav-links">
-        <CustomLink to="/teams">Teams</CustomLink>
-        <CustomLink to="/login">Login</CustomLink>
-        <CustomLink to="/register">Register</CustomLink>
-        <CustomLink to="/profile">Profile</CustomLink>
-        <CustomLink to="/feed">Feed</CustomLink>
-      </div>
+      <Link to="/" className="site-title nav-link">Home</Link>
+      <CustomLink to="/teams" class="nav-link">Teams</CustomLink>
+      <CustomLink to="/login" class="nav-link">Login</CustomLink>
+      <CustomLink to="/goals" class="nav-link">Goals</CustomLink>
+      <CustomLink to="/profile" class="nav-link">Profile</CustomLink>
+      <CustomLink to="/feed">Feed</CustomLink>
+
     </nav>
   )
 }

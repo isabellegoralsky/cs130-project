@@ -5,6 +5,7 @@ import HomePage from "./components/HomePage"
 import LoginPage from "./components/LoginPage"
 import RegisterPage from "./components/RegisterPage"
 import ProfilePage from "./components/ProfilePage"
+import GoalsPage from "./components/GoalsPage"
 import Footer from "./components/Footer"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import FeedPage from "./components/FeedPage"
@@ -21,6 +22,7 @@ function App() {
           <Route path="/register" element={<RegisterPage/>}/>
           <Route path="/profile" element={<ProfilePage/>}/>
           <Route path="/feed" element={<FeedPage/>} />
+          <Route path="/goals" element={<GoalsPage/>}/>
         </Routes>
       </div>
       <Footer />

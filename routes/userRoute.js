@@ -15,6 +15,43 @@ const createToken = (id) => {
    });
 }
 
+router.get('/', async (req, res) => {
+    const token = req.cookies.jwt;
+    if (!token) return res.status(400).send('Cookie was not found.')
+    const decoded = jwt.verify(token, process.env.TokenSecret);
+    var userId = decoded.id;
+    const user = await User.findOne({ _id: userId });
+    if (!user) return res.status(400).send('User was not found.');
+
+    console.log('Successfully found User.');
+    res.status(200).send(user);
+});
+
+router.put('/', async (req, res) => {
+    const token = req.cookies.jwt;
+    if (!token) return res.status(400).send('Cookie was not found.')
+    const decoded = jwt.verify(token, process.env.TokenSecret);
+    var userId = decoded.id;
+    const user = await User.findOne({ _id: userId });
+    if (!user) return res.status(400).send('User was not found.');
+
+    const update = {
+        ...(req.body.firstName && { firstName: req.body.firstName }),
+        ...(req.body.lastName && { lastName: req.body.lastName }),
+        ...(req.body.email && { email: req.body.email }),
+        ...(req.body.password && { password: req.body.password })
+    }
+
+    try {
+        await User.findByIdAndUpdate(userId, update);
+        console.log('Successfully updated User.');
+        res.status(200).send('Successfully updated User.');
+    } catch (err) {
+        console.log('Failed to update User.');
+        res.status(400).send('Failed to update User.');
+    }
+});
+
 router.post("/register", async (req, res) => {
    const emailExists = await User.findOne({
        email: req.body.email
@@ -36,7 +73,7 @@ router.post("/register", async (req, res) => {
            maxAge: maxAge
        });
        console.log("Successfully registered");
-       res.status(200).send("Successfully registered")
+       res.status(200).send("Successfully registered");
    } catch (err) {
        console.log("Failed to register");
        res.status(400).send(err);
