@@ -5,6 +5,7 @@ import HomePage from "./components/HomePage"
 import LoginPage from "./components/LoginPage"
 import RegisterPage from "./components/RegisterPage"
 import ProfilePage from "./components/ProfilePage"
+import GoalsPage from "./components/GoalsPage"
 import Footer from "./components/Footer"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/register" element={<RegisterPage/>}/>
           <Route path="/profile"f element={<ProfilePage/>}/>
+          <Route path="/goals" element={<GoalsPage/>}/>
         </Routes>
       </div>
       <Footer />

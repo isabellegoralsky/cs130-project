@@ -25,7 +25,7 @@ const TeamPage = ({ teams, updates, achievements }) => {
         <label htmlFor="team-dropdown" id="label-drop">Select Team</label>
         <select id="team-dropdown" onChange={handleTeamChange} value={selectedTeam?.id || ''}>
           <option disabled={true} value="">
-            - Select a Team -
+            Select a Team
           </option>
           {teams.map(team => (
             <option key={team.id} value={team.id}>{team.name}</option>
@@ -33,7 +33,6 @@ const TeamPage = ({ teams, updates, achievements }) => {
         </select>
       </div>
       <div>
-        <h1>{selectedTeam?.name}</h1>
         <Carousel items={updates[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} title="Updates" />
         <Carousel items={achievements[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} title="Achievements" />
       </div>

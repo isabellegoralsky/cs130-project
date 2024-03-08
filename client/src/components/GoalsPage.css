@@ -1,0 +1,42 @@
+.goals-page{
+  margin:110px 18% 12%;
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+#my-goals{
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 55px;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.goal-header{
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 33px;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#goals-div{
+  display: flex;
+  justify-content: space-between;
+}
+
+#another-goal{
+  text-align: center;
+  color: #FF5A13;
+  font-weight: 400;
+  margin-top:20px;
+}
+
+#another-goal:visited{
+  color: #FF5A13;
+}
+
+#another-goal:hover{
+  font-weight: bold;
+}

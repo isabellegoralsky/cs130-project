@@ -1,5 +1,5 @@
 #profile-page{
-    margin: 7% 15.6% 14%;
+    margin: 8% 15.6% 12%;
     font-family: "Nanum Gothic", sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -9,6 +9,7 @@
 
 .AvatarImage{
     border-radius: 50%;
+    width: 200px;
 }
 
 .AvatarRoot{
@@ -22,7 +23,7 @@
     display: flex;
     justify-content: center;
     font-weight: bold;
-    font-size: 45px;
+    font-size: 43px;
 }
 
 /* Tabs */
