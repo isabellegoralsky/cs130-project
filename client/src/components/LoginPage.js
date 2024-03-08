@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './LoginReg.css'
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -8,46 +7,17 @@ const LoginPage = () => {
     email: '',
     password: ''
   });
-  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Define the API endpoint
-    const loginUrl = 'http://localhost:3001/user/login'; 
-    try {
-      const response = await fetch(loginUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-        credentials: 'include', 
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Login Success:', data);
-        navigate('/profile');
-        // Handle successful login here (e.g., redirecting to another page)
-      } else {
-        throw new Error(data.message || 'Failed to login');
-      }
-    } catch (error) {
-      console.error('Login Error:', error);
-      // Handle login error here (e.g., showing an error message)
-    }
+    // TODO
+    console.log('Form Data:', formData);
   };
-
 
   return (
     <div class="login-div">

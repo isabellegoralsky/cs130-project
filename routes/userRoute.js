@@ -84,30 +84,24 @@ router.post("/login", async (req, res) => {
    const user = await User.findOne({
        email: req.body.email
    });
-
-  
-
    if (user) {
        const auth = await bcrypt.compare(req.body.password, user.password);
        if (auth) {
            try {
-            console.log("in auth")
                const token = createToken(user._id);
                res.cookie('jwt', token, {
                    httpOnly: true,
                    maxAge: maxAge
                });
                console.log("Successfully logged in");
-               res.status(200).json("Logged in")
+               res.status(200).send("Logged in")
            } catch (err) {
-            console.log("out auth")
-
                console.log("Failed to login");
-               res.status(400).json(err);
+               res.status(400).send(err);
            }
        }
        else{
-           return res.status(400).json('Incorrect password');
+           return res.status(400).send('Incorrect password');
        }
    }
    else{

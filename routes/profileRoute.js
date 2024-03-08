@@ -23,10 +23,6 @@ router.post('/addtemplate', async (req, res) => {
     const templateExists = await Template.findOne({
         userId: userId
     });
-    res.set({
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-    });
     if (templateExists === null){
         const template = new Template({
             userId: userId
@@ -147,26 +143,6 @@ router.post('/deletetemplate', async (req, res) => {
         }
         res.status(200).send("Successfully deleted a template.");
     });
-});
-
-router.get('/template/:uid', async (req, res) => {
-    const templateExists = await Template.findOne({
-        userId: req.params.uid
-    });
-    res.set({
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-    });
-    if (templateExists === null){
-        console.log("null")
-        return res.status(400).send("Template does not exist.");
-    }
-    else{
-        console.log("exists")
-        console.log(templateExists);
-
-        return res.json(templateExists);
-    }
 });
 
 module.exports = router;
