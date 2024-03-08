@@ -33,6 +33,9 @@ app.use('/profile', profileRoute);
 const personalRecordRoute = require('./routes/personalRecordRoute');
 app.use('/personalrecord', personalRecordRoute);
 
+const goalRoute = require('./routes/goalRoute');
+app.use('/goal', goalRoute);
+
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
