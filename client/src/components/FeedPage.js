@@ -1,8 +1,6 @@
 // TeamPage.js
 import React from 'react';
 import { useEffect, useState } from 'react';
-import * as Tabs from '@radix-ui/react-tabs';
-import * as Avatar from '@radix-ui/react-avatar';
 import * as Dialog from '@radix-ui/react-dialog';
 const exerciseList = [
   "Deadlift",
@@ -42,7 +40,6 @@ const FeedPage = ({}) => {
 
   ]);
 
-  const createPost = 
 
   useEffect(() => {
     
@@ -115,12 +112,10 @@ const PostModal = () => {
         reps: exercise.reps ? parseInt(exercise.reps, 10) : 0,
         sets: exercise.sets ? parseInt(exercise.sets, 10) : 0,
         notes: exercise.notes || undefined
-      })).filter(exercise => exercise.name) // Filtering out exercises without a name
+      })).filter(exercise => exercise.name) 
     };
 
-    // Assuming you have a function to save the post
     console.log(post);
-    // Here you would typically send 'post' to your backend or state management solution
   };
 
   return (
