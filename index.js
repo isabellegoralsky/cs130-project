@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
+
 const bcrypt = require('bcryptjs');
 
 dotenv.config();
@@ -10,6 +12,12 @@ dotenv.config();
 const PORT = process.env.PORT || 3001;
 
 const app = express();
+const corsOptions = {
+    origin: 'http://localhost:3000', //  frontend origin
+    credentials: true, 
+  };
+  
+  app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true

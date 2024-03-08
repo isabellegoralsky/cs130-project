@@ -23,6 +23,10 @@ router.post('/addtemplate', async (req, res) => {
     const templateExists = await Template.findOne({
         userId: userId
     });
+    res.set({
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+    });
     if (templateExists === null){
         const template = new Template({
             userId: userId

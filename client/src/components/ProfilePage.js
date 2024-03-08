@@ -48,8 +48,6 @@ export default function ProfilePage() {
     ]);
     useEffect(() => {
 
-
-
         //fetch myPals
         //fetch pinnedWorkouts
         let userId = "65e421f76d3cdc61279c11a2";
@@ -57,7 +55,7 @@ export default function ProfilePage() {
 
         fetch(url, {
         })
-            .then(response =>  response.json())
+            .then(response => response.json())
             .then(data => {
                 console.log(data);
                 //setWorkouts(data);
@@ -65,13 +63,12 @@ export default function ProfilePage() {
             .catch((error) => {
                 console.error('Error:', error);
             });
-
-
         //fetch personalRecords
     })
 
     const addPal = () => {
         console.log(currPalName)
+
         //send currPalName to backend
         setPals([...pals, currPalName])
     }
@@ -238,7 +235,7 @@ const WorkoutModal = () => {
         setExercises(newExercises);
     };
 
-    const saveNewWorkout = () => {
+    const saveNewWorkout = async () => {
         const data = {
             workoutName,
             exercises: exercises.map(exercise => ({
@@ -253,23 +250,9 @@ const WorkoutModal = () => {
                 notes: ""
             }))
         };
-        console.log(data);
-        return;
 
-        // Send data to the backend
-        fetch('/api/workout', {
-            method: 'POST',
-            body: data,
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                // Handle success response
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                // Handle error response
-            });
+
+        
     };
 
     return (

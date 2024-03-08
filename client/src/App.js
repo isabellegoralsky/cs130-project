@@ -7,6 +7,7 @@ import RegisterPage from "./components/RegisterPage"
 import ProfilePage from "./components/ProfilePage"
 import Footer from "./components/Footer"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import FeedPage from "./components/FeedPage"
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
           <Route path="/teams" element={<TeamPage teams={[]} achievements={[]} updates={[]} />} />
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/register" element={<RegisterPage/>}/>
-          <Route path="/profile"f element={<ProfilePage/>}/>
+          <Route path="/profile" element={<ProfilePage/>}/>
+          <Route path="/feed" element={<FeedPage/>} />
         </Routes>
       </div>
       <Footer />
