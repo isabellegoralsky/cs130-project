@@ -29,11 +29,11 @@ router.get('/', async (req, res) => {
 
 router.put('/', async (req, res) => {
     const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
+    if (!token) return res.status(400).json('Cookie was not found.')
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
     const user = await User.findOne({ _id: userId });
-    if (!user) return res.status(400).send('User was not found.');
+    if (!user) return res.status(400).json('User was not found.');
 
     const update = {
         ...(req.body.firstName && { firstName: req.body.firstName }),
@@ -45,10 +45,10 @@ router.put('/', async (req, res) => {
     try {
         await User.findByIdAndUpdate(userId, update);
         console.log('Successfully updated User.');
-        res.status(200).send('Successfully updated User.');
+        res.status(200).json('Successfully updated User.');
     } catch (err) {
         console.log('Failed to update User.');
-        res.status(400).send('Failed to update User.');
+        res.status(400).json('Failed to update User.');
     }
 });
 
@@ -94,18 +94,18 @@ router.post("/login", async (req, res) => {
                     maxAge: maxAge
                 });
                 console.log("Successfully logged in");
-                res.status(200).send("Logged in")
+                res.status(200).json("Logged in")
             } catch (err) {
                 console.log("Failed to login");
-                res.status(400).send(err);
+                res.status(400).json(err);
             }
         }
         else {
-            return res.status(400).send('Incorrect password');
+            return res.status(400).json('Incorrect password');
         }
     }
     else {
-        return res.status(400).send('No account found');
+        return res.status(400).json('No account found');
     }
 });
 

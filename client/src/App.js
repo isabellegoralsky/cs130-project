@@ -9,7 +9,7 @@ import GoalsPage from "./components/GoalsPage"
 import Footer from "./components/Footer"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import FeedPage from "./components/FeedPage"
-
+import OtherProfilePage from "./components/OtherProfilePage"
 function App() {
   return (
     <Router>
@@ -23,6 +23,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage/>}/>
           <Route path="/feed" element={<FeedPage/>} />
           <Route path="/goals" element={<GoalsPage/>}/>
+          <Route path="/profile/:userId" element={<OtherProfilePage />} />
         </Routes>
       </div>
       <Footer />
