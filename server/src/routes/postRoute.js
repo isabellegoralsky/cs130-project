@@ -14,9 +14,9 @@ router.post('/addpost', async (req, res) => {
     var userId = decoded.id;
     const post = new Post({
         userId: userId,
-        workoutName: req.body.workoutName,
+        title: req.body.workoutName,
         exercises: req.body.exercises,
-        note: req.body.note
+        description: req.body.note
     });
     try {
         const savePost= await post.save();
