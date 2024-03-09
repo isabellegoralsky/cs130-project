@@ -26,7 +26,6 @@ router.post('/addtemplate', async (req, res) => {
     });
     res.set({
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
     });
     if (templateExists === null){
         const template = new Template({

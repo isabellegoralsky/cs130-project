@@ -367,22 +367,39 @@ const WorkoutModal = () => {
 
     const saveNewWorkout = async () => {
         const data = {
-            workoutName,
-            exercises: exercises.map(exercise => ({
-                exerciseName: exercise.name || undefined,
-                reps: exercise.reps ? parseInt(exercise.reps, 10) : 0,
-                sets: exercise.sets ? parseInt(exercise.sets, 10) : 0,
-                notes: exercise.notes || undefined
-            })).concat(Array(8 - exercises.length).fill({
-                exerciseName: undefined,
-                reps: 0,
-                sets: 0,
-                notes: ""
-            }))
+            workoutName: workoutName || undefined,
+            exercises: {
+                exerciseName: exercises.map(exercise => exercise.name || undefined),
+                reps: exercises.map(exercise => exercise.reps || undefined),
+                sets: exercises.map(exercise => exercise.sets || undefined),
+            }
         };
+        console.log(data)
+        const url = `http://localhost:3001/profile/addtemplate`;
 
 
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                
+            },
+            credentials: 'include', // to include the cookie in the request
+            body: JSON.stringify(data),
+        });
 
+        if (response.ok) {
+            console.log("Successfully added to template.");
+            const result = await response.json();
+            console.log(result); 
+        } else {
+            const errorResult = await response.text();
+            console.error("Failed to add to template:", errorResult);
+        }
+    } catch (error) {
+        console.error("Error sending data to the endpoint:", error);
+    }
     };
 
     return (
