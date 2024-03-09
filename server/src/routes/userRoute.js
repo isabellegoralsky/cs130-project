@@ -122,7 +122,7 @@ router.post("/logout", async (req, res) => {
     }
 });
 
-router.post("/addfriend", async (req, res) => {
+router.post("/addfriend/:uid", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -131,14 +131,14 @@ router.post("/addfriend", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const friend = await User.findOne({
-        email: req.body.email
+        _id: req.params.uid
     });
     if (!friend) return res.status(400).send('Friend is not found.');
     User.findOneAndUpdate({
         _id: userId
     }, {
         $push: {
-            friends: friend.email
+            following: friend._id
         }
     }, {
         new: true
@@ -148,25 +148,11 @@ router.post("/addfriend", async (req, res) => {
             res.status(400).send(err);
         }
     });
-    User.findOneAndUpdate({
-        email: friend.email
-    }, {
-        $push: {
-            friends: user.email
-        }
-    }, {
-        new: true
-    }, (err, doc) => {
-        if (err) {
-            console.log("Something went wrong");
-            res.status(400).send(err);
-        }
-    });
-    console.log("Successfully added friend.");
-    res.status(200).send("Successfully added friend.");
+    console.log("Successfully followed user.");
+    res.status(200).send("Successfully followed user.");
 });
 
-router.post("/deletefriend", async (req, res) => {
+router.post("/deletefriend/:uid", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -175,28 +161,14 @@ router.post("/deletefriend", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const friend = await User.findOne({
-        email: req.body.email
+        _id: req.params.uid
     });
     if (!friend) return res.status(400).send('Friend is not found.');
     User.findOneAndUpdate({
         _id: userId
     }, {
         $pull: {
-            friends: friend.email
-        }
-    }, {
-        new: true
-    }, (err, doc) => {
-        if (err) {
-            console.log("Something went wrong");
-            res.status(400).send(err);
-        }
-    });
-    User.findOneAndUpdate({
-        email: friend.email
-    }, {
-        $pull: {
-            friends: user.email
+            following: friend._id
         }
     }, {
         new: true

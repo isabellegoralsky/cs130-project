@@ -40,7 +40,8 @@ const profileRoute = require('./routes/profileRoute');
 app.use('/profile', profileRoute);
 const personalRecordRoute = require('./routes/personalRecordRoute');
 app.use('/personalrecord', personalRecordRoute);
-
+const postRoute = require('./routes/postRoute');
+app.use('/post', postRoute);
 const goalRoute = require('./routes/goalRoute');
 app.use('/goal', goalRoute);
 
