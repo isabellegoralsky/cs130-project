@@ -29,6 +29,7 @@ export default function ProfilePage() {
     const [user, setUser] = useState({});
     const [pals, setPals] = useState(["Test Pal1", "Test Pal2", "Test Pal3"]);
     const [visibleExercises, setVisibleExercises] = useState(1);
+    const [personalRecords, setPersonalRecords] = useState([]);
     const [currPalName, setCurrPalName] = useState("");
     const [workouts, setWorkouts] = useState([{
         name: "Test Workout",
@@ -68,7 +69,7 @@ export default function ProfilePage() {
 
     }, [])
 
-    useEffect(() => {
+    useEffect(() => { //fetch templates
         let userId = user._id;
         console.log(user)
         console.log(userId);
@@ -92,28 +93,37 @@ export default function ProfilePage() {
     }, [user])
 
     useEffect(() => {
-        let userId = user._id;
-        console.log(user)
-        console.log(userId);
-        if (userId !== undefined && userId !== null) {
-            const url = `http://localhost:3001/profile/template/${userId}`;
-
-            fetch(url, {
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("before transform" + data)
-                    console.log(data)
-                    transformAndSetWorkouts(data);
-                    //setWorkouts(data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            //fetch personalRecords
+        async function fetchPersonalRecords() {
+          const userId = user._id;
+          if (userId) {
+            const url = `http://localhost:3001/personalRecord`; 
+      
+            try {
+              const response = await fetch(url, {
+                method: 'GET', 
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include', 
+              });
+      
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+      
+              const data = await response.json();
+              console.log("pr");
+              console.log(data);
+              setPersonalRecords(data);
+            } catch (error) {
+              console.error('Error:', error);
+            }
+          }
         }
-    }, [user])
-
+      
+        fetchPersonalRecords();
+      }, [user]); 
+      
 
 
     const transformAndSetWorkouts = (data) => {
@@ -240,6 +250,15 @@ export default function ProfilePage() {
                 </Tabs.Content>
                 <Tabs.Content className="TabsContent" value="tab2">
                     <p>Personal Records</p>
+                    {personalRecords.map(record => {
+                        return (
+                            <div class="pinned-workout">
+                                <p class="pinned-wo-name">{record.exerciseName}</p>
+                                <p>{record.record} LBS</p>
+                            </div>
+                        )
+                    }
+                    )}
                 </Tabs.Content>
                 <Tabs.Content className="TabsContent" id="pals-content" value="tab3">
                     <Dialog.Root>
