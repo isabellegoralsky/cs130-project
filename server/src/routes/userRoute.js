@@ -1,10 +1,11 @@
-const express = require('express');
 const router = require('express').Router();
-const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const { authenticateToken } = require('../middleware/auth');
 const User = require('../models/User');
 const Team = require('../models/Team');
+const Picture = require('../models/Picture');
 
 const maxAge = 30 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -15,26 +16,14 @@ const createToken = (id) => {
     });
 }
 
-router.get('/', async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const decoded = jwt.verify(token, process.env.TokenSecret);
-    var userId = decoded.id;
-    const user = await User.findOne({ _id: userId });
-    if (!user) return res.status(400).send('User was not found.');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-    console.log('Successfully found User.');
-    res.status(200).send(user);
+router.get('/', authenticateToken, async (req, res) => {
+    res.status(200).send(req.user);
 });
 
-router.put('/', async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const decoded = jwt.verify(token, process.env.TokenSecret);
-    var userId = decoded.id;
-    const user = await User.findOne({ _id: userId });
-    if (!user) return res.status(400).send('User was not found.');
-
+router.put('/', authenticateToken, async (req, res) => {
     const update = {
         ...(req.body.firstName && { firstName: req.body.firstName }),
         ...(req.body.lastName && { lastName: req.body.lastName }),
@@ -43,12 +32,12 @@ router.put('/', async (req, res) => {
     }
 
     try {
-        await User.findByIdAndUpdate(userId, update);
-        console.log('Successfully updated User.');
-        res.status(200).send('Successfully updated User.');
+        await User.updateOne({ _id: req.user._id }, update);
+        console.log('Successfully updated User');
+        res.status(200).send('Successfully updated User');
     } catch (err) {
         console.log('Failed to update User.');
-        res.status(400).send('Failed to update User.');
+        res.status(400).send('Failed to update User');
     }
 });
 
@@ -63,7 +52,8 @@ router.post("/register", async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        password: hashedPassword
+        password: hashedPassword,
+        profilePicture: null
     });
     try {
         const saveUser = await user.save();
@@ -325,6 +315,24 @@ router.post("/leaveteam", async (req, res) => {
     });
     console.log("Successfully left team.");
     res.status(200).send("Successfully left team.");
+});
+
+router.post("/profile-picture", authenticateToken, upload.single('image'), async (req, res) => {
+    const picture = new Picture({
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+        image: req.file.buffer
+    });
+    try {
+        await picture.save();
+        await User.updateOne({ _id: req.user._id }, { profilePicture: picture._id });
+        console.log('Successfully saved picture');
+        res.status(200).send('Successfully saved picture');
+    } catch (err) {
+        console.log('Failed to save picture');
+        console.log(err);
+        res.status(400).send('Failed to save picture');
+    }
 });
 
 module.exports = router;

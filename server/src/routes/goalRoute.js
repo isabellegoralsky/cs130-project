@@ -1,233 +1,91 @@
 const router = require('express').Router();
-const jwt = require('jsonwebtoken');
-const { SamplePost, PRGoal, ConsistencyGoal } = require('../models/Goal');
+const { authenticateToken } = require('../middleware/auth');
+const { Goal } = require('../models/Goal');
 
-router.post("/addConsistencyGoal", async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const user_id = jwt.verify(token, process.env.TokenSecret).id;
-    if(!user_id){
-        res.status(400).json({error: "No user info"});
-        return;
-    }
-    const goal = new ConsistencyGoal({
-        user_id,
-        startDate: new Date(),
-        ...req.body
+const allowedFields = ['title, description, ']
+
+router.post('/', authenticateToken, async (req, res) => {
+    const goal = new Goal({
+        userId: req.user._id,
+        title: req.body.title ? req.body.title : null,
+        description: req.body.description ? req.body.title : null,
+        type: req.body.type,
+        exercise: {
+            name: req.body.exercise.name,
+            amount: req.body.exercise.amount ? req.body.exercise.amount : null,
+            difficulty: req.body.exercise.difficulty ? req.body.exercise.difficulty : null
+        },
+        progress: 0,
+        createDate: new Date(),
+        endDate: req.body.endDate ? new Date(req.body.endDate) : null
     });
+
     try {
-        const saveGoal = await goal.save();
-        console.log("Successfully created consistency goal");
-        res.status(200).send("Successfully created consistency goal")
+        await goal.save();
+        console.log('Successfully created Goal.');
+        res.status(200).send('Successfully created Goal.')
     } catch (err) {
-        console.log("Failed to create goal");
+        console.log('Failed to create Goal.');
         res.status(400).send(err);
     }
 });
 
-router.post("/addPRGoal", async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const user_id = jwt.verify(token, process.env.TokenSecret).id;
-    if(!user_id){
-        res.status(400).json({error: "No user info"});
-        return;
+router.get('/', authenticateToken, async (req, res) => {
+    try {
+        const goals = await Goal.find({ userId: req.user._id });
+        console.log('Successfully found Goals.');
+        res.status(200).send(goals);
+    } catch (err) {
+        console.log('Failed to find Goals.');
+        res.status(400).send(err);
     }
-    const goal = new PRGoal({
-        user_id,
-        startDate: new Date(),
+});
+
+router.put('/:gid', authenticateToken, async (req, res) => {
+    const filter = {
+        _id: req.params.gid,
+        userId: req.user._id
+    };
+
+    const update = {
+        ...(req.body.title && { title: req.body.title }),
+        ...(req.body.description && { description: req.body.description }),
+        ...(req.body.type && { type: req.body.type }),
+        ...(req.body.exercise.name && { 'exercise.name': req.body.exercise.name}),
+        ...(req.body.exercise.amount && { 'exercise.amount': req.body.exercise.amount }),
+        ...(req.body.exercise.difficulty && { 'exercise.difficulty': req.body.exercise.difficulty }),
+        ...(req.body.progress && { progress: req.body.progress }),
+        ...(req.body.endDate && { endDate: new Date(req.body.endDate) })
+    };
+
+    try {
+        await Goal.findOneAndUpdate(filter, update);
+        console.log('Successfully updated Goal.');
+        res.status(200).send('Successfully updated Goal.');
+    } catch (err) {
+        console.log('Failed to update Goal.');
+        res.status(400).send(err);
+    }
+});
+
+router.delete('/:gid', authenticateToken, async (req, res) => {
+    const filter = {
+        _id: req.params.gid,
+        userId: req.user._id
+    };
+
+    const update = {
         ...req.body
-    });
+    };
+
     try {
-        const saveGoal = await goal.save();
-        console.log("Successfully created PR goal");
-        res.status(200).send("Successfully created PR goal")
+        await Goal.findOneAndDelete(filter, update);
+        console.log('Successfully deleted Goal.');
+        res.status(200).send('Successfully deleted Goal.');
     } catch (err) {
-        console.log("Failed to create goal");
-        res.status(400).send(err);
+        console.log('Failed to delete Goal.');
+        res.status(400).send('Failed to delete Goal.');
     }
 });
-
-router.post("/deleteConsistencyGoal", async (req, res) => {
-    try {
-        await ConsistencyGoal.findByIdAndDelete(req.body.id)
-        console.log("Successfully deleted consistency goal");
-        res.status(200).send("Successfully deleted consistency goal")
-    } catch (err) {
-        console.log("Failed to delete goal");
-        res.status(400).send(err);
-    }
-});
-
-router.post("/deletePRGoal", async (req, res) => {
-    try {
-        await PRGoal.findByIdAndDelete(req.body.id)
-        console.log("Successfully deleted PR goal");
-        res.status(200).send("Successfully deleted PR goal")
-    } catch (err) {
-        console.log("Failed to delete goal");
-        res.status(400).send(err);
-    }
-});
-
-router.get("/getPRGoals", async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const user_id = jwt.verify(token, process.env.TokenSecret).id;
-    if(!user_id){
-        res.status(400).json({error: "No user info"});
-        return;
-    }
-    try {
-        const prGoals = await PRGoal.find({ user_id });
-        let goals = [];
-        for(const goal of prGoals){
-            const progress = await findProgressTowardsPRGoal(goal);
-            goals.push({goal, progress})
-        }
-        res.status(400).json({ goals });
-    } catch (err) {
-        res.status(200).json({ error: err });
-    }
-});
-
-router.get("/getConsistencyGoals", async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const user_id = jwt.verify(token, process.env.TokenSecret).id;
-    if(!user_id){
-        res.status(400).json({error: "No user info"});
-        return;
-    }
-    try {
-        const consistencyGoals = await ConsistencyGoal.find({ user_id });
-        let goals = [];
-        for(const goal of consistencyGoals){
-            const progress = await findProgressTowardsConsistencyGoals(goal);
-            goals.push({goal, progress})
-        }
-        res.status(400).json({ goals });
-    } catch (err) {
-        console.log(err);
-        res.status(200).json({ error: err })
-    }
-})
 
 module.exports = router;
-
-async function findProgressTowardsPRGoal(prGoal) {
-    try {
-        const { user_id, exerciseType, exercise } = prGoal;
-        const progress = await SamplePost.aggregate([
-            {
-                $match: {
-                    user_id: user_id,
-                    'exercises.exerciseType': exerciseType,
-                    'exercises.exercise': exercise
-                }
-            },
-            {
-                $unwind: '$exercises'
-            },
-            {
-                $match: {
-                    'exercises.exerciseType': exerciseType,
-                    'exercises.exercise': exercise
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    maxAmount: { $max: { $toInt: '$exercises.amount' } }
-                }
-            }
-        ]);
-
-        if (progress.length > 0) {
-            return progress[0].maxAmount;
-        } else {
-            return 0;
-        }
-    } catch (error) {
-        console.error('Error finding progress:', error);
-        throw error;
-    }
-}
-
-async function findProgressTowardsConsistencyGoals(goal) {
-    try {
-        const { unit, user_id, exerciseType, exercise } = goal;
-        
-        let since;
-        if(goal.per == "DAY"){ 
-            since = getStartOfDay();
-        } else if (goal.per == "WEEK") { 
-            since = getStartOfWeek();
-        } else if (goal.per == "MONTH") {
-            since = getStartOfMonth();
-        }
-        
-        let sumField;
-        if(unit == 'SETS'){
-            sumField = { $sum: { $toInt: '$exercises.sets' } };
-        } else if(unit == 'REPS'){
-            sumField = { $sum: { $toInt: '$exercises.reps' } };
-        } else if(unit == 'DURATION_MINS'){
-            sumField = { $sum: { $toInt: '$exercises.amount' } }; //assuming amount is DURATION_MINS
-        } else { // COUNT
-            sumField = { $count: {} } 
-        }
-
-        const result = await SamplePost.aggregate([
-            {
-                $match: {
-                    user_id: user_id,
-                    'exercises.exerciseType': exerciseType,
-                    'exercises.exercise': exercise,
-                    date: { $gt: since }
-                }
-            },
-            {
-                $unwind: '$exercises'
-            },
-            {
-                $match: {
-                    'exercises.exerciseType': exerciseType,
-                    'exercises.exercise': exercise
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    sumField
-                }
-            }
-        ]);
-        
-        if(result.length > 0){
-            return result[0].sumField;
-        }
-        return 0;
-        
-    } catch (error) {
-        console.error('Error finding progress:', error);
-        throw error;
-    }
-
-}
-
-function getStartOfWeek(){
-    const today = new Date();
-    const start = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
-    start.setHours(0,0,0,0);
-    return start;
-}
-function getStartOfDay(){
-    return (new Date()).setHours(0,0,0,0);
-}
-function getStartOfMonth(){
-    const start = new Date()
-    start.setDate(1);
-    start.setHours(0,0,0,0);
-    return start;
-}

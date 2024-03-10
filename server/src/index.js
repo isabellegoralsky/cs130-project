@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 const corsOptions = {
     origin: 'http://localhost:3000', //  frontend origin
-    credentials: true, 
+    credentials: true,
   };
-  
+
   app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -44,6 +44,8 @@ const postRoute = require('./routes/postRoute');
 app.use('/post', postRoute);
 const goalRoute = require('./routes/goalRoute');
 app.use('/goal', goalRoute);
+const pictureRoute = require('./routes/pictureRoute');
+app.use('/picture', pictureRoute);
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
