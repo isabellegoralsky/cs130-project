@@ -23,6 +23,8 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/feed" element={<FeedPage />} />
           <Route path="/goals" element={<GoalsPage />} />
+          <Route path="/profile/:userId" element={<OtherProfilePage />} />
+
         </Routes>
       </div>
       <Footer />

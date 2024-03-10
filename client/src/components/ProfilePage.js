@@ -31,6 +31,7 @@ export default function ProfilePage() {
     const [visibleExercises, setVisibleExercises] = useState(1);
     const [personalRecords, setPersonalRecords] = useState([]);
     const [currPalName, setCurrPalName] = useState("");
+    const [imageSrc, setImageSrc] = useState("");
     const [workouts, setWorkouts] = useState([{
         name: "Test Workout",
         exercise1: {
@@ -88,7 +89,7 @@ export default function ProfilePage() {
                 .catch((error) => {
                     console.error('Error:', error);
                 });
-            //fetch personalRecords
+
         }
     }, [user])
 
@@ -123,6 +124,36 @@ export default function ProfilePage() {
       
         fetchPersonalRecords();
       }, [user]); 
+
+      useEffect(() => {
+        if(user._id === undefined){
+            return;
+        }
+        const url = `http://localhost:3001/profile/${user._id}/profilepage`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("user data is")
+                console.log(data)
+                setPals(data.followingNames);
+                if (data.profilePic && data.profilePic.image && data.profilePic.image.data && data.profilePic.image.data.length > 0) {
+                    let imageData = data.profilePic.image
+
+                    const blob = new Blob([new Uint8Array(imageData.data)], { type: imageData.contentType });
+                    const imageSrc = URL.createObjectURL(blob);
+                    console.log("image src is " + imageSrc)
+                    setImageSrc(imageSrc);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }, [user])
       
 
 
@@ -193,7 +224,7 @@ export default function ProfilePage() {
             <Avatar.Root className="AvatarRoot">
                 <Avatar.Image
                     className="AvatarImage"
-                    src="https://drive.google.com/thumbnail?id=1SQQgzP3d-hCNEA7p9nH4xhb9OO1TCC0G"
+                    src = {imageSrc ? imageSrc : "https://drive.google.com/thumbnail?id=1SQQgzP3d-hCNEA7p9nH4xhb9OO1TCC0G"}
                     alt="Avatar Image"
                 />
                 <Avatar.Fallback className="AvatarFallback" delayMs={600}>

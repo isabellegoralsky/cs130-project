@@ -177,7 +177,7 @@ router.get('/template/:uid', async (req, res) => {
 
 router.get('/:uid/profilepage', async (req, res) => {
     const user = await User.findOne({ _id: req.params.uid });
-    if (!user) return res.status(400).send('User was not found.');
+    if (!user) return res.status(400).json('User was not found.');
     var name = user.firstName + " " + user.lastName;
     const profilePic = await Picture.findOne({ _id: user.profilePicture});
     const followingids = user.following;

@@ -123,11 +123,11 @@ router.post("/addfriend/:uid", async (req, res) => {
     const user = await User.findOne({
         _id: userId
     });
-    if (!user) return res.status(400).send('User is not found.');
+    if (!user) return res.status(400).json('User is not found.');
     const friend = await User.findOne({
         _id: req.params.uid
     });
-    if (!friend) return res.status(400).send('Friend is not found.');
+    if (!friend) return res.status(400).json('Friend is not found.');
     User.findOneAndUpdate({
         _id: userId
     }, {
