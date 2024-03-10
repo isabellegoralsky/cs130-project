@@ -178,8 +178,7 @@ export default function ProfilePage() {
         }
         // Update the state with the transformed workouts
         setWorkouts(transformedWorkouts);
-        console.log("workouts re")
-        console.log(transformedWorkouts);
+
     };
 
     const addPal = () => {

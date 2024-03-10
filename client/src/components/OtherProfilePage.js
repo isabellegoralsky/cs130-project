@@ -7,9 +7,90 @@ import * as Dialog from '@radix-ui/react-dialog';
 
 export default function OtherProfilePage() {
     const { userId } = useParams(); 
+    console.log(userId)
     const [workouts, setWorkouts] = useState([]);
     const [user, setUser] = useState({});
     const [pals, setPals] = useState([]);
+    const [isNotPal, setIsNotPal] = useState(true);
+    const addPal = () => {
+        setIsNotPal(false);
+    }
+    useEffect(() => { //fetch templates
+        console.log(user)
+        console.log(userId);
+        if (userId !== undefined && userId !== null) {
+            const url = `http://localhost:3001/profile/template/${userId}`;
+
+            fetch(url, {
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("before transform" + data)
+                    console.log(data)
+                    transformAndSetWorkouts(data);
+                    //setWorkouts(data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            //fetch personalRecords
+        }
+    }, [user])
+    const transformAndSetWorkouts = (data) => {
+        const transformedWorkouts = [];
+
+        for (let i = 0; i < data.workoutName.length; i++) {
+            let workout = {
+                name: data.workoutName[i],
+                exercise1: {
+                    name: data.exercises[i].exerciseName[0],
+                    sets: data.exercises[i].sets[0],
+                    reps: data.exercises[i].reps[0],
+                },
+                exercise2: {
+                    name: data.exercises[i].exerciseName[1],
+                    sets: data.exercises[i].sets[1],
+                    reps: data.exercises[i].reps[1],
+                },
+                exercise3: {
+                    name: data.exercises[i].exerciseName[2],
+                    sets: data.exercises[i].sets[2],
+                    reps: data.exercises[i].reps[2],
+                },
+                exercise4: {
+                    name: data.exercises[i].exerciseName[3],
+                    sets: data.exercises[i].sets[3],
+                    reps: data.exercises[i].reps[3],
+                },
+                exercise5: {
+                    name: data.exercises[i].exerciseName[4],
+                    sets: data.exercises[i].sets[4],
+                    reps: data.exercises[i].reps[4],
+                },
+                exercise6: {
+                    name: data.exercises[i].exerciseName[5],
+                    sets: data.exercises[i].sets[5],
+                    reps: data.exercises[i].reps[5],
+                },
+                exercise7: {
+                    name: data.exercises[i].exerciseName[6],
+                    sets: data.exercises[i].sets[6],
+                    reps: data.exercises[i].reps[6],
+                },
+                exercise8: {
+                    name: data.exercises[i].exerciseName[7],
+                    sets: data.exercises[i].sets[7],
+                    reps: data.exercises[i].reps[7],
+                },
+                note: data.note[0]
+            }
+            transformedWorkouts.push(workout);
+        }
+        // Update the state with the transformed workouts
+        setWorkouts(transformedWorkouts);
+        console.log("workouts re")
+        console.log(transformedWorkouts);
+    };
     return (
         <div id="profile-page">
             <Avatar.Root className="AvatarRoot">
@@ -22,6 +103,7 @@ export default function OtherProfilePage() {
                     Avatar Image Loading...
                 </Avatar.Fallback>
             </Avatar.Root>
+            {isNotPal && <button id="add-pal-button" onClick={addPal}>Add Pal</button>}
             <h1 id="profile-name">{user.firstName + " " + user.lastName}</h1>
             <Tabs.Root className="TabsRoot" defaultValue="tab1">
                 <Tabs.List className="TabsList" aria-label="Profile Tabs">

@@ -150,6 +150,8 @@ router.post('/deletetemplate', async (req, res) => {
 });
 
 router.get('/template/:uid', async (req, res) => {
+    console.log("uid is")
+    console.log(req.params.uid)
     const templateExists = await Template.findOne({
         userId: req.params.uid
     });
@@ -159,7 +161,7 @@ router.get('/template/:uid', async (req, res) => {
     });
     if (templateExists === null){
         console.log("null")
-        return res.status(400).send("Template does not exist.");
+        return res.status(400).json("Template does not exist.");
     }
     else{
         console.log("exists")
