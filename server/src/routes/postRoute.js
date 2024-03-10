@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Team = require('../models/Team');
 const Post = require('../models/Post');
 const PostTeam = require('../models/PostTeam');
+const PersonalRecord = require('../models/PersonalRecord');
 
 router.post('/addpost', async (req, res) => {
     const token = req.cookies.jwt;
@@ -21,11 +22,79 @@ router.post('/addpost', async (req, res) => {
     try {
         const savePost= await post.save();
         console.log("Successfully posted");
-        res.status(200).send("Successfully posted");
     } catch (err) {
         console.log("Failed to post");
         res.status(400).send(err);
     }
+    //update pr 
+    const personalrecords = await PersonalRecord.find({userId:userId}).catch(err => {
+        console.error('Error:', err);
+    });
+    for (let i = 0; i < personalrecords.length; i++) {
+        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+            if(personalrecords[i].exerciseName === post.exercises.exerciseName[j]){
+                if(personalrecords[i].record<post.exercises.weight[j]){
+                    try{ 
+                            await PersonalRecord.findOneAndUpdate({
+                            _id: personalrecords[i]._id,
+                            exerciseName: personalrecords[i].exerciseName
+                        }, {
+                            record: post.exercises.weight[j]
+                        });
+                    }  
+                    catch (err){
+                        console.log('Failed to update personal records');
+                        console.log(err);
+                        res.status(400).send('Failed to update personal records');
+                    }
+                }
+            }
+        }
+    }
+    console.log("Successfully updated pr");
+    res.status(200).send('Successfully added post and updated');
+
+    
+
+    // Update individual goals
+    // const indGoals = await Goal.find({ userId: user._id }).catch(err => {
+    //     console.error('Error:', err);
+    // });
+    // for (let i = 0; i < indGoals.length; i++) {
+    //     for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+    //         if (indGoals[i].exercise.name === post.exercises.exerciseName[j]) {
+    //             if (indGoals[i].type === 'PR') {
+    //                 const amount = post.exercises.weight[j];
+    //                 if (indGoals[i].progress < amount) {
+    //                     try {
+    //                         await Goal.updateOne({ _id: indGoals[i]._id }, { $set: { progress: amount } });
+    //                         console.log('Updated PR Goal');
+    //                     }
+    //                     catch (error) {
+    //                         console.log('Failed to update PR goal');
+    //                         console.log(error);
+    //                         return res.status(400).send('Failed to update PR goal');
+    //                     }
+
+    //                 }
+    //             }
+    //             else if (indGoals[i].type === 'CST') {
+    //                 const amount = post.exercises.reps[j] * post.exercises.sets[j];
+    //                 try {
+    //                     await Goal.updateOne({ _id: indGoals[i]._id }, { $set: { progress: indGoals[i].progress + amount } });
+    //                     console.log('Updated CST Goal');
+    //                 } catch (error) {
+    //                     console.log('Failed to update CST Goal');
+    //                     console.log(error);
+    //                     return res.status(400).send('Failed to update CST goal');
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // //Update team goal
+    // res.status(200).send('Successfully added post');
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {

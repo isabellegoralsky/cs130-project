@@ -9,6 +9,7 @@ const Picture = require('../models/Picture');
 const Post = require('../models/Post');
 const PostTeam = require('../models/PostTeam');
 const { Goal } = require('../models/Goal');
+const PersonalRecord = require('../models/PersonalRecord');
 const Template = require('../models/Template');
 
 const maxAge = 30 * 24 * 60 * 60;
