@@ -4,12 +4,17 @@ import './Navbar.css'
 export default function Navbar() {
   return (
     <nav className="nav">
-      <CustomLink to="/teams" class="nav-link">Teams</CustomLink>
-      <CustomLink to="/login" class="nav-link">Login</CustomLink>
-      <CustomLink to="/goals" class="nav-link">Goals</CustomLink>
-      <CustomLink to="/profile" class="nav-link">Profile</CustomLink>
-      <CustomLink to="/feed">Feed</CustomLink>
-
+      <div class="nav-logo-div">
+        <img class="nav-logo" src="/gympals_logo.png"/>
+      </div>
+      <div class="nav-linkss">
+        <Link to="/" className="site-title nav-link">Home</Link>
+        <CustomLink to="/login" class="nav-link">Login</CustomLink>
+        <CustomLink to="/feed" class="nav-link">Feed</CustomLink>
+        <CustomLink to="/teams" class="nav-link">Teams</CustomLink>
+        <CustomLink to="/goals" class="nav-link">Goals</CustomLink>
+        <CustomLink to="/profile" class="nav-link">Profile</CustomLink>
+      </div>
     </nav>
   )
 }
