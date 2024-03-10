@@ -335,4 +335,25 @@ router.post("/profile-picture", authenticateToken, upload.single('image'), async
     }
 });
 
+router.get('/:uid/teams', async (req, res) => {
+    const user = await User.findOne({ _id: req.params.uid });
+    if (!user) return res.status(400).send('User was not found.');
+    var teams = user.teams;
+    return res.status(200).json(teams);
+});
+
+router.get('/:tid/teammembers', async (req, res) => {
+    const team = await Team.findOne({ _id: req.params.tid });
+    if (!team) return res.status(400).send('Team was not found.');
+    var users = team.teamMembers;
+    return res.status(200).json(users);
+});
+
+router.get('/:uid/following', async (req, res) => {
+    const user = await User.findOne({ _id: req.params.uid });
+    if (!user) return res.status(400).send('User was not found.');
+    var following = user.following;
+    return res.status(200).json(following);
+});
+
 module.exports = router;
