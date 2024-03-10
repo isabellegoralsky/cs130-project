@@ -18,7 +18,7 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/teams" element={<TeamPage teams={[]} achievements={[]} updates={[]} />} />
+          <Route path="/teams" element={<TeamPage teams={[]} achievements={[]} updates={[]} posts={[]}/>} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/feed" element={<FeedPage />} />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Goal from './Goal';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
@@ -6,9 +6,7 @@ import './GoalsPage.css'
 
 const GoalsPage = () => {
 
-    const handleCreateGoal = (e) => {
-        //TODO
-    }
+    const [goalType, setGoalType] = useState(null);
     const samplegoals = [
         { description: "Goal 1", savedprogress: 75 },
         { description: "Goal 2", savedprogress: 50 },
@@ -44,23 +42,14 @@ const GoalsPage = () => {
                         <Dialog.Content className="DialogContent">
                             <Dialog.Title className="DialogTitle">Add a Goal</Dialog.Title>
                             <Dialog.Description className="DialogDescription">
-                                Add a description for the goal and a target you would like to hit.
+                                What type of goal would you like to set?
                             </Dialog.Description>
-                            <fieldset className="Fieldset">
-                                <label className="Label" htmlFor="description">
-                                    Description
-                                </label>
-                                <input className="Input" id="description" />
-                            </fieldset>
-                            <fieldset className="Fieldset">
-                                <label className="Label" htmlFor="target">
-                                    Goal Target
-                                </label>
-                                <input className="Input" id="target" />
-                            </fieldset>
                             <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
                                 <Dialog.Close asChild>
-                                    <button onClick={handleCreateGoal}>Create Goal</button>
+                                    <button onClick={() => setGoalType('consistency')}>Consistency Goal</button>
+                                </Dialog.Close>
+                                <Dialog.Close asChild>
+                                    <button onClick={() => setGoalType('pr')}>PR Goal</button>
                                 </Dialog.Close>
                             </div>
                             <Dialog.Close asChild>
@@ -72,6 +61,156 @@ const GoalsPage = () => {
                     </Dialog.Portal>
                 </Dialog.Root>
             </div>
+            {goalType && goalType === 'consistency' && (
+                <ConsistencyGoalModal onClose={() => setGoalType(null)} />
+            )}
+            {goalType && goalType === 'pr' && (
+                <PRGoalModal onClose={() => setGoalType(null)} />
+            )}
+        </div>
+    );
+};
+
+const ConsistencyGoalModal = ({ onClose }) => {
+    const [exerciseName, setExerciseName] = useState('');
+    const [goalDesc, setGoalDesc] = useState(''); //done
+    const [exerciseType, setExerciseType] = useState(''); //done
+    const [goalTarget, setGoalTarget] = useState(''); //done
+    const [unit, setUnit] = useState(''); //done
+    const [per, setPer] = useState(''); //done
+    //need exercise which has additional fields name, sets, reps, unit, amount
+
+    return (
+        <div>
+            <Dialog.Root open>
+                <Dialog.Portal>
+                    <Dialog.Overlay className="DialogOverlay" />
+                    <Dialog.Content className="DialogContent">
+                        <Dialog.Close asChild>
+                            <button className="IconButton" aria-label="Close" onClick={onClose}>
+                                <Cross2Icon />
+                            </button>
+                        </Dialog.Close>
+                        <Dialog.Title className="DialogTitle">Add a Consistency Goal</Dialog.Title>
+                        <div>
+                            <input
+                                className="Input"
+                                placeholder="Exercise Name"
+                                value={exerciseName}
+                                onChange={(e) => setExerciseName(e.target.value)} />
+                            <div style={{ display: 'flex', }}>
+                                <textarea
+                                    className="Input"
+                                    placeholder="Goal Description"
+                                    value={goalDesc}
+                                    onChange={(e) => setGoalDesc(e.target.value)}
+                                />
+                                <select className="Select" defaultValue="" onChange={e => setExerciseType(e.target.value)}>
+                                    <option disabled={true} value="">
+                                        EXERCISE TYPE
+                                    </option>
+                                    <option key="CARDIO" value="CARDIO">CARDIO</option>
+                                    <option key="STRENGTH" value="STRENGTH">STRENGTH</option>
+                                </select>
+                            </div>
+                            <input
+                                className="Input"
+                                placeholder="Goal Target"
+                                value={goalTarget}
+                                onChange={(e) => setGoalTarget(e.target.value)}
+                            />
+                            <select className="Select" defaultValue="" onChange={e => setUnit(e.target.value)}>
+                                <option disabled={true} value="">
+                                    UNITS
+                                </option>
+                                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                                <option key="SETS" value="SETS">SETS</option>
+                                <option key="REPS" value="REPS">REPS</option>
+                                <option key="COUNT" value="COUNT">COUNT</option>
+                            </select>
+
+                            <div style={{ display: 'flex', }}>
+                                <p>per</p>
+                                <select className="Select" defaultValue="" onChange={e => setPer(e.target.value)}>
+                                    <option disabled={true} value="">
+                                        TIMEFRAME
+                                    </option>
+                                    <option key="DAY" value="DAY">DAY</option>
+                                    <option key="WEEK" value="WEEK">WEEK</option>
+                                    <option key="MONTH" value="MONTH">MONTH</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button className="Button green" onClick={onClose}>Add Goal</button>
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
+        </div>
+    );
+};
+
+const PRGoalModal = ({ onClose }) => {
+    const [exerciseName, setExerciseName] = useState('');
+    const [goalDesc, setGoalDesc] = useState(''); //done
+    const [exerciseType, setExerciseType] = useState(''); //done
+    const [goalTarget, setGoalTarget] = useState(''); //done
+    const [unit, setUnit] = useState(''); //done
+    const [per, setPer] = useState(''); //done
+    //need exercise which has additional fields name, sets, reps, unit, amount
+
+    return (
+        <div>
+            <Dialog.Root open>
+                <Dialog.Portal>
+                    <Dialog.Overlay className="DialogOverlay" />
+                    <Dialog.Content className="DialogContent">
+                        <Dialog.Close asChild>
+                            <button className="IconButton" aria-label="Close" onClick={onClose}>
+                                <Cross2Icon />
+                            </button>
+                        </Dialog.Close>
+                        <Dialog.Title className="DialogTitle">Add a PR Goal</Dialog.Title>
+                        <div>
+                            <input
+                                className="Input"
+                                placeholder="Exercise Name"
+                                value={exerciseName}
+                                onChange={(e) => setExerciseName(e.target.value)} />
+                            <div style={{ display: 'flex', }}>
+                                <textarea
+                                    className="Input"
+                                    placeholder="Goal Description"
+                                    value={goalDesc}
+                                    onChange={(e) => setGoalDesc(e.target.value)}
+                                />
+                                <select className="Select" defaultValue="" onChange={e => setExerciseType(e.target.value)}>
+                                    <option disabled={true} value="">
+                                        EXERCISE TYPE
+                                    </option>
+                                    <option key="CARDIO" value="CARDIO">CARDIO</option>
+                                    <option key="STRENGTH" value="STRENGTH">STRENGTH</option>
+                                </select>
+                            </div>
+                            <input
+                                className="Input"
+                                placeholder="Goal Target"
+                                value={goalTarget}
+                                onChange={(e) => setGoalTarget(e.target.value)}
+                            />
+
+                            <select className="Select" defaultValue="" onChange={e => setUnit(e.target.value)}>
+                                <option disabled={true} value="">
+                                    UNITS
+                                </option>
+                                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                                <option key="WEIGHT" value="SETS">WEIGHT (LBS)</option>
+                            </select>
+                        </div>
+                        <button className="Button green" onClick={onClose}>Add Goal</button>
+
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
         </div>
     );
 };
