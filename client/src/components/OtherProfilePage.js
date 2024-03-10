@@ -150,7 +150,8 @@ export default function OtherProfilePage() {
                     Avatar Image Loading...
                 </Avatar.Fallback>
             </Avatar.Root>
-            {isNotPal && <button id="add-pal-button" onClick={addPal}>Add Pal</button>}
+            {isNotPal && <button id="add-pal-button" onClick={addPal}><img class="add-pal-img" src="https://drive.google.com/thumbnail?id=1EqwyGYxBns9dZixaFfKm549nYskLIMWw" alt="pin a workout" />
+            </button>}
             <h1 id="profile-name">{user.name}</h1>
             <Tabs.Root className="TabsRoot" defaultValue="tab1">
                 <Tabs.List className="TabsList" aria-label="Profile Tabs">
