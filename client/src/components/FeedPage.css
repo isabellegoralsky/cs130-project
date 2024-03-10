@@ -58,3 +58,40 @@
     color: #FF5A13;
     margin-top: 2px;
 }
+
+#feed-page-pop-up{
+    font-family: "Nanum Gothic", sans-serif;
+}
+
+#pop-up-buttons{
+    display: flex;
+    flex-direction: column;
+}
+
+.add-workout-pop {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 0;
+    padding: 8px 15px;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 500;
+    height:42px;
+    font-family: "Bebas Neue", sans-serif;
+    background-color: rgb(255, 90, 19, .1);
+    color:#FF5A13;
+    margin-bottom: 20px;
+    float:left;
+    width:142px;
+  }
+
+.add-workout-pop:hover {
+    background-color: rgb(255, 90, 19, .3);
+  }
+
+#post-deets{
+    display: flex;
+    flex-direction: column;
+}

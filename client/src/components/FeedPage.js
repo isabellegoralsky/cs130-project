@@ -189,19 +189,23 @@ const PostModal = () => {
   };
 
   return (
-    <div>
-      <input
-        className="Input"
-        placeholder="Post Title"
-        value={postTitle}
-        onChange={(e) => setPostTitle(e.target.value)}
-      />
-      <textarea
-        className="Input"
-        placeholder="Post Description"
-        value={postDescription}
-        onChange={(e) => setPostDescription(e.target.value)}
-      />
+    <div id="feed-page-pop-up">
+      <div id="post-deets">
+        <input
+          style={{marginBottom: '8px'}}
+          className="Input"
+          placeholder="Post Title"
+          value={postTitle}
+          onChange={(e) => setPostTitle(e.target.value)}
+        />
+        <input
+          style={{marginBottom: '20px'}}
+          className="Input"
+          placeholder="Post Description"
+          value={postDescription}
+          onChange={(e) => setPostDescription(e.target.value)}
+        />
+      </div>
       {exercises.map((exercise, index) => (
         <ExerciseInput
           key={index}
@@ -210,10 +214,12 @@ const PostModal = () => {
           setExercise={(data) => setExerciseData(index, data)}
         />
       ))}
-      <button className="Button-add" onClick={addExercise}>Add Exercise</button>
-      <Dialog.Close asChild>
-        <button className="Button green" onClick={savePost}>Save Post</button>
-      </Dialog.Close>
+      <div id="pop-up-buttons">
+        <button className="add-workout-pop" onClick={addExercise}>Add Exercise</button>
+        <Dialog.Close asChild>
+          <button className="Button green" onClick={savePost}>Save Post</button>
+        </Dialog.Close>
+      </div>
     </div>
   );
 };
