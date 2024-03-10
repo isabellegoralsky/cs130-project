@@ -15,7 +15,7 @@ router.post('/', authenticateToken, async (req, res) => {
         },
         progress: 0,
         createDate: new Date(),
-        endDate: new Date(req.body.endDate)
+        endDate: req.body.endDate ? new Date(req.body.endDate) : null
     });
 
     try {
