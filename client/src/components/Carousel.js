@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 const Carousel = ({ items, title }) => {
   return (
     <div style={{ padding: '0px 200px 20px' }}>
-      <h2 class="teams-sections">{title}</h2>
       <div style={{
         display: 'flex',
         overflowX: 'auto',
