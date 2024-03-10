@@ -44,6 +44,8 @@ const postRoute = require('./routes/postRoute');
 app.use('/post', postRoute);
 const goalRoute = require('./routes/goalRoute');
 app.use('/goal', goalRoute);
+const teamGoalRoute = require('./routes/teamGoalRoute');
+app.use('/team-goal', teamGoalRoute);
 const pictureRoute = require('./routes/pictureRoute');
 app.use('/picture', pictureRoute);
 

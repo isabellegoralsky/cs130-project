@@ -1,18 +1,18 @@
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
-const goalSchema = new mongoose.Schema({
-    userId: ObjectId,
+const teamGoalSchema = new mongoose.Schema({
+    teamId: ObjectId,
     title: String,          // Optional.
     description: String,    // Optional.
-    type: String,           // PR/CST.
+    type: String,           // CST.
     exercise: {
         name: String,
-        amount: {           // Necessary for CST.
+        amount: {
             unit: String,   // SET/MIN.
             value: Number
         },
-        difficulty: {       // Necessary for PR. Optional for CST.
+        difficulty: {       // Optional.
             unit: String,   // LB/MPH.
             value: Number
         }
@@ -22,4 +22,4 @@ const goalSchema = new mongoose.Schema({
     endDate: Date           // Optional.
 });
 
-module.exports = mongoose.model('Goal', goalSchema);
+module.exports = mongoose.model('TeamGoal', teamGoalSchema);
