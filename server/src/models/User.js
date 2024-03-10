@@ -21,13 +21,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         max: 1024,
         min: 6
-    }, 
+    },
     following: {
         type: [ObjectId]
-    }, 
+    },
     teams: {
         type: [ObjectId]
-    }
+    },
+    profilePicture: ObjectId
 });
 
 module.exports = mongoose.model('User', userSchema);
