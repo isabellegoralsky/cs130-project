@@ -25,7 +25,7 @@ function App() {
           <Route path="/goals" element={<GoalsPage />} />
         </Routes>
       </div>
-      <Footer />
+      {location.pathname !== '/' && location.pathname !== '/register' && <Footer />}
     </div>
   )
 }
