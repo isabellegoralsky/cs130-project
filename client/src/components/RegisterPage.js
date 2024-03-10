@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './LoginReg.css';
 
 const RegisterPage = () => {
@@ -53,6 +54,8 @@ const RegisterPage = () => {
         <div class="button-div">
           <button class="bold-text signin-button" type="submit">sign up</button>
         </div>
+        <div id="login-reg-link">Have an account already?&nbsp;<Link to="/" id="sign-up-link">Sign In</Link></div>
+
       </form>
     </div>
   );

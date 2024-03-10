@@ -4,7 +4,6 @@ import './Navbar.css'
 export default function Navbar() {
   return (
     <nav className="nav">
-      <Link to="/" className="site-title nav-link">Home</Link>
       <CustomLink to="/teams" class="nav-link">Teams</CustomLink>
       <CustomLink to="/login" class="nav-link">Login</CustomLink>
       <CustomLink to="/goals" class="nav-link">Goals</CustomLink>
