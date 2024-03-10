@@ -28,7 +28,9 @@ const userSchema = new mongoose.Schema({
     teams: {
         type: [ObjectId]
     },
-    profilePicture: ObjectId
+    picture: {
+        type: ObjectId
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);
