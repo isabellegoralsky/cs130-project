@@ -6,6 +6,10 @@ const { authenticateToken } = require('../middleware/auth');
 const User = require('../models/User');
 const Team = require('../models/Team');
 const Picture = require('../models/Picture');
+const Post = require('../models/Post');
+const PostTeam = require('../models/PostTeam');
+const {Goal} = require('../models/Goal');
+const Template = require('../models/Template');
 
 const maxAge = 30 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -355,5 +359,54 @@ router.get('/:uid/following', async (req, res) => {
     var following = user.following;
     return res.status(200).json(following);
 });
+
+router.get('/:tid/teampage', async (req, res) => {
+    const team = await Team.findOne({ _id: req.params.tid });
+    if (!team) return res.status(400).send('Team was not found.');
+    var users = team.teamMembers;
+    var teamName = team.teamName;
+ 
+ 
+    const teamposts = await PostTeam.find({ userId: { $in: team.teamMembers } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<teamposts.length; i++){
+        const userid = teamposts[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=teamposts[i].title;
+        var note=teamposts[i].note;
+        var date=(teamposts[i].updatedAt.getMonth()+1)+'/'+teamposts[i].updatedAt.getDate()+'/'+teamposts[i].updatedAt.getFullYear();
+        var time=(teamposts[i].updatedAt.getHours()+':'+teamposts[i].updatedAt.getMinutes()+':'+teamposts[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, note: note, date: date, time: time});
+    }
+    var announcements = posts;
+ 
+ 
+ 
+ 
+    var teampost = await Post.find({ userId: { $in: team.teamMembers } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<teampost.length; i++){
+        const userid = teampost[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=teampost[i].title;
+        var exercises=teampost[i].exercises;
+        var description=teampost[i].description;
+        var date=(teampost[i].updatedAt.getMonth()+1)+'/'+teampost[i].updatedAt.getDate()+'/'+teampost[i].updatedAt.getFullYear();
+        var time=(teampost[i].updatedAt.getHours()+':'+teampost[i].updatedAt.getMinutes()+':'+teampost[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, exercises: exercises, description: description, date: date, time: time});
+    }
+    var teampost = posts;
+    var teamPage = {users, teamName, announcements, teampost};
+    console.log(teamPage);
+    return res.status(200).json(teamPage);
+ }); 
 
 module.exports = router;
