@@ -54,16 +54,16 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
             <div>
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
-                        <button className="IconButton" aria-label="Customise options">
+                        <button className="IconButton edit-goal" aria-label="Customise options">
                             <DotsHorizontalIcon />
                         </button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Portal>
                         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
-                            <DropdownMenu.Item className="DropdownMenuItem" onSelect={handleEdit}>
+                            <DropdownMenu.Item className="DropdownMenuItem edit-goal-del" onSelect={handleEdit}>
                                 Edit Goal
                             </DropdownMenu.Item>
-                            <DropdownMenu.Item className="DropdownMenuItem" onSelect={handleDelete}>
+                            <DropdownMenu.Item className="DropdownMenuItem edit-goal-del" onSelect={handleDelete}>
                                 Delete Goal
                             </DropdownMenu.Item>
                         </DropdownMenu.Content>
