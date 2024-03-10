@@ -14,18 +14,18 @@ router.post('/addpost', async (req, res) => {
     var userId = decoded.id;
     const post = new Post({
         userId: userId,
-        title: req.body.workoutName,
+        title: req.body.title,
         exercises: req.body.exercises,
-        description: req.body.note
+        description: req.body.description
     });
     try {
         const savePost= await post.save();
         console.log("Successfully posted");
-        res.status(200).send("Successfully posted");
     } catch (err) {
         console.log("Failed to post");
         res.status(400).send(err);
     }
+    console.log("here");
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {
