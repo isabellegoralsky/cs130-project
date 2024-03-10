@@ -61,7 +61,7 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
           <Dialog.Portal>
             <Dialog.Overlay className="DialogOverlay" >
               <Dialog.Content className="DialogContent" class="adding">
-                <Dialog.Title className="DialogTitle">Add a Team Consistency Goal</Dialog.Title>
+                <Dialog.Title className="DialogTitle">Add a Team Goal</Dialog.Title>
                 <ConsistencyGoalModal />
               </Dialog.Content>
             </Dialog.Overlay>
@@ -102,20 +102,56 @@ const TeamUpdateModal = () => {
 
 const ConsistencyGoalModal = () => {
   const [exerciseName, setExerciseName] = useState('');
+  const [goalTitle, setGoalTitle] = useState('');
   const [goalDesc, setGoalDesc] = useState('');
-  const [exerciseType, setExerciseType] = useState('');
+  const [goalType, setGoalType] = useState('');
   const [goalTarget, setGoalTarget] = useState('');
   const [unit, setUnit] = useState('');
-  const [per, setPer] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const exerciseList = [
+    "Deadlift",
+    "Squat",
+    "Bench Press",
+    "Pull-Up",
+    "Push-Up",
+    "Bent-Over Row",
+    "Overhead Press",
+    "Lunges",
+    "Plank",
+    "Leg Press",
+    "Barbell Curl",
+    "Tricep Dip",
+    "Shoulder Press",
+    "Lat Pull-Down",
+    "Russian Twist",
+    "Burpees"
+  ];
+
+  const handleAddGoal = async (e) => { }
 
   return (
     <div>
       <div>
         <input
           className="Input"
-          placeholder="Exercise Name"
+          placeholder="Goal Title"
+          value={goalTitle}
+          onChange={(e) => setGoalTitle(e.target.value)} />
+        <select
+          className="Select"
           value={exerciseName}
-          onChange={(e) => setExerciseName(e.target.value)} />
+          onChange={e => setExerciseName(e.target.value)}
+        >
+          <option disabled={true} value="">
+            SELECT EXERCISE
+          </option>
+          {exerciseList.map((ex) => (
+            <option key={ex} value={ex}>
+              {ex}
+            </option>
+          ))}
+        </select>
         <div style={{ display: 'flex', }}>
           <textarea
             className="Input"
@@ -123,12 +159,12 @@ const ConsistencyGoalModal = () => {
             value={goalDesc}
             onChange={(e) => setGoalDesc(e.target.value)}
           />
-          <select className="Select" defaultValue="" onChange={e => setExerciseType(e.target.value)}>
+          <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
             <option disabled={true} value="">
-              EXERCISE TYPE
+              SELECT TYPE
             </option>
-            <option key="CARDIO" value="CARDIO">CARDIO</option>
-            <option key="STRENGTH" value="STRENGTH">STRENGTH</option>
+            <option key="CARDIO" value="CST">CONSISTENCY</option>
+            <option key="STRENGTH" value="PR">PR</option>
           </select>
         </div>
         <input
@@ -139,26 +175,28 @@ const ConsistencyGoalModal = () => {
         />
         <select className="Select" defaultValue="" onChange={e => setUnit(e.target.value)}>
           <option disabled={true} value="">
-            UNITS
+            SELECT UNITS
           </option>
-          <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
-          <option key="SETS" value="SETS">SETS</option>
-          <option key="REPS" value="REPS">REPS</option>
-          <option key="COUNT" value="COUNT">COUNT</option>
+          {goalType === "CST" ? (
+            <>
+              <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+              <option key="SETS" value="SETS">SETS</option>
+            </>
+          ) : (
+            <>
+              <option key="LBS" value="LBS">WEIGHT (LBS)</option>
+              <option key="MPH" value="MPH">MPH</option>
+            </>
+          )}
         </select>
-        <div style={{ display: 'flex', }}>
-          <p>per</p>
-          <select className="Select" defaultValue="" onChange={e => setPer(e.target.value)}>
-            <option disabled={true} value="">
-              TIMEFRAME
-            </option>
-            <option key="DAY" value="DAY">DAY</option>
-            <option key="WEEK" value="WEEK">WEEK</option>
-            <option key="MONTH" value="MONTH">MONTH</option>
-          </select>
-        </div>
+        {goalType === "CST" && <input
+          className="Input"
+          placeholder="End Date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />}
       </div>
-      <button className="Button green">Add Goal</button>
+      <button className="Button green" onClick={handleAddGoal}>Add Goal</button>
     </div>
   );
 };

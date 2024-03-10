@@ -16,9 +16,38 @@ const RegisterPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO
+    
+    const registerUrl = 'http://localhost:3001/user/register';
+    try {
+      const response = await fetch(registerUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstname,
+          lastName: formData.lastname,
+          email: formData.email,
+          password: formData.password,
+        }),
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Register Success:', data.message);
+        //navigate('/profile');
+        // Handle successful login here (e.g., redirecting to another page)
+      } else {
+        throw new Error(data.message || 'Failed to register');
+      }
+    } catch (error) {
+      console.error('Register Error:', error);
+      // Handle register error here (e.g., showing an error message)
+    }
     console.log('Form Data:', formData);
   };
 

@@ -6,14 +6,14 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import './Goal.css';
 
-const Goal = ({ description, savedprogress, goalvalue }) => {
+const Goal = ({ title, description, savedprogress, goalvalue }) => {
     const [progress, setProgress] = React.useState(13);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [goalDesc, setGoalDesc] = useState(description);
     const [goalProgress, setGoalProgress] = useState(savedprogress);
     const [goalTarget, setGoalTarget] = useState(goalvalue);
-
+    const [goalTitle, setGoalTitle] = useState(title);
     const handleDelete = (e) => {
         setIsDeleteDialogOpen(true);
     }
@@ -69,7 +69,8 @@ const Goal = ({ description, savedprogress, goalvalue }) => {
                         </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                 </DropdownMenu.Root>
-                <p class="goal-d"> {description} </p>
+                <p class="goal-d"> {title} </p>
+                <p>{description}</p>
                 <Progress.Root className="ProgressRoot" value={progress}>
                     <Progress.Indicator className="ProgressIndicator" style={{ transform: `translateX(-${100 - progress}%)` }} />
                 </Progress.Root>
@@ -96,6 +97,15 @@ const Goal = ({ description, savedprogress, goalvalue }) => {
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Edit Goal</Dialog.Title>
                                 <Dialog.Description>If you missed a workout post, update your progress here. Or, change your description / target value.</Dialog.Description>
+                                <div>
+                                    <p>Goal Title</p>
+                                    <textarea
+                                        className="Input"
+                                        placeholder={title}
+                                        value={goalTitle}
+                                        onChange={(e) => setGoalTitle(e.target.value)}
+                                    />
+                                </div>
                                 <div>
                                     <p>Goal Description</p>
                                     <textarea
