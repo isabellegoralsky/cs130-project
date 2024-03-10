@@ -212,7 +212,7 @@ router.post("/createteam", async (req, res) => {
     }
 });
 
-router.post("/jointeam", async (req, res) => {
+router.post("/jointeam/:tid", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -221,11 +221,11 @@ router.post("/jointeam", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const teamExists = await Team.findOne({
-        teamName: req.body.teamName
+        _id: req.params.tid
     });
     if (teamExists === null) return res.status(400).send('Team not found');
     Team.findOneAndUpdate({
-        teamName: teamExists._id
+        _id: teamExists._id
     }, {
         $push: {
             teamMembers: userId

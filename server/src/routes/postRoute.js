@@ -14,9 +14,9 @@ router.post('/addpost', async (req, res) => {
     var userId = decoded.id;
     const post = new Post({
         userId: userId,
-        title: req.body.workoutName,
+        title: req.body.title,
         exercises: req.body.exercises,
-        description: req.body.note
+        description: req.body.description
     });
     try {
         const savePost= await post.save();
@@ -120,6 +120,82 @@ router.delete('/deleteteampost/:postid', async (req, res) => {
             res.status(400).send('Error occured.');
         }
     });
+});
+
+router.get('/posts', async (req, res) => {
+    const token = req.cookies.jwt;
+    const decoded = jwt.verify(token, process.env.TokenSecret);
+    var userId = decoded.id;
+    const user = await User.findOne({ _id: userId });
+    if (!user) return res.status(400).send('User was not found.');
+    var following = user.following;
+    following.push(user._id);
+    const post = await Post.find({ userId: { $in: user.following } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<post.length; i++){
+        const userid = post[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=post[i].title;
+        var exercises=post[i].exercises;
+        var description=post[i].description;
+        var date=(post[i].updatedAt.getMonth()+1)+'/'+post[i].updatedAt.getDate()+'/'+post[i].updatedAt.getFullYear();
+        var time=(post[i].updatedAt.getHours()+':'+post[i].updatedAt.getMinutes()+':'+post[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, exercises: exercises, description: description, date: date, time: time});
+    }
+    console.log(posts);
+    return res.status(200).json(posts);
+});
+
+//Announcements
+router.get('/teamposts/:tid', async (req, res) => {
+    const team = await Team.findOne({ _id: req.params.tid });
+    if (!team) return res.status(400).send('Team was not found.');
+    const teamposts = await PostTeam.find({ userId: { $in: team.teamMembers } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<teamposts.length; i++){
+        const userid = teamposts[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=teamposts[i].title;
+        var note=teamposts[i].note;
+        var date=(teamposts[i].updatedAt.getMonth()+1)+'/'+teamposts[i].updatedAt.getDate()+'/'+teamposts[i].updatedAt.getFullYear();
+        var time=(teamposts[i].updatedAt.getHours()+':'+teamposts[i].updatedAt.getMinutes()+':'+teamposts[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, note: note, date: date, time: time});
+    }
+    console.log(posts);
+    return res.status(200).json(posts);
+});
+
+//Posts
+router.get('/teampostsfeed/:tid', async (req, res) => {
+    const team = await Team.findOne({ _id: req.params.tid });
+    if (!team) return res.status(400).send('Team was not found.');
+    const teamposts = await Post.find({ userId: { $in: team.teamMembers } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<teamposts.length; i++){
+        const userid = teamposts[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=teamposts[i].title;
+        var exercises=teamposts[i].exercises;
+        var description=teamposts[i].description;
+        var date=(teamposts[i].updatedAt.getMonth()+1)+'/'+teamposts[i].updatedAt.getDate()+'/'+teamposts[i].updatedAt.getFullYear();
+        var time=(teamposts[i].updatedAt.getHours()+':'+teamposts[i].updatedAt.getMinutes()+':'+teamposts[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, exercises: exercises, description: description, date: date, time: time});
+    }
+    console.log(posts);
+    return res.status(200).json(posts);
+
 });
 
 module.exports = router;
