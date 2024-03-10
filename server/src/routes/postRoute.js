@@ -7,6 +7,8 @@ const User = require('../models/User');
 const Team = require('../models/Team');
 const Post = require('../models/Post');
 const PostTeam = require('../models/PostTeam');
+const Goal = require('../models/Goal');
+const TeamGoal = require('../models/TeamGoal');
 
 router.post('/addpost', async (req, res) => {
     const token = req.cookies.jwt;
@@ -19,13 +21,64 @@ router.post('/addpost', async (req, res) => {
         description: req.body.description
     });
     try {
-        const savePost= await post.save();
+        const savePost = await post.save();
         console.log("Successfully posted");
-        res.status(200).send("Successfully posted");
     } catch (err) {
         console.log("Failed to post");
         res.status(400).send(err);
     }
+    const user = await User.findOne({
+        _id: userId
+    });
+    if (!user) return res.status(400).send('User is not found.');
+    //Update individual goal
+    var indgoals = await Goal.find({ userId: userId  }).catch(err => {
+        console.error('Error:', err);
+    });
+
+    //Update Individual Goal
+    for(let i=0; i<indgoals.length; i++){
+        for(let j=0; j<post.exercises.exerciseName.length; j++){
+            if(indgoals[i].type==="PR"){
+                if(indgoals[i].exercise.name === post.exercises.exerciseName[j]){
+                    if(indgoals[i].exercise.difficulty.value < post.exercises.weight[j]){
+                        try{
+                            await Goal.findOneAndUpdate({
+                                _id: indgoals[i]._id
+                            },{
+                                $set: {
+                                    progress: indgoals[i].progress + 1
+                                }
+                            },(err, doc) => {
+                                if (err){
+                                    throw err;
+                                }
+                            });
+                            console.log("Updated goal");
+                            res.status(200).send("updated goal");
+                        }
+                        catch(err) {
+                            console.log("Failed to update goal");
+                            res.status(400).send(err);
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    if(indgoals.type==="CST"){
+        for(let i=0; i<indgoals.length; i++){
+            for(let j=0; j<savePost.exercises.length; j++){
+                if(indgoals[i].exercises.name === savePost.exercises[j].name){
+
+                }
+            }
+        }
+    }
+    //console.log(indgoals);
+    //Update team goal
+
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {
