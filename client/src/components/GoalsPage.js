@@ -73,12 +73,11 @@ const GoalsPage = () => {
 
 const ConsistencyGoalModal = ({ onClose }) => {
     const [exerciseName, setExerciseName] = useState('');
-    const [goalDesc, setGoalDesc] = useState(''); //done
-    const [exerciseType, setExerciseType] = useState(''); //done
-    const [goalTarget, setGoalTarget] = useState(''); //done
-    const [unit, setUnit] = useState(''); //done
-    const [per, setPer] = useState(''); //done
-    //need exercise which has additional fields name, sets, reps, unit, amount
+    const [goalDesc, setGoalDesc] = useState(''); 
+    const [exerciseType, setExerciseType] = useState(''); 
+    const [goalTarget, setGoalTarget] = useState(''); 
+    const [unit, setUnit] = useState(''); 
+    const [per, setPer] = useState(''); 
 
     return (
         <div>
