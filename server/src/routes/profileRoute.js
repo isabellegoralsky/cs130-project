@@ -181,7 +181,7 @@ router.get('/:uid/profilepage', async (req, res) => {
     var followingNames = [];
     for(let i=0; i<followingids.length; i++){
         const found = await User.findOne({_id: followingids[i]});
-        var fullName = found.firstName + ' ' + user.lastName;
+        var fullName = found.firstName + ' ' + found.lastName;
         followingNames.push(fullName);
     }
     const template = await Template.findOne({
