@@ -65,8 +65,35 @@ router.post('/addpost', authenticateToken, async (req, res) => {
     }
 
     //Update team goal
-    res.status(200).send('Successfully added post');
+    const teamIds = user.teams;
+    for (let i = 0; i < teamIds.length; i++) {
+        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+            const teamGoals = await TeamGoal.find({
+                teamId: teamIds[i],
+                'exercise.name': post.exercises.exerciseName[j]
+            });
 
+            for (let k = 0; k < teamGoals.length; k++) {
+                if (teamGoals[k].type === 'CST') {
+                    const amount = post.exercises.reps[j] * post.exercises.sets[j];
+                    try {
+                        await TeamGoal.updateOne(
+                            { _id: teamGoals[k]._id },
+                            { $set: { progress: teamGoals[k].progress + amount } }
+                        );
+                        console.log('Updated CST Goal');
+                    } catch (error) {
+                        console.log('Failed to update CST Goal');
+                        console.log(error);
+                        return res.status(400).send('Failed to update CST goal');
+                    }
+                }
+            }
+
+        }
+    }
+
+    res.status(200).send('Successfully added post');
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {

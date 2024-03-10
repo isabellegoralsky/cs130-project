@@ -3,23 +3,32 @@ const mongoose = require('mongoose');
 
 const teamGoalSchema = new mongoose.Schema({
     teamId: ObjectId,
-    title: String,          // Optional.
-    description: String,    // Optional.
-    type: String,           // CST.
+    title: {                                // Optional
+        type: String,
+        default: null
+    },
+    description: {                          // Optional
+        type: String,
+        default: null
+    },
+    type: { type: String },                 // CST
     exercise: {
-        name: String,
-        amount: {
-            unit: String,   // SET/MIN.
-            value: Number
-        },
-        difficulty: {       // Optional.
-            unit: String,   // LB/MPH.
-            value: Number
+        type: {
+            name: { type: String },
+            amount: {
+                unit: { type: String },     // SET/MIN
+                value: { type: Number }
+            }
         }
     },
-    progress: Number,
-    createDate: Date,       // Automatically created.
-    endDate: Date           // Optional.
-});
+    progress: {                             // Optional
+        type: Number,
+        default: 0
+    },
+    endsAt: {                               // Optional
+        type: Date,
+        default: null
+    }
+}, { timestamps: true });
 
 module.exports = mongoose.model('TeamGoal', teamGoalSchema);

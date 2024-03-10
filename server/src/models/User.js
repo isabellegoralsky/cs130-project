@@ -28,8 +28,9 @@ const userSchema = new mongoose.Schema({
     teams: {
         type: [ObjectId]
     },
-    picture: {
-        type: ObjectId
+    profilePicture: {
+        type: ObjectId,
+        default: null
     }
 });
 
