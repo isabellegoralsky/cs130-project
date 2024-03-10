@@ -1,10 +1,15 @@
-const express = require('express');
 const router = require('express').Router();
-const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const { authenticateToken } = require('../middleware/auth');
 const User = require('../models/User');
 const Team = require('../models/Team');
+const Picture = require('../models/Picture');
+const Post = require('../models/Post');
+const PostTeam = require('../models/PostTeam');
+const {Goal} = require('../models/Goal');
+const Template = require('../models/Template');
 
 const maxAge = 30 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -15,26 +20,14 @@ const createToken = (id) => {
     });
 }
 
-router.get('/', async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).send('Cookie was not found.')
-    const decoded = jwt.verify(token, process.env.TokenSecret);
-    var userId = decoded.id;
-    const user = await User.findOne({ _id: userId });
-    if (!user) return res.status(400).send('User was not found.');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-    console.log('Successfully found User.');
-    res.status(200).send(user);
+router.get('/', authenticateToken, async (req, res) => {
+    res.status(200).send(req.user);
 });
 
-router.put('/', async (req, res) => {
-    const token = req.cookies.jwt;
-    if (!token) return res.status(400).json('Cookie was not found.')
-    const decoded = jwt.verify(token, process.env.TokenSecret);
-    var userId = decoded.id;
-    const user = await User.findOne({ _id: userId });
-    if (!user) return res.status(400).json('User was not found.');
-
+router.put('/', authenticateToken, async (req, res) => {
     const update = {
         ...(req.body.firstName && { firstName: req.body.firstName }),
         ...(req.body.lastName && { lastName: req.body.lastName }),
@@ -43,12 +36,12 @@ router.put('/', async (req, res) => {
     }
 
     try {
-        await User.findByIdAndUpdate(userId, update);
-        console.log('Successfully updated User.');
-        res.status(200).json('Successfully updated User.');
+        await User.updateOne({ _id: req.user._id }, update);
+        console.log('Successfully updated User');
+        res.status(200).json('Successfully updated User');
     } catch (err) {
         console.log('Failed to update User.');
-        res.status(400).json('Failed to update User.');
+        res.status(400).json('Failed to update User');
     }
 });
 
@@ -63,7 +56,8 @@ router.post("/register", async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        password: hashedPassword
+        password: hashedPassword,
+        profilePicture: null
     });
     try {
         const saveUser = await user.save();
@@ -122,7 +116,7 @@ router.post("/logout", async (req, res) => {
     }
 });
 
-router.post("/addfriend", async (req, res) => {
+router.post("/addfriend/:uid", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -131,14 +125,14 @@ router.post("/addfriend", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const friend = await User.findOne({
-        email: req.body.email
+        _id: req.params.uid
     });
     if (!friend) return res.status(400).send('Friend is not found.');
     User.findOneAndUpdate({
         _id: userId
     }, {
         $push: {
-            friends: friend.email
+            following: friend._id
         }
     }, {
         new: true
@@ -148,25 +142,11 @@ router.post("/addfriend", async (req, res) => {
             res.status(400).send(err);
         }
     });
-    User.findOneAndUpdate({
-        email: friend.email
-    }, {
-        $push: {
-            friends: user.email
-        }
-    }, {
-        new: true
-    }, (err, doc) => {
-        if (err) {
-            console.log("Something went wrong");
-            res.status(400).send(err);
-        }
-    });
-    console.log("Successfully added friend.");
-    res.status(200).send("Successfully added friend.");
+    console.log("Successfully followed user.");
+    res.status(200).send("Successfully followed user.");
 });
 
-router.post("/deletefriend", async (req, res) => {
+router.post("/deletefriend/:uid", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -175,28 +155,14 @@ router.post("/deletefriend", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const friend = await User.findOne({
-        email: req.body.email
+        _id: req.params.uid
     });
     if (!friend) return res.status(400).send('Friend is not found.');
     User.findOneAndUpdate({
         _id: userId
     }, {
         $pull: {
-            friends: friend.email
-        }
-    }, {
-        new: true
-    }, (err, doc) => {
-        if (err) {
-            console.log("Something went wrong");
-            res.status(400).send(err);
-        }
-    });
-    User.findOneAndUpdate({
-        email: friend.email
-    }, {
-        $pull: {
-            friends: user.email
+            following: friend._id
         }
     }, {
         new: true
@@ -250,7 +216,7 @@ router.post("/createteam", async (req, res) => {
     }
 });
 
-router.post("/jointeam", async (req, res) => {
+router.post("/jointeam/:tid", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -259,11 +225,11 @@ router.post("/jointeam", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const teamExists = await Team.findOne({
-        teamName: req.body.teamName
+        _id: req.params.tid
     });
     if (teamExists === null) return res.status(400).send('Team not found');
     Team.findOneAndUpdate({
-        teamName: teamExists._id
+        _id: teamExists._id
     }, {
         $push: {
             teamMembers: userId
@@ -354,5 +320,93 @@ router.post("/leaveteam", async (req, res) => {
     console.log("Successfully left team.");
     res.status(200).send("Successfully left team.");
 });
+
+router.post("/profile-picture", authenticateToken, upload.single('image'), async (req, res) => {
+    const picture = new Picture({
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+        image: req.file.buffer
+    });
+    try {
+        await picture.save();
+        await User.updateOne({ _id: req.user._id }, { profilePicture: picture._id });
+        console.log('Successfully saved picture');
+        res.status(200).send('Successfully saved picture');
+    } catch (err) {
+        console.log('Failed to save picture');
+        console.log(err);
+        res.status(400).send('Failed to save picture');
+    }
+});
+
+router.get('/:uid/teams', async (req, res) => {
+    const user = await User.findOne({ _id: req.params.uid });
+    if (!user) return res.status(400).send('User was not found.');
+    var teams = user.teams;
+    return res.status(200).json(teams);
+});
+
+router.get('/:tid/teammembers', async (req, res) => {
+    const team = await Team.findOne({ _id: req.params.tid });
+    if (!team) return res.status(400).send('Team was not found.');
+    var users = team.teamMembers;
+    return res.status(200).json(users);
+});
+
+router.get('/:uid/following', async (req, res) => {
+    const user = await User.findOne({ _id: req.params.uid });
+    if (!user) return res.status(400).send('User was not found.');
+    var following = user.following;
+    return res.status(200).json(following);
+});
+
+router.get('/:tid/teampage', async (req, res) => {
+    const team = await Team.findOne({ _id: req.params.tid });
+    if (!team) return res.status(400).send('Team was not found.');
+    var users = team.teamMembers;
+    var teamName = team.teamName;
+ 
+ 
+    const teamposts = await PostTeam.find({ userId: { $in: team.teamMembers } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<teamposts.length; i++){
+        const userid = teamposts[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=teamposts[i].title;
+        var note=teamposts[i].note;
+        var date=(teamposts[i].updatedAt.getMonth()+1)+'/'+teamposts[i].updatedAt.getDate()+'/'+teamposts[i].updatedAt.getFullYear();
+        var time=(teamposts[i].updatedAt.getHours()+':'+teamposts[i].updatedAt.getMinutes()+':'+teamposts[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, note: note, date: date, time: time});
+    }
+    var announcements = posts;
+ 
+ 
+ 
+ 
+    var teampost = await Post.find({ userId: { $in: team.teamMembers } }).catch(err => {
+        console.error('Error:', err);
+    });
+    var posts = [];
+    for(let i=0; i<teampost.length; i++){
+        const userid = teampost[i].userId;
+        const user = await User.findOne({ _id: userid });
+        if (!user) return res.status(400).send('User was not found.');
+        var name=user.firstName + " " + user.lastName;
+        var title=teampost[i].title;
+        var exercises=teampost[i].exercises;
+        var description=teampost[i].description;
+        var date=(teampost[i].updatedAt.getMonth()+1)+'/'+teampost[i].updatedAt.getDate()+'/'+teampost[i].updatedAt.getFullYear();
+        var time=(teampost[i].updatedAt.getHours()+':'+teampost[i].updatedAt.getMinutes()+':'+teampost[i].updatedAt.getSeconds());
+        posts.push({name: name, title: title, exercises: exercises, description: description, date: date, time: time});
+    }
+    var teampost = posts;
+    var teamPage = {users, teamName, announcements, teampost};
+    console.log(teamPage);
+    return res.status(200).json(teamPage);
+ }); 
 
 module.exports = router;

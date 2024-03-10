@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
 const teamSchema = new mongoose.Schema({
@@ -7,10 +8,10 @@ const teamSchema = new mongoose.Schema({
         min: 4
     },
     admin: {
-        type: [String]
+        type: [ObjectId]
     },
     teamMembers: {
-        type: [String]
+        type: [ObjectId]
     }
 });
 

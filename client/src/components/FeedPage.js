@@ -1,7 +1,8 @@
-// TeamPage.js
 import React from 'react';
 import { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
+import './FeedPage.css';
+
 const exerciseList = [
   "Deadlift",
   "Squat",
@@ -24,16 +25,86 @@ const exerciseList = [
 const FeedPage = ({}) => {
   const [posts, setPosts] = useState([
     {
-      title: 'example',
+      title: 'quick back and bi workout',
       name: 'Dillon Go',
-      description: 'example description',
+      description: '',
       date: '2021-10-10',
       exercises: [
         {
-          name: 'dumbbell curls',
+          name: 'Bent-Over Row',
+          sets: '3',
+          reps: '10',
+          weight: '60'
+        },
+        {
+          name: 'Lat Pull-Down',
+          sets: '3',
+          reps: '10',
+          weight: '70'
+        },
+        {
+          name: 'Barbell Curl',
           sets: '3',
           reps: '10',
           weight: '20'
+        }
+      ]
+    },
+    {
+      title: 'some legs',
+      name: 'Darren Huang',
+      description: 'a few compound movements',
+      date: '2021-10-10',
+      exercises: [
+        {
+          name: 'Deadlift',
+          sets: '3',
+          reps: '10',
+          weight: '135'
+        },
+        {
+          name: 'Squat',
+          sets: '4',
+          reps: '10',
+          weight: '120'
+        },
+        {
+          name: 'Lunges',
+          sets: '3',
+          reps: '10',
+          weight: '110'
+        }
+      ]
+    },
+    {
+      title: 'misc workout',
+      name: 'Sam Rafter',
+      description: 'full body random exercises',
+      date: '2021-10-10',
+      exercises: [
+        {
+          name: 'Barbell Curl',
+          sets: '3',
+          reps: '10',
+          weight: '20'
+        },
+        {
+          name: 'Lunges',
+          sets: '3',
+          reps: '10',
+          weight: '100'
+        },
+        {
+          name: 'Tricep Dip',
+          sets: '3',
+          reps: '10',
+          weight: '20'
+        },
+        {
+          name: 'Russian Twist',
+          sets: '3',
+          reps: '12',
+          weight: ''
         }
       ]
     }
@@ -49,36 +120,35 @@ const FeedPage = ({}) => {
 
   return (
     <div className="feed-page">
-    <h1>Feed Page</h1>
-    <Dialog.Root class="pals-div">
-                        <Dialog.Trigger asChild>
-                            <button className="" class="">
-                                <img class="add-pal-img" src="https://drive.google.com/thumbnail?id=1EqwyGYxBns9dZixaFfKm549nYskLIMWw" alt="pin a workout" />
-                            </button>
-                        </Dialog.Trigger>
-                        <Dialog.Portal>
-                            <Dialog.Overlay className="DialogOverlay" >
-                                <Dialog.Content className="DialogContent" class="adding">
-                                    <Dialog.Title className="DialogTitle">Post</Dialog.Title>
-                                    <PostModal />
-                                </Dialog.Content>
-                            </Dialog.Overlay>
-                        </Dialog.Portal>
-                       
-                    </Dialog.Root>
-        {posts.map((post, index) => ( 
+      <Dialog.Root class="pals-div">
+        <Dialog.Trigger asChild>
+          <button className="" class="add-post">
+            create a post + </button>
+        </Dialog.Trigger>
+        <Dialog.Portal>
+            <Dialog.Overlay className="DialogOverlay" >
+              <Dialog.Content className="DialogContent" class="adding">
+                <Dialog.Title className="DialogTitle">Post</Dialog.Title>
+                <PostModal />
+              </Dialog.Content>
+            </Dialog.Overlay>
+        </Dialog.Portal>              
+      </Dialog.Root>
+      {posts.map((post, index) => (
+        <div class="post-row">
+          <h2 class="poster">{post.name}</h2>
           <div className="feed-post" key={index}>
-            <h1>{post.title}</h1>
-            <h2>{post.name}</h2>
-            <p>{post.description}</p>
-            <p>{post.date}</p>
+            <h1 class="post-title">{post.title}</h1>
+            <p class="post-descript">{post.description}</p>
             {post.exercises.map((exercise, index) => (
               <div key={index}>
-                <p>{exercise.name} {exercise.sets} {exercise.reps} {exercise.weight}</p>
+                <p class="post-exer">&#x2022; <span class="exer-name">{exercise.name}</span>: {exercise.sets}x{exercise.reps} @ {exercise.weight}lbs</p>
               </div>
             ))}
+            <p class='post-date'>{post.date}</p>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -20,13 +21,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         max: 1024,
         min: 6
-    }, 
-    friends: {
-        type: [String]
-    }, 
+    },
+    following: {
+        type: [ObjectId]
+    },
     teams: {
-        type: [String]
-    }
+        type: [ObjectId]
+    },
+    profilePicture: ObjectId
 });
 
 module.exports = mongoose.model('User', userSchema);
