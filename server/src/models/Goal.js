@@ -8,7 +8,7 @@ const goalSchema = new mongoose.Schema({
     type: String,           // PR/CST.
     exercise: {
         name: String,
-        amount: {           // Empty for PR. Necessary for CST.
+        amount: {           // Necessary for CST.
             unit: String,   // SET/MIN.
             value: Number
         },

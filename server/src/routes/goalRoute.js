@@ -2,16 +2,18 @@ const router = require('express').Router();
 const { authenticateToken } = require('../middleware/auth');
 const { Goal } = require('../models/Goal');
 
+const allowedFields = ['title, description, ']
+
 router.post('/', authenticateToken, async (req, res) => {
     const goal = new Goal({
         userId: req.user._id,
-        title: req.body.title,
-        description: req.body.description,
+        title: req.body.title ? req.body.title : null,
+        description: req.body.description ? req.body.title : null,
         type: req.body.type,
         exercise: {
             name: req.body.exercise.name,
-            amount: req.body.exercise.amount,
-            difficulty: req.body.exercise.difficulty
+            amount: req.body.exercise.amount ? req.body.exercise.amount : null,
+            difficulty: req.body.exercise.difficulty ? req.body.exercise.difficulty : null
         },
         progress: 0,
         createDate: new Date(),
@@ -49,7 +51,9 @@ router.put('/:gid', authenticateToken, async (req, res) => {
         ...(req.body.title && { title: req.body.title }),
         ...(req.body.description && { description: req.body.description }),
         ...(req.body.type && { type: req.body.type }),
-        ...(req.body.exercise && { exercise: req.body.exercise }),
+        ...(req.body.exercise.name && { 'exercise.name': req.body.exercise.name}),
+        ...(req.body.exercise.amount && { 'exercise.amount': req.body.exercise.amount }),
+        ...(req.body.exercise.difficulty && { 'exercise.difficulty': req.body.exercise.difficulty }),
         ...(req.body.progress && { progress: req.body.progress }),
         ...(req.body.endDate && { endDate: new Date(req.body.endDate) })
     };
