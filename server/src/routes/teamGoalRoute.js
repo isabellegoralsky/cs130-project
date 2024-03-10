@@ -14,7 +14,7 @@ router.post('/', authenticateToken, async (req, res) => {
         type: req.body.type,
         exercise: {
             name: req.body.exercise.name,
-            amount: req.body.exercise.amount ? req.body.exercise.amount : null,
+            amount: req.body.exercise.amount,
             difficulty: req.body.exercise.difficulty ? req.body.exercise.difficulty : null
         },
         progress: 0,
