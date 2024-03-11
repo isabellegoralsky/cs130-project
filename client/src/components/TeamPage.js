@@ -3,9 +3,15 @@ import React, { useState, useEffect } from 'react';
 import Carousel from './Carousel';
 import * as Dialog from '@radix-ui/react-dialog';
 import './Teams.css';
+import Goal from './Goal.js';
 
-const TeamPage = ({ teams, updates, achievements, posts }) => {
+const TeamPage = () => {
+  const [user, setUser] = useState({});
+  const [teams, setTeams] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState(teams.length > 0 ? teams[0] : '');
+  const [posts, setPosts] = useState([]);
+  const [updates, setUpdates] = useState([]);
+  const [achievements, setAchievements] = useState([]);
 
   useEffect(() => {
     // Automatically select the first team when the component mounts
@@ -14,9 +20,75 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
     }
   }, [teams]);
 
+  useEffect(() => {
+    if(selectedTeam === ''){
+      return;
+    }
+    (async () => {
+      try {   
+        setUpdates(selectedTeam.announcements);
+        setPosts(selectedTeam.teampost)
+        setAchievements(selectedTeam.goals)
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle error here (e.g., showing an error message)
+      }
+    })();
+    
+  }, [selectedTeam])
+
+  useEffect(() => {
+    (async () => {
+      try {   
+        let response = await fetch("http://localhost:3001/user/", {
+          credentials: 'include', 
+        });
+        let data = await response.json();
+
+        if (response.ok) {
+          console.log('Get User Success:', data);
+        } else {
+          throw new Error(data.message || 'Failed to login');
+        }
+        setUser(data);
+        
+        response = await fetch(`http://localhost:3001/user/${data._id}/teams`, {
+            credentials: 'include', 
+          });
+        data = await response.json();
+        if (response.ok) {
+          console.log('Get Teams Success:', data);
+        } else {
+          throw new Error(data.message || 'Failed to login');
+        }
+        
+        let teamsList = [];
+        for(const teamId of data){
+          const response = await fetch(`http://localhost:3001/user/${teamId}/teampage`, {
+            credentials: 'include', 
+          });
+          const data = await response.json();
+          if (response.ok) {
+            const goalResponse = await fetch(`http://localhost:3001/team-goal/${teamId}`, {
+              credentials: 'include'
+            });
+            const goalData = await goalResponse.json();
+            teamsList.push({id: teamId, goals: goalData, ...data});
+          } else {
+            throw new Error(data.message || 'Failed to get team details');
+          }
+        }
+        setTeams(teamsList);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    })();
+  }, []);
+
   const handleTeamChange = (event) => {
-    const teamId = event.target.value;
-    const team = teams.find(t => t.id.toString() === teamId);
+    const teamName = event.target.value;
+    const team = teams.find(t => t.teamName.toString() === teamName);
     setSelectedTeam(team);
   };
 
@@ -24,12 +96,12 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
     <div className="team-page">
       <div className="team-selector">
         <label htmlFor="team-dropdown" id="label-drop">Select Team</label>
-        <select id="team-dropdown" onChange={handleTeamChange} value={selectedTeam?.id || ''}>
+        <select id="team-dropdown" onChange={handleTeamChange} value={selectedTeam?.teamName || ''}>
           <option disabled={true} value="">
             Select a Team
           </option>
-          {teams.map(team => (
-            <option key={team.id} value={team.id}>{team.name}</option>
+          {(teams || []).map(team => (
+            <option key={team.teamName} value={team.teamName}>{team.teamName}</option>
           ))}
         </select>
       </div>
@@ -45,12 +117,17 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
             <Dialog.Overlay className="DialogOverlay" >
               <Dialog.Content className="DialogContent" class="adding">
                 <Dialog.Title className="DialogTitle">Add a Team Update</Dialog.Title>
-                <TeamUpdateModal />
+                <TeamUpdateModal teamId={selectedTeam?.id}/>
               </Dialog.Content>
             </Dialog.Overlay>
           </Dialog.Portal>
         </Dialog.Root>
-        <Carousel items={updates[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
+        <Carousel items={updates.length > 0 ? updates.map((update) => ({
+          content: <>
+              <p>{update.title}</p>
+              <p>{update.name}</p>
+            </>
+          })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} /*title="Announcements"*/ />
         <Dialog.Root class="pals-div">
           <h2 class="teams-sections">Team Goals</h2>
           <Dialog.Trigger asChild>
@@ -67,18 +144,173 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
             </Dialog.Overlay>
           </Dialog.Portal>
         </Dialog.Root>
-        <Carousel items={achievements[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
+        <Carousel items={achievements.length > 0 ? achievements.map((achievement, index) => ({
+           content: <Goal key={index} title={achievement.title} description={achievement.description ||''} savedprogress={achievement.progress} goalvalue={100}></Goal>
+          })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
         <h2 class="teams-sections">Member Posts</h2>
-        <Carousel items={posts[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
-
+        <Carousel items={posts.length > 0 ? posts.map((post) => ({
+          content: <>
+              <p>{post.createDate}</p>
+              <p>{post.description}</p>
+            </>
+          })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
+        <CreateTeamDialog></CreateTeamDialog>
+        <JoinTeamDialog></JoinTeamDialog>
       </div>
-    </div >
-  );
+    </div>)
 };
 
-const TeamUpdateModal = () => {
+const CreateTeamDialog = () => {
+  const [teamName, setTeamName] = useState('');
+  
+  const handleCreateTeam = async (event) => {
+    try {   
+      let response = await fetch('http://localhost:3001/user/createteam', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify({
+          teamName
+        })
+      });
+      let data = await response.json();
+
+      if (response.ok) {
+        console.log('Create New Team Success:', data);
+      } else {
+        throw new Error(data.message || 'Failed to login');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  return <Dialog.Root>
+    <Dialog.Trigger asChild>
+        <div id="create-team">
+            <span classname="ClickableText">create a new team?</span>
+        </div>
+    </Dialog.Trigger>
+    <Dialog.Portal>
+      <Dialog.Overlay className="DialogOverlay" />
+      <Dialog.Content className="DialogContent">
+        <Dialog.Title className="DialogTitle">Create a Team</Dialog.Title>
+        <Dialog.Description className="DialogDescription">
+          Name your new team.
+        </Dialog.Description>
+        <fieldset className="Fieldset">
+          <label className="Label" htmlFor="name">
+            Name
+          </label>
+          <input 
+            className="name"
+            id="name" 
+            onChange={(e)=>{setTeamName(e.target.value);}}/>
+        </fieldset>
+        
+        <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
+          <Dialog.Close asChild>
+            <button onClick={handleCreateTeam}>Create Team</button>
+          </Dialog.Close>
+        </div>
+        <Dialog.Close asChild>
+            <button className="IconButton" aria-label="Close">
+                {/* <Cross2Icon /> */}
+            </button>
+        </Dialog.Close>
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>;
+}
+const JoinTeamDialog = () => {
+  const [teamId, setTeamId] = useState('');
+  const handleJoinTeam = async (event) => {
+
+    try {   
+      let response = await fetch(`http://localhost:3001/user/jointeam/${teamId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      });
+      let data = await response.json();
+
+      if (response.ok) {
+        console.log('Create New Team Success:', data);
+      } else {
+        throw new Error(data.message || 'Failed to login');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
+  return <Dialog.Root>
+    <Dialog.Trigger asChild>
+        <div id="create-team">
+            <span classname="ClickableText">join a team?</span>
+        </div>
+    </Dialog.Trigger>
+    <Dialog.Portal>
+      <Dialog.Overlay className="DialogOverlay" />
+      <Dialog.Content className="DialogContent">
+        <Dialog.Title className="DialogTitle">Join a Team</Dialog.Title>
+        <Dialog.Description className="DialogDescription">
+          Enter Team ID.
+        </Dialog.Description>
+        <fieldset className="Fieldset">
+          <label className="Label" htmlFor="name">
+            ID
+          </label>
+          <input 
+            className="teamId"
+            id="teamId" 
+            onChange={(e)=>{setTeamId(e.target.value);}}/>
+        </fieldset>
+        
+        <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
+          <Dialog.Close asChild>
+            <button onClick={handleJoinTeam}>Join Team</button>
+          </Dialog.Close>
+        </div>
+        <Dialog.Close asChild>
+            <button className="IconButton" aria-label="Close">
+            </button>
+        </Dialog.Close>
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>;
+}
+const TeamUpdateModal = ({teamId}) => {
   const [updateTitle, setUpdateTitle] = useState('');
   const [updateBody, setUpdateBody] = useState('');
+
+  const handleUpdate = async (event) => {
+    try {   
+      let response = await fetch(`http://localhost:3001/post/addteampost/${teamId}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }, 
+        body: JSON.stringify({
+          title: updateTitle,
+          note: updateBody
+        })
+      });
+      let data = await response.json();
+
+      if (response.ok) {
+        console.log('Update Team Post Success:', data);
+      } else {
+        throw new Error(data.message || 'Failed to login');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div>
@@ -95,12 +327,14 @@ const TeamUpdateModal = () => {
         value={updateBody}
         onChange={(e) => setUpdateBody(e.target.value)}
       />
-      <button className="Button green">Post Update</button>
+      <Dialog.Close asChild>
+      <button className="Button green" onClick={handleUpdate}>Post Update</button>
+      </Dialog.Close>
     </div>
   )
 };
 
-const ConsistencyGoalModal = () => {
+const ConsistencyGoalModal = ({teamId}) => {
   const [exerciseName, setExerciseName] = useState('');
   const [goalTitle, setGoalTitle] = useState('');
   const [goalDesc, setGoalDesc] = useState('');
@@ -128,7 +362,39 @@ const ConsistencyGoalModal = () => {
     "Burpees"
   ];
 
-  const handleAddGoal = async (e) => { }
+  const handleAddGoal = async (e) => { 
+    try {   
+      let response = await fetch(`http://localhost:3001/team-goal/`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          teamId,
+          title: goalTitle,
+          type: goalType,
+          description: goalDesc,
+          exercise: {
+            name: exerciseName,
+            amount: {
+              unit,
+              amount: goalTarget
+            }
+          }
+        })
+      });
+      let data = await response.json();
+
+      if (response.ok) {
+        console.log('Create Team Goal Success:', data);
+      } else {
+        throw new Error(data.message || 'Failed to login');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   return (
     <div>
@@ -196,7 +462,9 @@ const ConsistencyGoalModal = () => {
           onChange={(e) => setEndDate(e.target.value)}
         />}
       </div>
-      <button className="Button green" onClick={handleAddGoal}>Add Goal</button>
+      <Dialog.Close asChild>
+        <button className="Button green" onClick={handleAddGoal}>Add Goal</button>
+      </Dialog.Close>
     </div>
   );
 };
