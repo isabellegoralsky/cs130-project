@@ -27,8 +27,8 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 });
 
-router.get('/', authenticateToken, async (req, res) => {
-    const team = await Team.findById(req.body.teamId);
+router.get('/:tid', authenticateToken, async (req, res) => {
+    const team = await Team.findById(req.params.tid);
 
     try {
         const goals = await TeamGoal.find({ teamId: req.body.teamId });
