@@ -10,6 +10,7 @@ const Post = require('../models/Post');
 const PostTeam = require('../models/PostTeam');
 const { Goal } = require('../models/Goal');
 const Template = require('../models/Template');
+const PersonalRecord = require('../models/PersonalRecord');
 
 const maxAge = 30 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -38,10 +39,10 @@ router.put('/', authenticateToken, async (req, res) => {
     try {
         await User.updateOne({ _id: req.user._id }, update);
         console.log('Successfully updated User');
-        res.status(200).send('Successfully updated User');
+        res.status(200).json('Successfully updated User');
     } catch (err) {
         console.log('Failed to update User.');
-        res.status(400).send('Failed to update User');
+        res.status(400).json('Failed to update User');
     }
 });
 
@@ -91,15 +92,15 @@ router.post("/login", async (req, res) => {
                 res.status(200).json({ message: "Successfully logged in" });
             } catch (err) {
                 console.log("Failed to login");
-                res.status(400).send(err);
+                res.status(400).json(err);
             }
         }
         else {
-            return res.status(400).send('Incorrect password');
+            return res.status(400).json('Incorrect password');
         }
     }
     else {
-        return res.status(400).send('No account found');
+        return res.status(400).json('No account found');
     }
 });
 
@@ -123,11 +124,11 @@ router.post("/addfriend/:uid", async (req, res) => {
     const user = await User.findOne({
         _id: userId
     });
-    if (!user) return res.status(400).send('User is not found.');
+    if (!user) return res.status(400).json('User is not found.');
     const friend = await User.findOne({
         _id: req.params.uid
     });
-    if (!friend) return res.status(400).send('Friend is not found.');
+    if (!friend) return res.status(400).json('Friend is not found.');
     User.findOneAndUpdate({
         _id: userId
     }, {

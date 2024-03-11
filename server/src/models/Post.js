@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema({
         type: String
     },
     exercises: {
-        type: {exerciseName: [String], sets: [Number], reps: [Number]}
+        type: {exerciseName: [String], sets: [Number], reps: [Number], weight: [Number]}
     },
     description: {
         type: String
