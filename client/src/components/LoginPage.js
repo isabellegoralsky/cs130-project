@@ -19,7 +19,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Define the API endpoint
-    const loginUrl = 'http://localhost:3001/user/login'; 
+    const loginUrl = 'http://CodeDe-Appli-FvDYBBpWqa6p-642374602.us-east-1.elb.amazonaws.com:8080/user/login'; 
     try {
       const response = await fetch(loginUrl, {
         method: 'POST',
