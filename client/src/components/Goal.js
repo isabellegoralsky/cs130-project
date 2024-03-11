@@ -81,11 +81,13 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Are you absolutely sure?</Dialog.Title>
-                                <Dialog.Description>This action cannot be undone. This will permanently delete your goal.</Dialog.Description>
-                                <Dialog.Close asChild>
-                                    <button onClick={handleCancelDelete}>Cancel</button>
-                                </Dialog.Close>
-                                <button onClick={handleConfirmDelete}>Yes, delete goal</button>
+                                <Dialog.Description class="descript-thing">This action cannot be undone. This will permanently delete your goal.</Dialog.Description>
+                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                    <Dialog.Close asChild>
+                                        <button onClick={handleCancelDelete} class="edit-goal-cancel">Cancel</button>
+                                    </Dialog.Close>
+                                    <button onClick={handleConfirmDelete} class="Button green">Yes, delete goal</button>
+                                </div>
                             </Dialog.Content>
                         </Dialog.Overlay>
                     </Dialog.Portal>

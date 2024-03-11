@@ -115,7 +115,7 @@
   font-family: "Nanum Gothic", sans-serif;
 }
 
-#descript-go{
+#descript-go, .descript-thing{
   font-family: "Nanum Gothic", sans-serif;
 }
 
@@ -137,7 +137,6 @@
   font-family: "Bebas Neue", sans-serif;
   background-color: rgb(255, 90, 19, .1);
   color:#FF5A13;
-  margin-bottom: 20px;
   float:left;
   width:120px;
   padding: 8 15px;
