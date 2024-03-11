@@ -46,4 +46,25 @@
     flex-direction: column;
     margin-bottom: 20px;
     margin-top: 6px;
+    width: 300px;
+}
+
+.teams-goal-pop{
+    font-family: "Nanum Gothic", sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    margin-top: 6px;
+    width: 500px;
+}
+
+.goal-teams-in{
+    margin-bottom: 8px;
+}
+
+#selections-goal{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 10px;
 }

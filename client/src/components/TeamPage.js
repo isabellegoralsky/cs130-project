@@ -135,69 +135,69 @@ const ConsistencyGoalModal = () => {
 
   return (
     <div>
-      <div>
+      <div class="teams-goal-pop">
         <input
-          className="Input"
+          className="Input goal-teams-in"
           placeholder="Goal Title"
           value={goalTitle}
           onChange={(e) => setGoalTitle(e.target.value)} />
-        <select
-          className="Select"
-          value={exerciseName}
-          onChange={e => setExerciseName(e.target.value)}
-        >
-          <option disabled={true} value="">
-            SELECT EXERCISE
-          </option>
-          {exerciseList.map((ex) => (
-            <option key={ex} value={ex}>
-              {ex}
-            </option>
-          ))}
-        </select>
-        <div style={{ display: 'flex', }}>
-          <textarea
-            className="Input"
+        <input
+            className="Input goal-teams-in"
             placeholder="Goal Description"
             value={goalDesc}
             onChange={(e) => setGoalDesc(e.target.value)}
-          />
-          <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
-            <option disabled={true} value="">
-              SELECT TYPE
-            </option>
-            <option key="CARDIO" value="CST">CONSISTENCY</option>
-            <option key="STRENGTH" value="PR">PR</option>
-          </select>
-        </div>
+        />
         <input
-          className="Input"
+          className="Input goal-teams-in"
           placeholder="Goal Target"
           value={goalTarget}
           onChange={(e) => setGoalTarget(e.target.value)}
         />
-        <select className="Select" defaultValue="" onChange={e => setUnit(e.target.value)}>
-          <option disabled={true} value="">
-            SELECT UNITS
-          </option>
-          {goalType === "CST" ? (
-            <>
-              <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
-              <option key="SETS" value="SETS">SETS</option>
-            </>
-          ) : (
-            <>
-              <option key="LBS" value="LBS">WEIGHT (LBS)</option>
-              <option key="MPH" value="MPH">MPH</option>
-            </>
-          )}
-        </select>
-        {goalType === "CST" && <input
-          className="Input"
-          placeholder="End Date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />}
+        <div id="selections-goal">
+          <select
+            className="Select"
+            value={exerciseName}
+            onChange={e => setExerciseName(e.target.value)}
+          >
+            <option disabled={true} value="">
+              SELECT EXERCISE
+            </option>
+            {exerciseList.map((ex) => (
+              <option key={ex} value={ex}>
+                {ex}
+              </option>
+            ))}
+          </select>
+          <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
+              <option disabled={true} value="">
+                SELECT TYPE
+              </option>
+              <option key="CARDIO" value="CST">CONSISTENCY</option>
+              <option key="STRENGTH" value="PR">PR</option>
+          </select>
+          <select className="Select" defaultValue="" onChange={e => setUnit(e.target.value)}>
+            <option disabled={true} value="">
+              SELECT UNITS
+            </option>
+            {goalType === "CST" ? (
+              <>
+                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                <option key="SETS" value="SETS">SETS</option>
+              </>
+            ) : (
+              <>
+                <option key="LBS" value="LBS">WEIGHT (LBS)</option>
+                <option key="MPH" value="MPH">MPH</option>
+              </>
+            )}
+          </select>
+          {goalType === "CST" && <input
+            className="Input"
+            placeholder="End Date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />}
+        </div>
       </div>
       <button className="Button green" onClick={handleAddGoal}>Add Goal</button>
     </div>
