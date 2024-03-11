@@ -173,8 +173,11 @@ const FeedPage = ({ }) => {
             userId: post.userId
           }
         });
-        console.log("post data", postData)
+
+        postData.reverse()
         setPosts(postData);
+        console.log("post data", postData)
+
       }
       catch (error) {
         console.error('Error wth feed fetch:', error);

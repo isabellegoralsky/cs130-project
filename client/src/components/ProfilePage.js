@@ -159,7 +159,10 @@ export default function ProfilePage() {
 
     const transformAndSetWorkouts = (data) => {
         const transformedWorkouts = [];
-
+        if(!data || !data.workoutName || !data.exercises){
+            console.log("no data in workouts")
+            return;
+        }
         for (let i = 0; i < data.workoutName.length; i++) {
             let workout = {
                 name: data.workoutName[i],
