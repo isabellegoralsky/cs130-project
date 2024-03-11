@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './LoginReg.css'
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Link } from 'react-router-dom';
+import { HOST_NAME } from '../index';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Define the API endpoint
-    const loginUrl = 'http://localhost:3001/user/login'; 
+    const loginUrl = `http://${HOST_NAME}:3001/user/login`; 
     try {
       const response = await fetch(loginUrl, {
         method: 'POST',
