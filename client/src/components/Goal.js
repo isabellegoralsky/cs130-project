@@ -96,48 +96,54 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Edit Goal</Dialog.Title>
-                                <Dialog.Description>If you missed a workout post, update your progress here. Or, change your description / target value.</Dialog.Description>
+                                <Dialog.Description id="descript-go">If you missed a workout post, update your progress here. Or, change your description / target value.</Dialog.Description>
                                 <div>
-                                    <p>Goal Title</p>
-                                    <textarea
+                                    <p class="titles-goals">Goal Title</p>
+                                    <input
                                         className="Input"
                                         placeholder={title}
                                         value={goalTitle}
                                         onChange={(e) => setGoalTitle(e.target.value)}
+                                        style={{width: '97%'}}
                                     />
                                 </div>
                                 <div>
-                                    <p>Goal Description</p>
-                                    <textarea
+                                    <p class="titles-goals">Goal Description</p>
+                                    <input
                                         className="Input"
                                         placeholder={description}
                                         value={goalDesc}
                                         onChange={(e) => setGoalDesc(e.target.value)}
+                                        style={{width: '97%'}}
                                     />
                                 </div>
                                 <div>
-                                    <p>Goal Progress</p>
+                                    <p class="titles-goals">Goal Progress</p>
                                     <input
                                         className="Input"
                                         placeholder={savedprogress}
                                         value={goalProgress}
+                                        style={{width: '97%'}}
                                         onChange={(e) => setGoalProgress(e.target.value)}
                                     />
                                 </div>
-                                <div>
-                                    <p>Goal Target</p>
+                                <div style={{marginBottom:'35px'}}>
+                                    <p class="titles-goals">Goal Target</p>
                                     <input
                                         className="Input"
                                         placeholder={goalvalue}
                                         value={goalTarget}
+                                        style={{width: '97%'}}
                                         onChange={(e) => setGoalTarget(e.target.value)}
                                     />
                                 </div>
-
-                                <Dialog.Close asChild>
-                                    <button onClick={handleCancelEdit}>Cancel</button>
-                                </Dialog.Close>
-                                <button onClick={handleConfirmEdit}>Save Changes</button>
+                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                    <Dialog.Close asChild>
+                                        <button class="edit-goal-cancel" onClick={handleCancelEdit}>Cancel</button>
+                                    </Dialog.Close>
+                                    <button onClick={handleConfirmEdit} class="Button green">Save Changes</button>
+                                </div>
+                                
                             </Dialog.Content>
                         </Dialog.Overlay>
                     </Dialog.Portal>
