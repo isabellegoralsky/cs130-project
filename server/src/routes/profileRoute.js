@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = require('express').Router();
 const cookieParser = require('cookie-parser');
@@ -30,8 +31,8 @@ router.post('/addtemplate', async (req, res) => {
     });
     res.set({
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
     });
+
     if (templateExists === null){
         const template = new Template({
             userId: userId
@@ -45,7 +46,7 @@ router.post('/addtemplate', async (req, res) => {
         }
     }
     else {
-        const templates = templateExists.workoutName;
+        const templates = templateExists.templateName;
         if(templates.includes(req.body.workoutName)){
             return res.status(400).send("Already have this template.");
         }
@@ -54,7 +55,7 @@ router.post('/addtemplate', async (req, res) => {
         userId: userId
     }, {
         $push: {
-            workoutName: req.body.workoutName,
+            templateName: req.body.workoutName,
             exercises: req.body.exercises,
             note: req.body.note
         }
@@ -82,7 +83,7 @@ router.post('/edittemplate', async (req, res) => {
     if (templateExists === null){
         return res.status(400).send("Template does not exist.");
     }
-    var index = templateExists.workoutName.indexOf(req.body.workoutName);
+    var index = templateExists.templateName.indexOf(req.body.workoutName);
     if(index===-1){
         return res.status(400).send("Workout does not exist.");
     }
@@ -96,7 +97,7 @@ router.post('/edittemplate', async (req, res) => {
         userId: userId
     }, {
         userId: userId,
-        workoutName: templateExists.workoutName,
+        templateName: templateExists.templateName,
         exercises: templateExists.exercises,
         note: templateExists.note
     }, {
@@ -123,11 +124,11 @@ router.post('/deletetemplate', async (req, res) => {
     if (templateExists === null){
         return res.status(400).send("Template does not exist.");
     }
-    var index = templateExists.workoutName.indexOf(req.body.workoutName);
+    var index = templateExists.templateName.indexOf(req.body.workoutName);
     if(index===-1){
         return res.status(400).send("Workout does not exist.");
     }
-    var workoutName = templateExists.workoutName;
+    var workoutName = templateExists.templateName;
     var exercises = templateExists.exercises;
     var note = templateExists.note;
     workoutName.splice(index, 1);
@@ -137,7 +138,7 @@ router.post('/deletetemplate', async (req, res) => {
         userId: userId
     }, {
         userId: userId,
-        workoutName: workoutName,
+        templateName: workoutName,
         exercises: exercises,
         note: note
     }, {
@@ -155,6 +156,8 @@ router.post('/deletetemplate', async (req, res) => {
 });
 
 router.get('/template/:uid', async (req, res) => {
+    console.log("uid is")
+    console.log(req.params.uid)
     const templateExists = await Template.findOne({
         userId: req.params.uid
     });
@@ -164,7 +167,7 @@ router.get('/template/:uid', async (req, res) => {
     });
     if (templateExists === null){
         console.log("null")
-        return res.status(400).send("Template does not exist.");
+        return res.status(400).json("Template does not exist.");
     }
     else{
         console.log("exists")
@@ -176,7 +179,7 @@ router.get('/template/:uid', async (req, res) => {
 
 router.get('/:uid/profilepage', async (req, res) => {
     const user = await User.findOne({ _id: req.params.uid });
-    if (!user) return res.status(400).send('User was not found.');
+    if (!user) return res.status(400).json('User was not found.');
     var name = user.firstName + " " + user.lastName;
     const profilePic = await Picture.findOne({ _id: user.profilePicture});
     const followingids = user.following;

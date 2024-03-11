@@ -2,6 +2,7 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import './FeedPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const exerciseList = [
   "Deadlift",
@@ -22,7 +23,13 @@ const exerciseList = [
   "Burpees"
 ];
 
-const FeedPage = ({}) => {
+const FeedPage = ({ }) => {
+  const navigate = useNavigate(); 
+  const goToUserProfile = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
+
+  const [user, setUser] = useState({});
   const [posts, setPosts] = useState([
     {
       title: 'quick back and bi workout',
@@ -113,10 +120,70 @@ const FeedPage = ({}) => {
 
 
   useEffect(() => {
-    
-  }, [posts]);
+    //fetch user
+    async function fetchUser() {
+      try {
+        const url = `http://localhost:3001/user`;
+        const response = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        const data = await response.json();
+        setUser(data);
+      }
+      catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    fetchUser();
 
-  
+  }, [])
+
+  useEffect(() => { //fetch feed
+    async function fetchFeed() {
+      try {
+        const url = `http://localhost:3001/post/posts`;
+        const response = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        const data = await response.json();
+        console.log(data)
+        const postData = data.map(post => {
+          console.log(post)
+          let currExercises = [];
+          post.exercises.exerciseName.forEach((exercise, index) => {
+            currExercises.push({
+              name: exercise,
+              sets: post.exercises.sets[index],
+              reps: post.exercises.reps[index],
+              weight: index < post.exercises.weight.length ? post.exercises.weight[index] : ''
+            });
+          })
+          return {
+            title: post.title ?? '',
+            name: post.name,
+            description: post.description ?? '',
+            date: post.date,
+            exercises: currExercises,
+            userId: post.userId
+          }
+        });
+        console.log("post data", postData)
+        setPosts(postData);
+      }
+      catch (error) {
+        console.error('Error wth feed fetch:', error);
+      }
+    }
+    fetchFeed();
+  }, [])
+
+
 
   return (
     <div className="feed-page">
@@ -126,17 +193,17 @@ const FeedPage = ({}) => {
             create a post + </button>
         </Dialog.Trigger>
         <Dialog.Portal>
-            <Dialog.Overlay className="DialogOverlay" >
-              <Dialog.Content className="DialogContent" class="adding">
-                <Dialog.Title className="DialogTitle">Post</Dialog.Title>
-                <PostModal />
-              </Dialog.Content>
-            </Dialog.Overlay>
-        </Dialog.Portal>              
+          <Dialog.Overlay className="DialogOverlay" >
+            <Dialog.Content className="DialogContent" class="adding">
+              <Dialog.Title className="DialogTitle">Post</Dialog.Title>
+              <PostModal />
+            </Dialog.Content>
+          </Dialog.Overlay>
+        </Dialog.Portal>
       </Dialog.Root>
       {posts.map((post, index) => (
         <div class="post-row">
-          <h2 class="poster">{post.name}</h2>
+        <h2 className="poster" onClick={() => goToUserProfile(post.userId)}>{post.name}</h2>
           <div className="feed-post" key={index}>
             <h1 class="post-title">{post.title}</h1>
             <p class="post-descript">{post.description}</p>
@@ -159,11 +226,11 @@ export default FeedPage;
 const PostModal = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postDescription, setPostDescription] = useState('');
-  const [exercises, setExercises] = useState([{ name: '', sets: '', reps: '', notes: '' }]);
+  const [exercises, setExercises] = useState([{ name: '', sets: '', reps: '', weight: '' }]);
 
   const addExercise = () => {
     if (exercises.length < 8) {
-      setExercises([...exercises, { name: '', sets: '', reps: '', notes: '' }]);
+      setExercises([...exercises, { name: '', sets: '', reps: '', weight: '' }]);
     }
   };
 
@@ -174,18 +241,35 @@ const PostModal = () => {
   };
 
   const savePost = async () => {
+    let exercisesObject = {
+      exerciseName: exercises.map(exercise => exercise.name),
+      sets: exercises.map(exercise => exercise.sets),
+      reps: exercises.map(exercise => exercise.reps),
+      weight: exercises.map(exercise => exercise.weight)
+    }
     const post = {
       title: postTitle,
       description: postDescription,
-      exercises: exercises.map(exercise => ({
-        name: exercise.name || undefined,
-        reps: exercise.reps ? parseInt(exercise.reps, 10) : 0,
-        sets: exercise.sets ? parseInt(exercise.sets, 10) : 0,
-        notes: exercise.notes || undefined
-      })).filter(exercise => exercise.name) 
+      exercises: exercisesObject
     };
 
-    console.log(post);
+    console.log("post is ", post);
+    try {
+      const url = `http://localhost:3001/post/addpost`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(post)
+      });
+      const data = await response.json();
+      console.log(data);
+    }
+    catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -221,41 +305,41 @@ const PostModal = () => {
 
 
 
-  const ExerciseInput = ({ exerciseList, exercise, setExercise }) => (
-    <div style={{ display: 'flex', marginTop: 10, marginBottom: 15, alignItems: 'flex-start' }}>
-        <select
-            className="Select"
-            value={exercise.name}
-            onChange={e => setExercise({ ...exercise, name: e.target.value })}
-        >
-            {exerciseList.map((ex) => (
-                <option key={ex} value={ex}>
-                    {ex}
-                </option>
-            ))}
-        </select>
-        <div class="workout-deets">
-            <input
-                className="Input"
-                placeholder="# Sets"
-                style={{ marginBottom: 5 }}
-                value={exercise.sets}
-                onChange={e => setExercise({ ...exercise, sets: e.target.value })}
-            />
-            <input
-                className="Input"
-                placeholder="# Reps"
-                style={{ marginBottom: 5 }}
-                value={exercise.reps}
-                onChange={e => setExercise({ ...exercise, reps: e.target.value })}
-            />
-            <input
-                className="Input"
-                placeholder="Notes"
-                style={{ marginBottom: 5 }}
-                value={exercise.notes}
-                onChange={e => setExercise({ ...exercise, notes: e.target.value })}
-            />
-        </div>
+const ExerciseInput = ({ exerciseList, exercise, setExercise }) => (
+  <div style={{ display: 'flex', marginTop: 10, marginBottom: 15, alignItems: 'flex-start' }}>
+    <select
+      className="Select"
+      value={exercise.name}
+      onChange={e => setExercise({ ...exercise, name: e.target.value })}
+    >
+      {exerciseList.map((ex) => (
+        <option key={ex} value={ex}>
+          {ex}
+        </option>
+      ))}
+    </select>
+    <div class="workout-deets">
+      <input
+        className="Input"
+        placeholder="# Sets"
+        style={{ marginBottom: 5 }}
+        value={exercise.sets}
+        onChange={e => setExercise({ ...exercise, sets: e.target.value })}
+      />
+      <input
+        className="Input"
+        placeholder="# Reps"
+        style={{ marginBottom: 5 }}
+        value={exercise.reps}
+        onChange={e => setExercise({ ...exercise, reps: e.target.value })}
+      />
+      <input
+        className="Input"
+        placeholder="Weight"
+        style={{ marginBottom: 5 }}
+        value={exercise.weight}
+        onChange={e => setExercise({ ...exercise, weight: e.target.value })}
+      />
     </div>
+  </div>
 );

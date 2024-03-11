@@ -5,7 +5,7 @@ const templateSchema = new mongoose.Schema({
     userId: {
         type: ObjectId
     }, 
-    workoutName: {
+    templateName: {
         type: [String]
     },
     exercises: {
