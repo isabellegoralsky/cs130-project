@@ -5,7 +5,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Team = require('../models/Team');
+const Picture = require('../models/Picture');
+const Post = require('../models/Post');
+const PostTeam = require('../models/PostTeam');
+const { Goal } = require('../models/Goal');
 const Template = require('../models/Template');
+const PersonalRecord = require('../models/PersonalRecord');
 
 const maxAge = 30 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -167,6 +172,28 @@ router.get('/template/:uid', async (req, res) => {
 
         return res.json(templateExists);
     }
+});
+
+router.get('/:uid/profilepage', async (req, res) => {
+    const user = await User.findOne({ _id: req.params.uid });
+    if (!user) return res.status(400).send('User was not found.');
+    var name = user.firstName + " " + user.lastName;
+    const profilePic = await Picture.findOne({ _id: user.profilePicture});
+    const followingids = user.following;
+    var followingNames = [];
+    for(let i=0; i<followingids.length; i++){
+        const found = await User.findOne({_id: followingids[i]});
+        var fullName = found.firstName + ' ' + found.lastName;
+        followingNames.push(fullName);
+    }
+    const template = await Template.findOne({
+        userId: req.params.uid
+    });
+    var personalRecords = await PersonalRecord.find({userId: user._id});
+    var posts = await Post.find({userId: user._id});
+    console.log(posts);
+    var profilepage = {name, profilePic, followingids, followingNames, template, personalRecords, posts};
+    return res.status(200).json(profilepage);
 });
 
 module.exports = router;
