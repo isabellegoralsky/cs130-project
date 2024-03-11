@@ -168,16 +168,16 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
             <div>
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
-                        <button className="IconButton" aria-label="Customise options">
+                        <button className="IconButton edit-goal" aria-label="Customise options">
                             <DotsHorizontalIcon />
                         </button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Portal>
                         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={5}>
-                            <DropdownMenu.Item className="DropdownMenuItem" onSelect={handleEdit}>
+                            <DropdownMenu.Item className="DropdownMenuItem edit-goal-del" onSelect={handleEdit}>
                                 Edit Goal
                             </DropdownMenu.Item>
-                            <DropdownMenu.Item className="DropdownMenuItem" onSelect={handleDelete}>
+                            <DropdownMenu.Item className="DropdownMenuItem edit-goal-del" onSelect={handleDelete}>
                                 Delete Goal
                             </DropdownMenu.Item>
                         </DropdownMenu.Content>
@@ -195,11 +195,13 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Are you absolutely sure?</Dialog.Title>
-                                <Dialog.Description>This action cannot be undone. This will permanently delete your goal.</Dialog.Description>
-                                <Dialog.Close asChild>
-                                    <button onClick={handleCancelDelete}>Cancel</button>
-                                </Dialog.Close>
-                                <button onClick={handleConfirmDelete}>Yes, delete goal</button>
+                                <Dialog.Description class="descript-thing">This action cannot be undone. This will permanently delete your goal.</Dialog.Description>
+                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                    <Dialog.Close asChild>
+                                        <button onClick={handleCancelDelete} class="edit-goal-cancel">Cancel</button>
+                                    </Dialog.Close>
+                                    <button onClick={handleConfirmDelete} class="Button green">Yes, delete goal</button>
+                                </div>
                             </Dialog.Content>
                         </Dialog.Overlay>
                     </Dialog.Portal>
@@ -253,6 +255,7 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                                         className="Input"
                                         placeholder={savedprogress}
                                         value={goalProgress}
+                                        style={{width: '97%'}}
                                         onChange={(e) => setGoalProgress(e.target.value)}
                                     />
                                      <p>Goal Target</p>
@@ -260,6 +263,7 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                                         className="Input"
                                         placeholder={goalvalue}
                                         value={goalTarget}
+                                        style={{width: '97%'}}
                                         onChange={(e) => setGoalTarget(e.target.value)}
                                     />
                                     <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>

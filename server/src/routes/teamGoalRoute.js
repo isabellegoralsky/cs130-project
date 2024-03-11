@@ -33,10 +33,10 @@ router.get('/', authenticateToken, async (req, res) => {
     try {
         const goals = await TeamGoal.find({ teamId: req.body.teamId });
         console.log('Successfully found Goals.');
-        res.status(200).send(goals);
+        res.status(200).json(goals);
     } catch (err) {
         console.log('Failed to find Goals.');
-        res.status(400).send(err);
+        res.status(400).json({message: err});
     }
 });
 
