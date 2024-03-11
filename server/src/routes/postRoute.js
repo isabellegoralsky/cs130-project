@@ -21,13 +21,14 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 
     try {
         await post.save();
+        res.status(200).json('Successfully posted');
     } catch (err) {
         console.log('Failed to post');
-        res.status(400).send(err);
+        res.status(400).json(err);
     }
 
     //update pr 
-    const personalrecords = await PersonalRecord.find({userId:userId}).catch(err => {
+    const personalrecords = await PersonalRecord.find({userId:user._id}).catch(err => {
         console.error('Error:', err);
     });
     for (let i = 0; i < personalrecords.length; i++) {
@@ -46,7 +47,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
                     catch (err){
                         console.log('Failed to update personal records');
                         console.log(err);
-                        res.status(400).send('Failed to update personal records');
+                        res.status(400).json('Failed to update personal records');
                     }
                 }
             }
@@ -71,7 +72,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
                         catch (error) {
                             console.log('Failed to update PR goal');
                             console.log(error);
-                            return res.status(400).send('Failed to update PR goal');
+                            return res.status(400).json('Failed to update PR goal');
                         }
 
                     }
@@ -84,7 +85,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
                     } catch (error) {
                         console.log('Failed to update CST Goal');
                         console.log(error);
-                        return res.status(400).send('Failed to update CST goal');
+                        return res.status(400).json('Failed to update CST goal');
                     }
                 }
             }
@@ -112,7 +113,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
                     } catch (error) {
                         console.log('Failed to update CST Goal');
                         console.log(error);
-                        return res.status(400).send('Failed to update CST goal');
+                        return res.status(400).json('Failed to update CST goal');
                     }
                 }
             }
@@ -120,7 +121,6 @@ router.post('/addpost', authenticateToken, async (req, res) => {
         }
     }
 
-    res.status(200).send('Successfully added post and updated');
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {
