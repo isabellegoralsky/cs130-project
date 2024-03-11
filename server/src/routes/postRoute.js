@@ -1,31 +1,126 @@
-const express = require('express');
 const router = require('express').Router();
-const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const { authenticateToken } = require('../middleware/auth');
 const User = require('../models/User');
 const Team = require('../models/Team');
 const Post = require('../models/Post');
 const PostTeam = require('../models/PostTeam');
+const Goal = require('../models/Goal');
+const TeamGoal = require('../models/TeamGoal');
+const PersonalRecord = require('../models/PersonalRecord');
 
-router.post('/addpost', async (req, res) => {
-    const token = req.cookies.jwt;
-    const decoded = jwt.verify(token, process.env.TokenSecret);
-    var userId = decoded.id;
+router.post('/addpost', authenticateToken, async (req, res) => {
+    const user = req.user;
+
     const post = new Post({
-        userId: userId,
+        userId: user._id,
         title: req.body.title,
         exercises: req.body.exercises,
         description: req.body.description
     });
+
     try {
-        const savePost= await post.save();
-        console.log("Successfully posted");
-        res.status(200).send("Successfully posted");
+        await post.save();
     } catch (err) {
-        console.log("Failed to post");
+        console.log('Failed to post');
         res.status(400).send(err);
     }
+
+    //update pr 
+    const personalrecords = await PersonalRecord.find({userId:userId}).catch(err => {
+        console.error('Error:', err);
+    });
+    for (let i = 0; i < personalrecords.length; i++) {
+        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+            if(personalrecords[i].exerciseName === post.exercises.exerciseName[j]){
+                if(personalrecords[i].record<post.exercises.weight[j]){
+                    try{ 
+                            await PersonalRecord.findOneAndUpdate({
+                            _id: personalrecords[i]._id,
+                            exerciseName: personalrecords[i].exerciseName
+                        }, {
+                            record: post.exercises.weight[j]
+                        });
+                        console.log("Successfully updated pr");
+                    }  
+                    catch (err){
+                        console.log('Failed to update personal records');
+                        console.log(err);
+                        res.status(400).send('Failed to update personal records');
+                    }
+                }
+            }
+        }
+    }
+
+    // Update individual goals
+    const indGoals = await Goal.find({ userId: user._id }).catch(err => {
+        console.error('Error:', err);
+    });
+
+    for (let i = 0; i < indGoals.length; i++) {
+        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+            if (indGoals[i].exercise.name === post.exercises.exerciseName[j]) {
+                if (indGoals[i].type === 'PR') {
+                    const amount = post.exercises.weight[j];
+                    if (indGoals[i].progress < amount) {
+                        try {
+                            await Goal.updateOne({ _id: indGoals[i]._id }, { $set: { progress: amount } });
+                            console.log('Updated PR Goal');
+                        }
+                        catch (error) {
+                            console.log('Failed to update PR goal');
+                            console.log(error);
+                            return res.status(400).send('Failed to update PR goal');
+                        }
+
+                    }
+                }
+                else if (indGoals[i].type === 'CST') {
+                    const amount = post.exercises.reps[j] * post.exercises.sets[j];
+                    try {
+                        await Goal.updateOne({ _id: indGoals[i]._id }, { $set: { progress: indGoals[i].progress + amount } });
+                        console.log('Updated CST Goal');
+                    } catch (error) {
+                        console.log('Failed to update CST Goal');
+                        console.log(error);
+                        return res.status(400).send('Failed to update CST goal');
+                    }
+                }
+            }
+        }
+    }
+
+    //Update team goal
+    const teamIds = user.teams;
+    for (let i = 0; i < teamIds.length; i++) {
+        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+            const teamGoals = await TeamGoal.find({
+                teamId: teamIds[i],
+                'exercise.name': post.exercises.exerciseName[j]
+            });
+
+            for (let k = 0; k < teamGoals.length; k++) {
+                if (teamGoals[k].type === 'CST') {
+                    const amount = post.exercises.reps[j] * post.exercises.sets[j];
+                    try {
+                        await TeamGoal.updateOne(
+                            { _id: teamGoals[k]._id },
+                            { $set: { progress: teamGoals[k].progress + amount } }
+                        );
+                        console.log('Updated CST Goal');
+                    } catch (error) {
+                        console.log('Failed to update CST Goal');
+                        console.log(error);
+                        return res.status(400).send('Failed to update CST goal');
+                    }
+                }
+            }
+
+        }
+    }
+
+    res.status(200).send('Successfully added post and updated');
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {
@@ -39,11 +134,11 @@ router.post('/addteampost/:teamid', async (req, res) => {
         note: req.body.note
     });
     try {
-        const savePost= await post.save();
-        console.log("Successfully posted");
-        res.status(200).send("Successfully posted");
+        const savePost = await post.save();
+        console.log('Successfully posted');
+        res.status(200).send('Successfully posted');
     } catch (err) {
-        console.log("Failed to post");
+        console.log('Failed to post');
         res.status(400).send(err);
     }
 });
@@ -54,19 +149,19 @@ router.post('/editpost/:postid', async (req, res) => {
     var userId = decoded.id;
     Post.findOneAndUpdate({
         _id: req.params.postid
-    },{
+    }, {
         $set: {
             userId: userId,
             title: req.body.title,
             exercises: req.body.exercises,
             description: req.body.description
         }
-    }, function (err){
-        if (!err){
+    }, function (err) {
+        if (!err) {
             res.status(200).send('Edited post.');
-            console.log("Edited Post");
+            console.log('Edited Post');
         }
-        else{
+        else {
             res.status(400).send('Error occured.');
         }
     });
@@ -78,17 +173,17 @@ router.post('/editteampost/:postid', async (req, res) => {
     var userId = decoded.id;
     PostTeam.findOneAndUpdate({
         _id: req.params.postid
-    },{
+    }, {
         $set: {
             title: req.body.title,
             note: req.body.note
         }
-    }, function (err){
-        if (!err){
+    }, function (err) {
+        if (!err) {
             res.status(200).send('Edited post.');
-            console.log("Edited Post");
+            console.log('Edited Post');
         }
-        else{
+        else {
             res.status(400).send('Error occured.');
         }
     });
@@ -98,11 +193,11 @@ router.delete('/deletepost/:postid', async (req, res) => {
     Post.findOneAndRemove({
         _id: req.params.postid
     }, function (err) {
-        if (!err){
+        if (!err) {
             res.status(200).send('Deleted post.');
-            console.log("Deleted Post");
+            console.log('Deleted Post');
         }
-        else{
+        else {
             res.status(400).send('Error occured.');
         }
     });
@@ -112,11 +207,11 @@ router.delete('/deleteteampost/:postid', async (req, res) => {
     PostTeam.findOneAndRemove({
         _id: req.params.postid
     }, function (err) {
-        if (!err){
+        if (!err) {
             res.status(200).send('Deleted team post.');
-            console.log("Deleted team post");
+            console.log('Deleted team post');
         }
-        else{
+        else {
             res.status(400).send('Error occured.');
         }
     });
@@ -134,17 +229,17 @@ router.get('/posts', async (req, res) => {
         console.error('Error:', err);
     });
     var posts = [];
-    for(let i=0; i<post.length; i++){
+    for (let i = 0; i < post.length; i++) {
         const userid = post[i].userId;
         const user = await User.findOne({ _id: userid });
         if (!user) return res.status(400).send('User was not found.');
-        var name=user.firstName + " " + user.lastName;
-        var title=post[i].title;
-        var exercises=post[i].exercises;
-        var description=post[i].description;
-        var date=(post[i].updatedAt.getMonth()+1)+'/'+post[i].updatedAt.getDate()+'/'+post[i].updatedAt.getFullYear();
-        var time=(post[i].updatedAt.getHours()+':'+post[i].updatedAt.getMinutes()+':'+post[i].updatedAt.getSeconds());
-        posts.push({name: name, title: title, exercises: exercises, description: description, date: date, time: time, userId: userid});
+        var name = user.firstName + ' ' + user.lastName;
+        var title = post[i].title;
+        var exercises = post[i].exercises;
+        var description = post[i].description;
+        var date = (post[i].updatedAt.getMonth() + 1) + '/' + post[i].updatedAt.getDate() + '/' + post[i].updatedAt.getFullYear();
+        var time = (post[i].updatedAt.getHours() + ':' + post[i].updatedAt.getMinutes() + ':' + post[i].updatedAt.getSeconds());
+        posts.push({ name: name, title: title, exercises: exercises, description: description, date: date, time: time });
     }
     console.log(posts);
     return res.status(200).json(posts);
@@ -158,16 +253,16 @@ router.get('/teamposts/:tid', async (req, res) => {
         console.error('Error:', err);
     });
     var posts = [];
-    for(let i=0; i<teamposts.length; i++){
+    for (let i = 0; i < teamposts.length; i++) {
         const userid = teamposts[i].userId;
         const user = await User.findOne({ _id: userid });
         if (!user) return res.status(400).send('User was not found.');
-        var name=user.firstName + " " + user.lastName;
-        var title=teamposts[i].title;
-        var note=teamposts[i].note;
-        var date=(teamposts[i].updatedAt.getMonth()+1)+'/'+teamposts[i].updatedAt.getDate()+'/'+teamposts[i].updatedAt.getFullYear();
-        var time=(teamposts[i].updatedAt.getHours()+':'+teamposts[i].updatedAt.getMinutes()+':'+teamposts[i].updatedAt.getSeconds());
-        posts.push({name: name, title: title, note: note, date: date, time: time});
+        var name = user.firstName + ' ' + user.lastName;
+        var title = teamposts[i].title;
+        var note = teamposts[i].note;
+        var date = (teamposts[i].updatedAt.getMonth() + 1) + '/' + teamposts[i].updatedAt.getDate() + '/' + teamposts[i].updatedAt.getFullYear();
+        var time = (teamposts[i].updatedAt.getHours() + ':' + teamposts[i].updatedAt.getMinutes() + ':' + teamposts[i].updatedAt.getSeconds());
+        posts.push({ name: name, title: title, note: note, date: date, time: time });
     }
     console.log(posts);
     return res.status(200).json(posts);
@@ -181,17 +276,17 @@ router.get('/teampostsfeed/:tid', async (req, res) => {
         console.error('Error:', err);
     });
     var posts = [];
-    for(let i=0; i<teamposts.length; i++){
+    for (let i = 0; i < teamposts.length; i++) {
         const userid = teamposts[i].userId;
         const user = await User.findOne({ _id: userid });
         if (!user) return res.status(400).send('User was not found.');
-        var name=user.firstName + " " + user.lastName;
-        var title=teamposts[i].title;
-        var exercises=teamposts[i].exercises;
-        var description=teamposts[i].description;
-        var date=(teamposts[i].updatedAt.getMonth()+1)+'/'+teamposts[i].updatedAt.getDate()+'/'+teamposts[i].updatedAt.getFullYear();
-        var time=(teamposts[i].updatedAt.getHours()+':'+teamposts[i].updatedAt.getMinutes()+':'+teamposts[i].updatedAt.getSeconds());
-        posts.push({name: name, title: title, exercises: exercises, description: description, date: date, time: time});
+        var name = user.firstName + ' ' + user.lastName;
+        var title = teamposts[i].title;
+        var exercises = teamposts[i].exercises;
+        var description = teamposts[i].description;
+        var date = (teamposts[i].updatedAt.getMonth() + 1) + '/' + teamposts[i].updatedAt.getDate() + '/' + teamposts[i].updatedAt.getFullYear();
+        var time = (teamposts[i].updatedAt.getHours() + ':' + teamposts[i].updatedAt.getMinutes() + ':' + teamposts[i].updatedAt.getSeconds());
+        posts.push({ name: name, title: title, exercises: exercises, description: description, date: date, time: time });
     }
     console.log(posts);
     return res.status(200).json(posts);

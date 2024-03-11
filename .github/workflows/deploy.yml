@@ -1,0 +1,65 @@
+name: Build and Deploy Node App
+
+on:
+  workflow_dispatch: {}
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+
+env:
+  applicationfolder: ./
+  AWS_REGION: us-east-1
+  S3BUCKET: codedeploystack-webappdeploymentbucket-lscfffupw1af
+
+
+jobs:
+  build:
+    name: Build and Package
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout Repository
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+          role-session-name: GitHub-Action-Role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Delete client code in s3 bucket
+        working-directory: ${{ env.applicationfolder }}
+        run: aws s3 rm s3://${{ env.S3BUCKET }}/client --recursive
+
+      - name: Delete server code in s3 bucket
+        working-directory: ${{ env.applicationfolder }}
+        run: aws s3 rm s3://${{ env.S3BUCKET }}/server --recursive
+
+      - name: Upload Client Source Code to s3
+        working-directory: ${{ env.applicationfolder }}
+        run: aws s3 cp client s3://${{ env.S3BUCKET }}/client --recursive
+
+      - name: Upload Server Source Code to s3
+        working-directory: ${{ env.applicationfolder }}
+        run: aws s3 cp server s3://${{ env.S3BUCKET }}/server --recursive
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: Dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - uses: actions/checkout@v2
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+        role-session-name: GitHub-Action-Role
+        aws-region: ${{ env.AWS_REGION }}
+    - run: |
+        echo "Deploying branch ${{ env.GITHUB_REF }} to ${{ github.event.inputs.environment }}"
+        commit_hash=`git rev-parse HEAD`
+        aws deploy create-deployment --application-name CodeDeployAppNameWithASG --deployment-group-name CodeDeployGroupName --github-location repository=$GITHUB_REPOSITORY,commitId=$commit_hash --ignore-application-stop-failures

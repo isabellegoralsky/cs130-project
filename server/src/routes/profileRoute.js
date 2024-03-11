@@ -8,8 +8,10 @@ const User = require('../models/User');
 const Team = require('../models/Team');
 const Picture = require('../models/Picture');
 const Post = require('../models/Post');
-const PersonalRecord = require('../models/PersonalRecord');
+const PostTeam = require('../models/PostTeam');
+const { Goal } = require('../models/Goal');
 const Template = require('../models/Template');
+const PersonalRecord = require('../models/PersonalRecord');
 
 const maxAge = 30 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -184,7 +186,7 @@ router.get('/:uid/profilepage', async (req, res) => {
     var followingNames = [];
     for(let i=0; i<followingids.length; i++){
         const found = await User.findOne({_id: followingids[i]});
-        var fullName = found.firstName + ' ' + user.lastName;
+        var fullName = found.firstName + ' ' + found.lastName;
         followingNames.push(fullName);
     }
     const template = await Template.findOne({

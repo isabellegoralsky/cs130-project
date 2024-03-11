@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const PersonalRecord = require('../models/PersonalRecord')
+const PersonalRecord = require('../models/PersonalRecord');
 
 router.post('/', async (req, res) => {
     const token = req.cookies.jwt;
