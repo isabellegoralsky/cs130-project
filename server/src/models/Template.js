@@ -9,7 +9,7 @@ const templateSchema = new mongoose.Schema({
         type: [String]
     },
     exercises: {
-        type: [{exerciseName: [String], sets: [Number], reps: [Number]}]
+        type: [{exerciseName: [String], sets: [Number], reps: [Number], weight: [Number]}]
     },
     note: {
         type: [String]
