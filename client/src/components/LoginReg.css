@@ -11,10 +11,11 @@
     width:40vw;
     background-color: #FF5A13;
     height: 100vh;
+    box-shadow: 5px 0 6px 0px rgba(0,0,0,.15);
 }
 
 .right-login-side{
-    margin: 90px 0 120px 120px;
+    margin: 90px 0 100px 120px;
     width: 43vw;
 }
 
