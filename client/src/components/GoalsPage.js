@@ -68,12 +68,25 @@ const GoalsPage = () => {
                         <Dialog.Overlay className="DialogOverlay" />
                         <Dialog.Content className="DialogContent">
                             <Dialog.Title className="DialogTitle">Add a Goal</Dialog.Title>
-                            <div>
+                            <div class="teams-goal-pop">
                                 <input
-                                    className="Input"
+                                    className="Input goal-teams-in goal-in"
                                     placeholder="Goal Title"
                                     value={goalTitle}
                                     onChange={(e) => setGoalTitle(e.target.value)} />
+                                <input
+                                        className="Input goal-teams-in goal-in"
+                                        placeholder="Goal Description"
+                                        value={goalDesc}
+                                        onChange={(e) => setGoalDesc(e.target.value)}
+                                    />
+                                <input
+                                    className="Input goal-teams-in goal-in"
+                                    placeholder="Goal Target"
+                                    value={goalTarget}
+                                    onChange={(e) => setGoalTarget(e.target.value)}
+                                />
+                            <div id="selections-goal" style={{marginRight: '55px'}}>
                                 <select
                                     className="Select"
                                     value={exerciseName}
@@ -88,27 +101,13 @@ const GoalsPage = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <div style={{ display: 'flex', }}>
-                                    <textarea
-                                        className="Input"
-                                        placeholder="Goal Description"
-                                        value={goalDesc}
-                                        onChange={(e) => setGoalDesc(e.target.value)}
-                                    />
-                                    <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
+                                <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
                                         <option disabled={true} value="">
                                             SELECT TYPE
                                         </option>
                                         <option key="CARDIO" value="CST">CONSISTENCY</option>
                                         <option key="STRENGTH" value="PR">PR</option>
-                                    </select>
-                                </div>
-                                <input
-                                    className="Input"
-                                    placeholder="Goal Target"
-                                    value={goalTarget}
-                                    onChange={(e) => setGoalTarget(e.target.value)}
-                                />
+                                </select>
                                 <select className="Select" defaultValue="" onChange={e => setUnit(e.target.value)}>
                                     <option disabled={true} value="">
                                         SELECT UNITS
@@ -131,6 +130,7 @@ const GoalsPage = () => {
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
                                 />}
+                            </div>
                             </div>
                             <button className="Button green" onClick={handleAddGoal}>Add Goal</button>
                         </Dialog.Content>
