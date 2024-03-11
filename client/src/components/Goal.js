@@ -6,7 +6,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import './Goal.css';
 
-const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
+const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, unit, date, urlType }) => {
     const [progress, setProgress] = React.useState(13);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -14,8 +14,32 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
     const [goalProgress, setGoalProgress] = useState(savedprogress);
     const [goalTarget, setGoalTarget] = useState(goalvalue);
     const [goalTitle, setGoalTitle] = useState(title);
+    const [goalType, setGoalType] = useState(type);
+    const [endDate, setEndDate] = useState(date);
+    const [exerciseName, setExerciseName] = useState(name);
+    const [goalUnit, setGoalUnit] = useState(unit);
+
     const [user, setUser] = useState({});
     const [goalID, setGoalID] = useState(gid);
+
+    const exerciseList = [
+        "Deadlift",
+        "Squat",
+        "Bench Press",
+        "Pull-Up",
+        "Push-Up",
+        "Bent-Over Row",
+        "Overhead Press",
+        "Lunges",
+        "Plank",
+        "Leg Press",
+        "Barbell Curl",
+        "Tricep Dip",
+        "Shoulder Press",
+        "Lat Pull-Down",
+        "Russian Twist",
+        "Burpees"
+    ];
 
     const handleDelete = (e) => {
         setIsDeleteDialogOpen(true);
@@ -77,8 +101,49 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
         }
     };
 
-    const handleEdit = (e) => {
-        setIsEditDialogOpen(true);
+    const handleConfirmEdit = async (e) => {
+        e.preventDefault();
+        const userId = user._id;
+        if (userId) {
+            const updateUrl = `http://localhost:3001/goal/${goalID}`;
+            const updatedData = {
+                title: goalTitle,
+                description: goalDesc,
+                type: goalType,                 // PR/CST
+                exercise: {
+                    name: exerciseName,
+                    amount: {
+                        unit: goalUnit,     // LB/MPH for PR. SET/MIN for CST
+                        value: goalTarget,
+                    }
+                },
+                progress: goalProgress,
+                endsAt: endDate,
+            }
+            try {
+                const response = await fetch(updateUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(updatedData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('Successfully updated goal:', data);
+                    setIsEditDialogOpen(false);
+
+                } else {
+                    throw new Error(data.message || 'Failed to update goal');
+                }
+            } catch (error) {
+                console.error('Update Goal Error:', error);
+                // Handle update error here (e.g., showing an error message)
+            }
+        }
     }
 
     const handleCancelEdit = () => {
@@ -86,9 +151,10 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
         setIsEditDialogOpen(false);
     };
 
-    const handleConfirmEdit = () => {
+    const handleEdit = () => {
         console.log('Edit confirmed');
-        setIsEditDialogOpen(false);
+
+        setIsEditDialogOpen(true);
     };
 
     useEffect(() => {
@@ -144,26 +210,44 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Edit Goal</Dialog.Title>
-                                <Dialog.Description>If you missed a workout post, update your progress here. Or, change your description / target value.</Dialog.Description>
+                                <Dialog.Description>If you missed a workout post, update your progress here. Or, change your goal. / target value.</Dialog.Description>
                                 <div>
-                                    <p>Goal Title</p>
-                                    <textarea
-                                        className="Input"
-                                        placeholder={title}
-                                        value={goalTitle}
-                                        onChange={(e) => setGoalTitle(e.target.value)}
-                                    />
-                                </div>
-                                <div>
+                                <p>Goal Title</p>
+                                    <input
+                                       className="Input"
+                                       placeholder={title}
+                                       value={goalTitle}
+                                       onChange={(e) => setGoalTitle(e.target.value)} />
+                                    <select
+                                        className="Select"
+                                        value={exerciseName}
+                                        onChange={e => setExerciseName(e.target.value)}
+                                    >
+                                        <option disabled={true} value={name}>
+                                            {name}
+                                        </option>
+                                        {exerciseList.map((ex) => (
+                                            <option key={ex} value={ex}>
+                                                {ex}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div style={{ display: 'flex', }}>
                                     <p>Goal Description</p>
-                                    <textarea
-                                        className="Input"
-                                        placeholder={description}
-                                        value={goalDesc}
-                                        onChange={(e) => setGoalDesc(e.target.value)}
-                                    />
-                                </div>
-                                <div>
+                                        <textarea
+                                            className="Input"
+                                            placeholder={description}
+                                            value={goalDesc}
+                                            onChange={(e) => setGoalDesc(e.target.value)}
+                                        />
+                                        <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
+                                            <option disabled={true} value={type}>
+                                                {type}
+                                            </option>
+                                            <option key="CARDIO" value="CST">CONSISTENCY</option>
+                                            <option key="STRENGTH" value="PR">PR</option>
+                                        </select>
+                                    </div>
                                     <p>Goal Progress</p>
                                     <input
                                         className="Input"
@@ -171,17 +255,36 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
                                         value={goalProgress}
                                         onChange={(e) => setGoalProgress(e.target.value)}
                                     />
-                                </div>
-                                <div>
-                                    <p>Goal Target</p>
+                                     <p>Goal Target</p>
                                     <input
                                         className="Input"
                                         placeholder={goalvalue}
                                         value={goalTarget}
                                         onChange={(e) => setGoalTarget(e.target.value)}
                                     />
+                                    <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
+                                        <option disabled={true} value={unit}>
+                                            {unit}
+                                        </option>
+                                        {goalType === "CST" ? (
+                                            <>
+                                                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                                                <option key="SETS" value="SETS">SETS</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option key="LBS" value="LBS">WEIGHT (LBS)</option>
+                                                <option key="MPH" value="MPH">MPH</option>
+                                            </>
+                                        )}
+                                    </select>
+                                    {goalType === "CST" && <input
+                                        className="Input"
+                                        placeholder={date ? date : "End Date"}
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                    />}
                                 </div>
-
                                 <Dialog.Close asChild>
                                     <button onClick={handleCancelEdit}>Cancel</button>
                                 </Dialog.Close>

@@ -160,6 +160,11 @@ const GoalsPage = () => {
                                 description={goal.description}
                                 savedprogress={goal.progress}
                                 goalvalue={goal.exercise.amount.value}
+                                name={goal.exercise.name}
+                                type={goal.type}
+                                unit={goal.exercise.amount.unit}
+                                date={goal.endsAt}
+                                urlType={'Personal'}
                             />
                         ))
                     }
@@ -176,6 +181,11 @@ const GoalsPage = () => {
                                 description={goal.description}
                                 savedprogress={goal.progress}
                                 goalvalue={goal.exercise.amount.value}
+                                name={goal.exercise.name}
+                                type={goal.type}
+                                unit={goal.exercise.amount.unit}
+                                date={goal.endsAt}
+                                urlType={'Personal'}
                             />
                         ))
                     }
