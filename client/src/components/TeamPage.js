@@ -34,10 +34,10 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
         </select>
       </div>
       <div>
+        <h2 class="teams-sections">Updates</h2>
         <Dialog.Root class="pals-div">
-          <h2 class="teams-sections">Updates</h2>
           <Dialog.Trigger asChild>
-            <button className="" class="">
+            <button className="" class="teams-clicks">
               <img class="add-pal-img" src="https://drive.google.com/thumbnail?id=1EqwyGYxBns9dZixaFfKm549nYskLIMWw" alt="pin a workout" />
             </button>
           </Dialog.Trigger>
@@ -51,10 +51,11 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
           </Dialog.Portal>
         </Dialog.Root>
         <Carousel items={updates[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
+        
+        <h2 class="teams-sections">Team Goals</h2>
         <Dialog.Root class="pals-div">
-          <h2 class="teams-sections">Team Goals</h2>
           <Dialog.Trigger asChild>
-            <button className="" class="">
+            <button className="" class="teams-clicks">
               <img class="add-pal-img" src="https://drive.google.com/thumbnail?id=1EqwyGYxBns9dZixaFfKm549nYskLIMWw" alt="pin a workout" />
             </button>
           </Dialog.Trigger>
@@ -68,7 +69,8 @@ const TeamPage = ({ teams, updates, achievements, posts }) => {
           </Dialog.Portal>
         </Dialog.Root>
         <Carousel items={achievements[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
-        <h2 class="teams-sections">Member Posts</h2>
+        
+        <h2 class="teams-sections" style={{marginBottom:'40px'}}>Member Posts</h2>
         <Carousel items={posts[selectedTeam?.id] || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
 
       </div>
@@ -82,19 +84,20 @@ const TeamUpdateModal = () => {
 
   return (
     <div>
-      <div>
+      <div class="team-update-pop">
+        <input
+            className="Input"
+            placeholder="Update Title"
+            value={updateTitle}
+            style={{marginBottom: '6px'}}
+            onChange={(e) => setUpdateTitle(e.target.value)} />
         <input
           className="Input"
-          placeholder="Update Title"
-          value={updateTitle}
-          onChange={(e) => setUpdateTitle(e.target.value)} />
+          placeholder="Write an update here..."
+          value={updateBody}
+          onChange={(e) => setUpdateBody(e.target.value)}
+        />
       </div>
-      <textarea
-        className="Input"
-        placeholder="Write an update here..."
-        value={updateBody}
-        onChange={(e) => setUpdateBody(e.target.value)}
-      />
       <button className="Button green">Post Update</button>
     </div>
   )
