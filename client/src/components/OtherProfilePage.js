@@ -85,10 +85,13 @@ export default function OtherProfilePage() {
     }, [user])
     const transformAndSetWorkouts = (data) => {
         const transformedWorkouts = [];
-
-        for (let i = 0; i < data.workoutName.length; i++) {
+        if(!data || !data.templateName || !data.exercises){
+            console.log("no data in workouts")
+            return;
+        }
+        for (let i = 0; i < data.templateName.length; i++) {
             let workout = {
-                name: data.workoutName[i],
+                name: data.templateName[i],
                 exercise1: {
                     name: data.exercises[i].exerciseName[0],
                     sets: data.exercises[i].sets[0],
@@ -129,14 +132,13 @@ export default function OtherProfilePage() {
                     sets: data.exercises[i].sets[7],
                     reps: data.exercises[i].reps[7],
                 },
-                note: data.note[0]
+                note: i < data.note.length ? data.note[i] : ''
             }
             transformedWorkouts.push(workout);
         }
         // Update the state with the transformed workouts
         setWorkouts(transformedWorkouts);
-        console.log("workouts re")
-        console.log(transformedWorkouts);
+
     };
     return (
         <div id="profile-page">
@@ -172,14 +174,14 @@ export default function OtherProfilePage() {
                             <div class="pinned-workout">
                                 <p class="pinned-wo-name">{workout.name}</p>
                                 {workout && workout.exercise1 && workout.exercise1.name && workout.exercise1.name !== "" && <p>{workout.exercise1.name} SETS {workout.exercise1.sets} REPS {workout.exercise1.reps} </p>}
-                                {workout && workout.exercise2 && workout.exercise2.name && workout.exercise2.name !== "" && <p>{workout.exercise2.name} SETS {workout.exercise2.sets} REPS {workout.exercise2.reps} </p>}
-                                {workout && workout.exercise3 && workout.exercise3.name && workout.exercise3.name !== "" && <p>{workout.exercise3.name} SETS {workout.exercise3.sets} REPS {workout.exercise3.reps} </p>}
-                                {workout && workout.exercise4 && workout.exercise4.name && workout.exercise4.name !== "" && <p>{workout.exercise4.name} SETS {workout.exercise4.sets} REPS {workout.exercise4.reps} </p>}
-                                {workout && workout.exercise5 && workout.exercise5.name && workout.exercise5.name !== "" && <p>{workout.exercise5.name} SETS {workout.exercise5.sets} REPS {workout.exercise5.reps} </p>}
-                                {workout && workout.exercise6 && workout.exercise6.name && workout.exercise6.name !== "" && <p>{workout.exercise6.name} SETS {workout.exercise6.sets} REPS {workout.exercise6.reps} </p>}
-                                {workout && workout.exercise7 && workout.exercise7.name && workout.exercise7.name !== "" && <p>{workout.exercise7.name} SETS {workout.exercise7.sets} REPS {workout.exercise7.reps} </p>}
-                                {workout && workout.exercise8 && workout.exercise8.name && workout.exercise8.name !== "" && <p>{workout.exercise8.name} SETS {workout.exercise8.sets} REPS {workout.exercise8.reps} </p>}
-                                <p>Note: {workout.note}</p>
+                                    {workout && workout.exercise2 && workout.exercise2.name && workout.exercise2.name !== "" && <p>{workout.exercise2.name} SETS {workout.exercise2.sets} REPS {workout.exercise2.reps} </p>}    
+                                    {workout && workout.exercise3 && workout.exercise3.name && workout.exercise3.name !== "" && <p>{workout.exercise3.name} SETS {workout.exercise3.sets} REPS {workout.exercise3.reps} </p>}
+                                    {workout && workout.exercise4 && workout.exercise4.name && workout.exercise4.name !== "" && <p>{workout.exercise4.name} SETS {workout.exercise4.sets} REPS {workout.exercise4.reps} </p>}
+                                    {workout && workout.exercise5 && workout.exercise5.name && workout.exercise5.name !== "" && <p>{workout.exercise5.name} SETS {workout.exercise5.sets} REPS {workout.exercise5.reps} </p>}
+                                    {workout && workout.exercise6 && workout.exercise6.name && workout.exercise6.name !== "" && <p>{workout.exercise6.name} SETS {workout.exercise6.sets} REPS {workout.exercise6.reps} </p>}
+                                    {workout && workout.exercise7 && workout.exercise7.name && workout.exercise7.name !== "" && <p>{workout.exercise7.name} SETS {workout.exercise7.sets} REPS {workout.exercise7.reps} </p>}
+                                    {workout && workout.exercise8 && workout.exercise8.name && workout.exercise8.name !== "" && <p>{workout.exercise8.name} SETS {workout.exercise8.sets} REPS {workout.exercise8.reps} </p>}  
+                                   {workout && workout.note && workout.note !== "nullstring" && <p>Note: {workout.note}</p>}
                             </div>
                         )
                     })}

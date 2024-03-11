@@ -275,7 +275,7 @@ export default function ProfilePage() {
                                     {workout && workout.exercise6 && workout.exercise6.name && workout.exercise6.name !== "" && <p>{workout.exercise6.name} SETS {workout.exercise6.sets} REPS {workout.exercise6.reps} </p>}
                                     {workout && workout.exercise7 && workout.exercise7.name && workout.exercise7.name !== "" && <p>{workout.exercise7.name} SETS {workout.exercise7.sets} REPS {workout.exercise7.reps} </p>}
                                     {workout && workout.exercise8 && workout.exercise8.name && workout.exercise8.name !== "" && <p>{workout.exercise8.name} SETS {workout.exercise8.sets} REPS {workout.exercise8.reps} </p>}  
-                                   {workout && workout.note && <p>Note: {workout.note}</p>}
+                                   {workout && workout.note && workout.note !== "nullstring" && <p>Note: {workout.note}</p>}
                                 </div>
                             )
                         })}
