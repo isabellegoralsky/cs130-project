@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Progress from '@radix-ui/react-progress';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -6,7 +6,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import './Goal.css';
 
-const Goal = ({ title, description, savedprogress, goalvalue }) => {
+const Goal = ({ gid, title, description, savedprogress, goalvalue }) => {
     const [progress, setProgress] = React.useState(13);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -14,6 +14,9 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
     const [goalProgress, setGoalProgress] = useState(savedprogress);
     const [goalTarget, setGoalTarget] = useState(goalvalue);
     const [goalTitle, setGoalTitle] = useState(title);
+    const [user, setUser] = useState({});
+    const [goalID, setGoalID] = useState(gid);
+
     const handleDelete = (e) => {
         setIsDeleteDialogOpen(true);
     }
@@ -23,10 +26,55 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
         setIsDeleteDialogOpen(false);
     };
 
-    const handleConfirmDelete = () => {
-        //
-        console.log('Delete confirmed');
-        setIsDeleteDialogOpen(false);
+
+    useEffect(() => {
+        //fetch user
+        async function fetchUser() {
+            try {
+                const url = `http://localhost:3001/user`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                setUser(data);
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        fetchUser();
+
+    }, [])
+
+    const handleConfirmDelete = async (e) => {
+        e.preventDefault();
+        const userId = user._id;
+        if (userId) {
+            const registerUrl = `http://localhost:3001/goal/${goalID}`;
+            try {
+                const response = await fetch(registerUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setIsDeleteDialogOpen(false);
+                    window.location.reload();
+                } else {
+                    throw new Error(data || 'Failed to delete goal');
+                }
+            } catch (error) {
+                console.error('Delete Goal Error:', error);
+            }
+        }
     };
 
     const handleEdit = (e) => {
@@ -43,7 +91,7 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
         setIsEditDialogOpen(false);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         const progress = (savedprogress / goalvalue) * 100
         const timer = setTimeout(() => setProgress(progress), 500);
         return () => clearTimeout(timer);

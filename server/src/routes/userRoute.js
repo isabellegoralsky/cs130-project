@@ -68,7 +68,7 @@ router.post("/register", async (req, res) => {
             maxAge: maxAge
         });
         console.log("Successfully registered");
-        res.status(200).json({ "message": "Successfully registered" });
+        res.status(200).json('Successfully registered');
     } catch (err) {
         console.log("Failed to register");
         res.status(400).send(err);
@@ -89,7 +89,7 @@ router.post("/login", async (req, res) => {
                     maxAge: maxAge
                 });
                 console.log("Successfully logged in");
-                res.status(200).json({ message: "Successfully logged in" });
+                res.status(200).json('Successfully logged in');
             } catch (err) {
                 console.log("Failed to login");
                 res.status(400).json(err);

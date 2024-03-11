@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './LoginReg.css';
 
 const RegisterPage = () => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -38,15 +41,13 @@ const RegisterPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Register Success:', data.message);
-        //navigate('/profile');
-        // Handle successful login here (e.g., redirecting to another page)
+        console.log(data);
+        navigate('/profile');
       } else {
-        throw new Error(data.message || 'Failed to register');
+        throw new Error(data || 'Failed to register');
       }
     } catch (error) {
       console.error('Register Error:', error);
-      // Handle register error here (e.g., showing an error message)
     }
     console.log('Form Data:', formData);
   };
