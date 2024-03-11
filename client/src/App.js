@@ -27,7 +27,7 @@ function App() {
 
         </Routes>
       </div>
-      <Footer />
+      {location.pathname !== '/' && location.pathname !== '/register' && <Footer />}
     </div>
   )
 }
