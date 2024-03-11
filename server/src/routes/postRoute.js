@@ -7,6 +7,7 @@ const Post = require('../models/Post');
 const PostTeam = require('../models/PostTeam');
 const Goal = require('../models/Goal');
 const TeamGoal = require('../models/TeamGoal');
+const PersonalRecord = require('../models/PersonalRecord');
 
 router.post('/addpost', authenticateToken, async (req, res) => {
     const user = req.user;
@@ -20,10 +21,36 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 
     try {
         await post.save();
-        console.log('Successfully posted');
     } catch (err) {
         console.log('Failed to post');
         res.status(400).send(err);
+    }
+
+    //update pr 
+    const personalrecords = await PersonalRecord.find({userId:userId}).catch(err => {
+        console.error('Error:', err);
+    });
+    for (let i = 0; i < personalrecords.length; i++) {
+        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+            if(personalrecords[i].exerciseName === post.exercises.exerciseName[j]){
+                if(personalrecords[i].record<post.exercises.weight[j]){
+                    try{ 
+                            await PersonalRecord.findOneAndUpdate({
+                            _id: personalrecords[i]._id,
+                            exerciseName: personalrecords[i].exerciseName
+                        }, {
+                            record: post.exercises.weight[j]
+                        });
+                        console.log("Successfully updated pr");
+                    }  
+                    catch (err){
+                        console.log('Failed to update personal records');
+                        console.log(err);
+                        res.status(400).send('Failed to update personal records');
+                    }
+                }
+            }
+        }
     }
 
     // Update individual goals
@@ -93,7 +120,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
         }
     }
 
-    res.status(200).send('Successfully added post');
+    res.status(200).send('Successfully added post and updated');
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {
