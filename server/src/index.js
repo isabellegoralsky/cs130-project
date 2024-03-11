@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 const corsOptions = {
-    origin: ['http://localhost:8080', "http://CodeDe-Appli-FvDYBBpWqa6p-642374602.us-east-1.elb.amazonaws.com:8080", "*"], //  frontend origin
+    origin: true,
     credentials: true,
   };
   app.use(cors(corsOptions));
