@@ -12,7 +12,7 @@ export default function OtherProfilePage() {
     const [workouts, setWorkouts] = useState([]);
     const [user, setUser] = useState({});
     const [pals, setPals] = useState([]);
-    const [isNotPal, setIsNotPal] = useState(true);
+    const [isNotPal, setIsNotPal] = useState(false);
     const addPal = async () => {
         setIsNotPal(false);
         await fetch(`http://localhost:3001/user/addfriend/${userId}`, {
