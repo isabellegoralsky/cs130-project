@@ -143,7 +143,7 @@ const TeamPage = () => {
             <Dialog.Overlay className="DialogOverlay" >
               <Dialog.Content className="DialogContent" class="adding">
                 <Dialog.Title className="DialogTitle">Add a Team Goal</Dialog.Title>
-                <ConsistencyGoalModal />
+                <ConsistencyGoalModal teamId={selectedTeam?.id}/>
               </Dialog.Content>
             </Dialog.Overlay>
           </Dialog.Portal>
