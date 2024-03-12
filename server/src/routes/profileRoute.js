@@ -122,10 +122,12 @@ router.post('/deletetemplate', async (req, res) => {
         userId: userId
     });
     if (templateExists === null){
+        console.log("null")
         return res.status(400).send("Template does not exist.");
     }
     var index = templateExists.templateName.indexOf(req.body.workoutName);
     if(index===-1){
+        console.log("userId", userId)
         return res.status(400).send("Workout does not exist.");
     }
     var workoutName = templateExists.templateName;
