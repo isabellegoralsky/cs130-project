@@ -14,7 +14,10 @@ const GoalsPage = () => {
     const [goalType, setGoalType] = useState('');
     const [goalTarget, setGoalTarget] = useState('');
     const [goalUnit, setGoalUnit] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [endMonth, setEndMonth] = useState('');
+    const [endDay, setEndDay] = useState('');
+    const [endYear, setEndYear] = useState('');
+
     const [openAddGoal, setOpenAddGoal] = useState(false);
     const navigate = useNavigate(); // Initialize useNavigate hook
 
@@ -55,7 +58,7 @@ const GoalsPage = () => {
 
                 }
             },
-            endDate: new Date(endDate)
+            endDate: new Date(endYear, endMonth, endDay)
         };
         console.log(formdata);
         const registerUrl = 'http://localhost:3001/goal/';
@@ -79,7 +82,9 @@ const GoalsPage = () => {
                 setExerciseName('');
                 setGoalTarget('');
                 setGoalUnit('');
-                setEndDate('');
+                setEndDay('');
+                setEndMonth('');
+                setEndYear('');
                 setOpenAddGoal(false);
                 window.location.reload();
             } else {
@@ -164,7 +169,6 @@ const GoalsPage = () => {
                                 type={goal.type}
                                 unit={goal.exercise.amount.unit}
                                 date={goal.endsAt}
-                                urlType={'Personal'}
                             />
                         ))
                     }
@@ -185,7 +189,6 @@ const GoalsPage = () => {
                                 type={goal.type}
                                 unit={goal.exercise.amount.unit}
                                 date={goal.endsAt}
-                                urlType={'Personal'}
                             />
                         ))
                     }
@@ -207,68 +210,84 @@ const GoalsPage = () => {
                                     value={goalTitle}
                                     onChange={(e) => setGoalTitle(e.target.value)} />
                                 <input
-                                        className="Input goal-teams-in goal-in"
-                                        placeholder="Goal Description"
-                                        value={goalDesc}
-                                        onChange={(e) => setGoalDesc(e.target.value)}
-                                    />
+                                    className="Input goal-teams-in goal-in"
+                                    placeholder="Goal Description"
+                                    value={goalDesc}
+                                    onChange={(e) => setGoalDesc(e.target.value)}
+                                />
                                 <input
                                     className="Input goal-teams-in goal-in"
                                     placeholder="Goal Target"
                                     value={goalTarget}
                                     onChange={(e) => setGoalTarget(e.target.value)}
                                 />
-                            <div id="selections-goal" style={{marginRight: '55px'}}>
-                                <select
-                                    className="Select"
-                                    value={exerciseName}
-                                    onChange={e => setExerciseName(e.target.value)}
-                                >
-                                    <option disabled={true} value="">
-                                        SELECT EXERCISE
-                                    </option>
-                                    {exerciseList.map((ex) => (
-                                        <option key={ex} value={ex}>
-                                            {ex}
+                                <div id="selections-goal" style={{ marginRight: '55px' }}>
+                                    <select
+                                        className="Select"
+                                        value={exerciseName}
+                                        onChange={e => setExerciseName(e.target.value)}
+                                    >
+                                        <option disabled={true} value="">
+                                            SELECT EXERCISE
                                         </option>
-                                    ))}
-                                </select>
-                                <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
+                                        {exerciseList.map((ex) => (
+                                            <option key={ex} value={ex}>
+                                                {ex}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
                                         <option disabled={true} value="">
                                             SELECT TYPE
                                         </option>
                                         <option key="CARDIO" value="CST">CONSISTENCY</option>
                                         <option key="STRENGTH" value="PR">PR</option>
                                     </select>
+                                    <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
+                                        <option disabled={true} value="">
+                                            SELECT UNITS
+                                        </option>
+                                        {goalType === "CST" ? (
+                                            <>
+                                                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                                                <option key="SETS" value="SETS">SETS</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option key="LBS" value="LBS">WEIGHT (LBS)</option>
+                                                <option key="MPH" value="MPH">MPH</option>
+                                            </>
+                                        )}
+                                    </select>
                                 </div>
-                                <input
-                                    className="Input"
-                                    placeholder="Goal Target"
-                                    value={goalTarget}
-                                    onChange={(e) => setGoalTarget(e.target.value)}
-                                />
-                                <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
-                                    <option disabled={true} value="">
-                                        SELECT UNITS
-                                    </option>
-                                    {goalType === "CST" ? (
+                                <p>Complete By:</p>
+                                <div id="selections-goal" >
+                                    {goalType === "CST" && (
                                         <>
-                                            <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
-                                            <option key="SETS" value="SETS">SETS</option>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <option key="LBS" value="LBS">WEIGHT (LBS)</option>
-                                            <option key="MPH" value="MPH">MPH</option>
+                                            <input
+                                                className="Input"
+                                                placeholder="MM"
+                                                value={endMonth}
+                                                onChange={(e) => setEndMonth(e.target.value)}
+                                                style={{ width: '25px' }}
+                                            />
+                                            <input
+                                                className="Input"
+                                                placeholder="DD"
+                                                value={endDay}
+                                                onChange={(e) => setEndDay(e.target.value)}
+                                                style={{ width: '25px' }}
+                                            />
+                                            <input
+                                                className="Input"
+                                                placeholder="YYYY"
+                                                value={endYear}
+                                                onChange={(e) => setEndYear(e.target.value)}
+                                                style={{ width: '25px' }}
+                                            />
                                         </>
                                     )}
-                                </select>
-                                {goalType === "CST" && <input
-                                    className="Input"
-                                    placeholder="End Date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />}
+                                </div>
                             </div>
                             <button className="Button green" onClick={handleAddGoal}>Add Goal</button>
                         </Dialog.Content>

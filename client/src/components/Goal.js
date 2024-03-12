@@ -6,7 +6,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import './Goal.css';
 
-const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, unit, date, urlType }) => {
+const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name, type, unit, date }) => {
     const [progress, setProgress] = React.useState(13);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -77,14 +77,21 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
         e.preventDefault();
         const userId = user._id;
         if (userId) {
-            const registerUrl = `http://localhost:3001/goal/${goalID}`;
+            let goalUrl = ``;
+            if (teamid) {
+                goalUrl = `http://localhost:3001/team-goal/${gid}`;
+            }
+            else {
+                goalUrl = `http://localhost:3001/goal/${gid}`;
+            }
             try {
-                const response = await fetch(registerUrl, {
+                const response = await fetch(goalUrl, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     credentials: 'include',
+                    body: JSON.stringify({ teamId: teamid }),
                 });
 
                 const data = await response.json();
@@ -105,23 +112,30 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
         e.preventDefault();
         const userId = user._id;
         if (userId) {
-            const updateUrl = `http://localhost:3001/goal/${goalID}`;
+            let goalUrl = ``;
+            if (teamid) {
+                goalUrl = `http://localhost:3001/team-goal/${gid}`;
+            }
+            else {
+                goalUrl = `http://localhost:3001/goal/${gid}`;
+            }
             const updatedData = {
                 title: goalTitle,
                 description: goalDesc,
-                type: goalType,                 // PR/CST
+                type: goalType,                
                 exercise: {
                     name: exerciseName,
                     amount: {
-                        unit: goalUnit,     // LB/MPH for PR. SET/MIN for CST
+                        unit: goalUnit,     
                         value: goalTarget,
                     }
                 },
                 progress: goalProgress,
                 endsAt: endDate,
+                teamId: teamid,
             }
             try {
-                const response = await fetch(updateUrl, {
+                const response = await fetch(goalUrl, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -196,7 +210,7 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Are you absolutely sure?</Dialog.Title>
                                 <Dialog.Description class="descript-thing">This action cannot be undone. This will permanently delete your goal.</Dialog.Description>
-                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Dialog.Close asChild>
                                         <button onClick={handleCancelDelete} class="edit-goal-cancel">Cancel</button>
                                     </Dialog.Close>
@@ -214,12 +228,12 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                                 <Dialog.Title className="DialogTitle">Edit Goal</Dialog.Title>
                                 <Dialog.Description>If you missed a workout post, update your progress here. Or, change your goal. / target value.</Dialog.Description>
                                 <div>
-                                <p>Goal Title</p>
+                                    <p>Goal Title</p>
                                     <input
-                                       className="Input"
-                                       placeholder={title}
-                                       value={goalTitle}
-                                       onChange={(e) => setGoalTitle(e.target.value)} />
+                                        className="Input"
+                                        placeholder={title}
+                                        value={goalTitle}
+                                        onChange={(e) => setGoalTitle(e.target.value)} />
                                     <select
                                         className="Select"
                                         value={exerciseName}
@@ -235,7 +249,7 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                                         ))}
                                     </select>
                                     <div style={{ display: 'flex', }}>
-                                    <p>Goal Description</p>
+                                        <p>Goal Description</p>
                                         <textarea
                                             className="Input"
                                             placeholder={description}
@@ -255,15 +269,15 @@ const Goal = ({ gid, title, description, savedprogress, goalvalue, name, type, u
                                         className="Input"
                                         placeholder={savedprogress}
                                         value={goalProgress}
-                                        style={{width: '97%'}}
+                                        style={{ width: '97%' }}
                                         onChange={(e) => setGoalProgress(e.target.value)}
                                     />
-                                     <p>Goal Target</p>
+                                    <p>Goal Target</p>
                                     <input
                                         className="Input"
                                         placeholder={goalvalue}
                                         value={goalTarget}
-                                        style={{width: '97%'}}
+                                        style={{ width: '97%' }}
                                         onChange={(e) => setGoalTarget(e.target.value)}
                                     />
                                     <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
