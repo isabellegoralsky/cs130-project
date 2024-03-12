@@ -338,7 +338,7 @@ export default function ProfilePage() {
                         {workouts.map(workout => {
                             return (
                                 <div class="pinned-workout">
-                                    <button onClick={deleteWorkout}> delete </button>
+                                    {/* <button onClick={deleteWorkout}> delete </button> */}
 
                                     <p class="pinned-wo-name">{workout.name}</p>
                                     {workout && workout.exercise1 && workout.exercise1.name && workout.exercise1.name !== "" && <p>{workout.exercise1.name} SETS {workout.exercise1.sets} REPS {workout.exercise1.reps} </p>}
