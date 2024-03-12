@@ -3,7 +3,6 @@ import Goal from './Goal';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import './GoalsPage.css'
-import { DialogClose } from 'radix-ui';
 
 const GoalsPage = () => {
     const [user, setUser] = useState({});
