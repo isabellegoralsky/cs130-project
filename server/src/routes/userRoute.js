@@ -117,7 +117,7 @@ router.post("/logout", async (req, res) => {
     }
 });
 
-router.post("/addfriend/:uid", async (req, res) => {
+router.post("/addfriend/:email", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -126,7 +126,7 @@ router.post("/addfriend/:uid", async (req, res) => {
     });
     if (!user) return res.status(400).json('User is not found.');
     const friend = await User.findOne({
-        _id: req.params.uid
+        email: req.params.email
     });
     if (!friend) return res.status(400).json('Friend is not found.');
     User.findOneAndUpdate({
