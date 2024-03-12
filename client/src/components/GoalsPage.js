@@ -107,10 +107,10 @@ const GoalsPage = () => {
                     }
                 </div>
             </div>
-            <div>
+            <div style={{textAlign: 'center'}}>
                 <Dialog.Root>
                     <Dialog.Trigger asChild>
-                        <span classname="ClickableText">add another goal?</span>
+                        <span classname="ClickableText" id="another-goal">add another goal?</span>
                     </Dialog.Trigger>
                     <Dialog.Portal>
                         <Dialog.Overlay className="DialogOverlay" >
@@ -272,28 +272,33 @@ const GoalModal = ({ u }) => {
                 <div id="selections-goal" >
                     {goalType === "CST" && (
                         <>
+                        <div class="cst-goal-date">
                             <p>Complete By:</p>
-                            <input
-                                className="Input"
-                                placeholder="MM"
-                                value={endMonth}
-                                onChange={(e) => setEndMonth(e.target.value)}
-                                style={{ width: '25px' }}
-                            />
-                            <input
-                                className="Input"
-                                placeholder="DD"
-                                value={endDay}
-                                onChange={(e) => setEndDay(e.target.value)}
-                                style={{ width: '25px' }}
-                            />
-                            <input
-                                className="Input"
-                                placeholder="YYYY"
-                                value={endYear}
-                                onChange={(e) => setEndYear(e.target.value)}
-                                style={{ width: '25px' }}
-                            />
+                            <div>
+                                <input
+                                    className="Input dateSS"
+                                    placeholder="MM"
+                                    value={endMonth}
+                                    onChange={(e) => setEndMonth(e.target.value)}
+                                    style={{ width: '25px' }}
+                                />
+                                <input
+                                    className="Input dateSS"
+                                    placeholder="DD"
+                                    value={endDay}
+                                    onChange={(e) => setEndDay(e.target.value)}
+                                    style={{ width: '25px' }}
+                                />
+                                <input
+                                    className="Input dateSS"
+                                    placeholder="YYYY"
+                                    value={endYear}
+                                    onChange={(e) => setEndYear(e.target.value)}
+                                    style={{ width: '40px' }}
+                                />
+                            </div>
+                            
+                        </div>
                         </>
                     )}
                 </div>
