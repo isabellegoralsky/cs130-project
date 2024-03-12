@@ -32,6 +32,7 @@ export default function ProfilePage() {
     const [personalRecords, setPersonalRecords] = useState([]);
     const [currPalName, setCurrPalName] = useState("");
     const [imageSrc, setImageSrc] = useState("");
+    const [avatarFile, setAvatarFile] = useState(null);
     const [workouts, setWorkouts] = useState([{
         name: "Test Workout",
         exercise1: {
@@ -95,38 +96,38 @@ export default function ProfilePage() {
 
     useEffect(() => {
         async function fetchPersonalRecords() {
-          const userId = user._id;
-          if (userId) {
-            const url = `http://localhost:3001/personalRecord`; 
-      
-            try {
-              const response = await fetch(url, {
-                method: 'GET', 
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                credentials: 'include', 
-              });
-      
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-      
-              const data = await response.json();
-              console.log("pr");
-              console.log(data);
-              setPersonalRecords(data);
-            } catch (error) {
-              console.error('Error:', error);
-            }
-          }
-        }
-      
-        fetchPersonalRecords();
-      }, [user]); 
+            const userId = user._id;
+            if (userId) {
+                const url = `http://localhost:3001/personalRecord`;
 
-      useEffect(() => {
-        if(user._id === undefined){
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'include',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log("pr");
+                    console.log(data);
+                    setPersonalRecords(data);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        fetchPersonalRecords();
+    }, [user]);
+
+    useEffect(() => {
+        if (user._id === undefined) {
             return;
         }
         const url = `http://localhost:3001/profile/${user._id}/profilepage`;
@@ -154,12 +155,12 @@ export default function ProfilePage() {
                 console.error('Error:', error);
             });
     }, [user])
-      
+
 
 
     const transformAndSetWorkouts = (data) => {
         const transformedWorkouts = [];
-        if(!data || !data.templateName || !data.exercises){
+        if (!data || !data.templateName || !data.exercises) {
             console.log("no data in workouts")
             return;
         }
@@ -215,25 +216,96 @@ export default function ProfilePage() {
 
     };
 
-    const addPal = () => {
-        console.log("friending " + currPalName)
+    const deleteWorkout = async (e) => {
+        const workoutName = e.target.value;
+        const data = {
+            workoutName: workoutName,
+        };
 
-        //send currPalName to backend
-        setPals([...pals, currPalName])
-    }
+        const url = `http://localhost:3001/profile/deletetemplate`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(data),
+            });
+            const updatedWorkouts = workouts.filter(workout => workout.name !== workoutName);
+            setWorkouts(updatedWorkouts);
+        }
+        catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleAvatarChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImageSrc(reader.result);
+            };
+            reader.readAsDataURL(file);
+            setAvatarFile(file); // Update the state with the selected file
+            // You can also upload the file to a server here or in a separate function
+            uploadAvatar();
+        }
+    };
+
+    const uploadAvatar = async () => {
+        if (!avatarFile) return;
+
+        const url = `http://localhost:3001/user/profile-picture`;
+        const formData = new FormData();
+        formData.append('image', avatarFile);
+
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log("Avatar uploaded successfully.");
+            } else {
+                console.error("Failed to upload avatar.");
+            }
+        } catch (error) {
+            console.error("Error uploading avatar:", error);
+        }
+    };
 
     return (
         <div id="profile-page">
             <Avatar.Root className="AvatarRoot">
                 <Avatar.Image
                     className="AvatarImage"
-                    src = {imageSrc ? imageSrc : "https://drive.google.com/thumbnail?id=1SQQgzP3d-hCNEA7p9nH4xhb9OO1TCC0G"}
+                    src={imageSrc ? imageSrc : "https://drive.google.com/thumbnail?id=1SQQgzP3d-hCNEA7p9nH4xhb9OO1TCC0G"}
                     alt="Avatar Image"
                 />
                 <Avatar.Fallback className="AvatarFallback" delayMs={600}>
                     Avatar Image Loading...
                 </Avatar.Fallback>
+                <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                style={{ display: 'none' }}
+                id="avatarUpload"
+            />
+            <button
+                onClick={() => document.getElementById('avatarUpload').click()}
+                className="Button violet"
+                style={{ marginTop: '10px' }}
+            >
+                +
+            </button>
             </Avatar.Root>
+            
             <h1 id="profile-name">{user.firstName + " " + user.lastName}</h1>
             <Tabs.Root className="TabsRoot" defaultValue="tab1">
                 <Tabs.List className="TabsList" aria-label="Profile Tabs">
@@ -266,16 +338,18 @@ export default function ProfilePage() {
                         {workouts.map(workout => {
                             return (
                                 <div class="pinned-workout">
+                                    {/* <button onClick={deleteWorkout}> delete </button> */}
+
                                     <p class="pinned-wo-name">{workout.name}</p>
                                     {workout && workout.exercise1 && workout.exercise1.name && workout.exercise1.name !== "" && <p>{workout.exercise1.name} SETS {workout.exercise1.sets} REPS {workout.exercise1.reps} </p>}
-                                    {workout && workout.exercise2 && workout.exercise2.name && workout.exercise2.name !== "" && <p>{workout.exercise2.name} SETS {workout.exercise2.sets} REPS {workout.exercise2.reps} </p>}    
+                                    {workout && workout.exercise2 && workout.exercise2.name && workout.exercise2.name !== "" && <p>{workout.exercise2.name} SETS {workout.exercise2.sets} REPS {workout.exercise2.reps} </p>}
                                     {workout && workout.exercise3 && workout.exercise3.name && workout.exercise3.name !== "" && <p>{workout.exercise3.name} SETS {workout.exercise3.sets} REPS {workout.exercise3.reps} </p>}
                                     {workout && workout.exercise4 && workout.exercise4.name && workout.exercise4.name !== "" && <p>{workout.exercise4.name} SETS {workout.exercise4.sets} REPS {workout.exercise4.reps} </p>}
                                     {workout && workout.exercise5 && workout.exercise5.name && workout.exercise5.name !== "" && <p>{workout.exercise5.name} SETS {workout.exercise5.sets} REPS {workout.exercise5.reps} </p>}
                                     {workout && workout.exercise6 && workout.exercise6.name && workout.exercise6.name !== "" && <p>{workout.exercise6.name} SETS {workout.exercise6.sets} REPS {workout.exercise6.reps} </p>}
                                     {workout && workout.exercise7 && workout.exercise7.name && workout.exercise7.name !== "" && <p>{workout.exercise7.name} SETS {workout.exercise7.sets} REPS {workout.exercise7.reps} </p>}
-                                    {workout && workout.exercise8 && workout.exercise8.name && workout.exercise8.name !== "" && <p>{workout.exercise8.name} SETS {workout.exercise8.sets} REPS {workout.exercise8.reps} </p>}  
-                                   {workout && workout.note && workout.note !== "nullstring" && <p>Note: {workout.note}</p>}
+                                    {workout && workout.exercise8 && workout.exercise8.name && workout.exercise8.name !== "" && <p>{workout.exercise8.name} SETS {workout.exercise8.sets} REPS {workout.exercise8.reps} </p>}
+                                    {workout && workout.note && workout.note !== "nullstring" && <p>Note: {workout.note}</p>}
                                 </div>
                             )
                         })}
@@ -319,11 +393,6 @@ export default function ProfilePage() {
                                         </fieldset>
 
 
-                                    </div>
-                                    <div style={{ display: 'flex', marginTop: 15, justifyContent: 'flex-end' }}>
-                                        <Dialog.Close asChild>
-                                            <button className="Button green" onClick={addPal}>Save</button>
-                                        </Dialog.Close>
                                     </div>
                                 </Dialog.Content>
                             </Dialog.Overlay>
@@ -411,28 +480,28 @@ const WorkoutModal = () => {
         const url = `http://localhost:3001/profile/addtemplate`;
 
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                
-            },
-            credentials: 'include', // to include the cookie in the request
-            body: JSON.stringify(data),
-        });
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
 
-        if (response.ok) {
-            console.log("Successfully added to template.");
-            const result = await response.json();
-            console.log(result); 
-        } else {
-            const errorResult = await response.text();
-            console.error("Failed to add to template:", errorResult);
+                },
+                credentials: 'include', // to include the cookie in the request
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                console.log("Successfully added to template.");
+                const result = await response.json();
+                console.log(result);
+            } else {
+                const errorResult = await response.text();
+                console.error("Failed to add to template:", errorResult);
+            }
+        } catch (error) {
+            console.error("Error sending data to the endpoint:", error);
         }
-    } catch (error) {
-        console.error("Error sending data to the endpoint:", error);
-    }
     };
 
     return (
