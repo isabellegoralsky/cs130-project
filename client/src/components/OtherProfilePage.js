@@ -187,7 +187,6 @@ export default function OtherProfilePage() {
                     })}
                 </Tabs.Content>
                 <Tabs.Content className="TabsContent" value="tab2">
-                    <p>Personal Records</p>
                     {user && user.personalRecords && user.personalRecords.length && user.personalRecords.map(record => {
                         return (
                             <div class="pinned-workout">

@@ -403,7 +403,6 @@ export default function ProfilePage() {
                    </Dialog.Root>
                </Tabs.Content>
                <Tabs.Content className="TabsContent" value="tab2">
-                   <p>Personal Records</p>
                    {personalRecords.map(record => {
                        return (
                            <div class="pinned-workout">
