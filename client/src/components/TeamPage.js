@@ -1,6 +1,7 @@
 // TeamPage.js
 import React, { useState, useEffect } from 'react';
 import Carousel from './Carousel';
+import ACarousel from './AchCarousel';
 import * as Dialog from '@radix-ui/react-dialog';
 import './Teams.css';
 import Goal from './Goal.js';
@@ -124,10 +125,14 @@ const TeamPage = () => {
         </Dialog.Root>
         <Carousel items={updates.length > 0 ? updates.map((update) => ({
           content: <>
-              <p>{update.title}</p>
-              <p>{update.name}</p>
+            <div class="an-update">
+              <div class="update-title">{update.title}</div>
+              <div class="update-name">{update.name}</div>
+              <div class="update-note">{update.note}</div>
+            </div>
             </>
           })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} /*title="Announcements"*/ />
+        <h2 class="teams-sections">achievements</h2>
         <Dialog.Root class="pals-div">
           <Dialog.Trigger asChild>
             <button className="" class="teams-clicks">
@@ -143,10 +148,10 @@ const TeamPage = () => {
             </Dialog.Overlay>
           </Dialog.Portal>
         </Dialog.Root>
-        <Carousel items={achievements.length > 0 ? achievements.map((achievement, index) => ({
+        <ACarousel items={achievements.length > 0 ? achievements.map((achievement, index) => ({
            content: <Goal key={index} title={achievement.title} description={achievement.description ||''} savedprogress={achievement.progress} goalvalue={100}></Goal>
           })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
-        <h2 class="teams-sections">Member Posts</h2>
+        <h2 class="teams-sections" style={{marginBottom:'38px'}}>Member Posts</h2>
         <Carousel items={posts.length > 0 ? posts.map((post) => ({
           content: <>
               <p>{post.createDate}</p>
@@ -187,7 +192,7 @@ const CreateTeamDialog = () => {
   }
   return <Dialog.Root>
     <Dialog.Trigger asChild>
-        <div id="create-team">
+        <div id="create-team" class="create-join" style={{marginTop: '40px'}}>
             <span classname="ClickableText">create a new team?</span>
         </div>
     </Dialog.Trigger>
@@ -248,7 +253,7 @@ const JoinTeamDialog = () => {
   
   return <Dialog.Root>
     <Dialog.Trigger asChild>
-        <div id="create-team">
+        <div id="create-team" class="create-join" style={{marginTop: '10px'}}>
             <span classname="ClickableText">join a team?</span>
         </div>
     </Dialog.Trigger>
@@ -327,12 +332,6 @@ const TeamUpdateModal = ({teamId}) => {
           onChange={(e) => setUpdateBody(e.target.value)}
         />
       </div>
-      <textarea
-        className="Input"
-        placeholder="Write an update here..."
-        value={updateBody}
-        onChange={(e) => setUpdateBody(e.target.value)}
-      />
       <Dialog.Close asChild>
       <button className="Button green" onClick={handleUpdate}>Post Update</button>
       </Dialog.Close>
