@@ -323,6 +323,7 @@ router.post("/leaveteam", async (req, res) => {
 });
 
 router.post("/profile-picture", authenticateToken, upload.single('image'), async (req, res) => {
+    console.log(req.file)
     const picture = new Picture({
         filename: req.file.originalname,
         contentType: req.file.mimetype,
