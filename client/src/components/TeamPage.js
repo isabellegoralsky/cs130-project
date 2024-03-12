@@ -71,7 +71,7 @@ const TeamPage = () => {
         }
         setUser(data);
 
-        response = await fetch(`http://localhost:3001/user/${data._id}/teamname`, {
+        response = await fetch(`http://localhost:3001/user/${data._id}/teams`, {
           credentials: 'include',
         });
 
