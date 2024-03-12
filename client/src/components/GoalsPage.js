@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './GoalsPage.css'
+import { DialogClose } from 'radix-ui';
 
 const GoalsPage = () => {
     const [user, setUser] = useState({});
@@ -260,31 +261,36 @@ const GoalsPage = () => {
                                         )}
                                     </select>
                                 </div>
-                                <p>Complete By:</p>
+                                
                                 <div id="selections-goal" >
                                     {goalType === "CST" && (
                                         <>
-                                            <input
-                                                className="Input"
-                                                placeholder="MM"
-                                                value={endMonth}
-                                                onChange={(e) => setEndMonth(e.target.value)}
-                                                style={{ width: '25px' }}
-                                            />
-                                            <input
-                                                className="Input"
-                                                placeholder="DD"
-                                                value={endDay}
-                                                onChange={(e) => setEndDay(e.target.value)}
-                                                style={{ width: '25px' }}
-                                            />
-                                            <input
-                                                className="Input"
-                                                placeholder="YYYY"
-                                                value={endYear}
-                                                onChange={(e) => setEndYear(e.target.value)}
-                                                style={{ width: '25px' }}
-                                            />
+                                        <div class="cst-goal-date">
+                                            <p>Complete By:</p>
+                                            <div class="date-stuff">
+                                                <input
+                                                    className="Input dateSS"
+                                                    placeholder="MM"
+                                                    value={endMonth}
+                                                    onChange={(e) => setEndMonth(e.target.value)}
+                                                    style={{ width: '25px' }}
+                                                />
+                                                <input
+                                                    className="Input dateSS"
+                                                    placeholder="DD"
+                                                    value={endDay}
+                                                    onChange={(e) => setEndDay(e.target.value)}
+                                                    style={{ width: '25px' }}
+                                                />
+                                                <input
+                                                    className="Input dateSS"
+                                                    placeholder="YYYY"
+                                                    value={endYear}
+                                                    onChange={(e) => setEndYear(e.target.value)}
+                                                    style={{ width: '40px' }}
+                                                />
+                                            </div>
+                                        </div>
                                         </>
                                     )}
                                 </div>

@@ -132,7 +132,7 @@ const TeamPage = () => {
             </div>
             </>
           })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} /*title="Announcements"*/ />
-        <h2 class="teams-sections">achievements</h2>
+        <h2 class="teams-sections">Team Goals</h2>
         <Dialog.Root class="pals-div">
           <Dialog.Trigger asChild>
             <button className="" class="teams-clicks">
@@ -148,8 +148,7 @@ const TeamPage = () => {
             </Dialog.Overlay>
           </Dialog.Portal>
         </Dialog.Root>
-        <h2 class="teams-sections">Team Goals</h2>
-        <Carousel items={achievements.length > 0 ? achievements.map((achievement, index) => ({
+        <ACarousel items={achievements.length > 0 ? achievements.map((achievement, index) => ({
           content: <Goal key={index} title={achievement.title}
             description={achievement.description || ''}
             savedprogress={achievement.progress}
@@ -219,19 +218,17 @@ const CreateTeamDialog = () => {
           </label>
           <input
             className="name"
+            class="Input"
             id="name"
             onChange={(e) => { setTeamName(e.target.value); }} />
         </fieldset>
 
         <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
           <Dialog.Close asChild>
-            <button onClick={handleCreateTeam}>Create Team</button>
+            <button onClick={handleCreateTeam} class="Button green">Create Team</button>
           </Dialog.Close>
         </div>
         <Dialog.Close asChild>
-          <button className="IconButton" aria-label="Close">
-            {/* <Cross2Icon /> */}
-          </button>
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>
@@ -281,17 +278,16 @@ const JoinTeamDialog = () => {
           <input
             className="teamId"
             id="teamId"
+            class="Input"
             onChange={(e) => { setTeamId(e.target.value); }} />
         </fieldset>
 
         <div style={{ display: 'flex', marginTop: 25, justifyContent: 'flex-end' }}>
           <Dialog.Close asChild>
-            <button onClick={handleJoinTeam}>Join Team</button>
+            <button onClick={handleJoinTeam} class="Button green">Join Team</button>
           </Dialog.Close>
         </div>
         <Dialog.Close asChild>
-          <button className="IconButton" aria-label="Close">
-          </button>
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>
