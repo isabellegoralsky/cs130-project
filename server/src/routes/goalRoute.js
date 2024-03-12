@@ -18,7 +18,7 @@ router.post('/', authenticateToken, async (req, res) => {
     try {
         await goal.save();
         console.log('Successfully created Goal');
-        res.status(200).send('Successfully created Goal')
+        res.status(200).json('Successfully created Goal')
     } catch (error) {
         console.log('Failed to create Goal');
         console.log(error);
@@ -61,7 +61,7 @@ router.put('/:gid', authenticateToken, async (req, res) => {
     try {
         await Goal.updateOne(filter, update);
         console.log('Successfully updated Goal');
-        res.status(200).send('Successfully updated Goal');
+        res.status(200).json('Successfully updated Goal');
     } catch (error) {
         console.log('Failed to update Goal');
         console.log(error);
@@ -80,7 +80,7 @@ router.delete('/:gid', authenticateToken, async (req, res) => {
     try {
         await Goal.deleteOne(filter);
         console.log('Successfully deleted Goal');
-        res.status(200).send('Successfully deleted Goal');
+        res.status(200).json('Successfully deleted Goal');
     } catch (error) {
         console.log('Failed to delete Goal');
         console.log(error);

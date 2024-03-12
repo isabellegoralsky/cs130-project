@@ -43,7 +43,7 @@ const LoginPage = () => {
         navigate('/profile');
         // Handle successful login here (e.g., redirecting to another page)
       } else {
-        throw new Error(data.message || 'Failed to login');
+        throw new Error(data || 'Failed to login');
       }
     } catch (error) {
       console.error('Login Error:', error);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Progress from '@radix-ui/react-progress';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -6,7 +6,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import './Goal.css';
 
-const Goal = ({ title, description, savedprogress, goalvalue }) => {
+const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name, type, unit, date }) => {
     const [progress, setProgress] = React.useState(13);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -14,6 +14,33 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
     const [goalProgress, setGoalProgress] = useState(savedprogress);
     const [goalTarget, setGoalTarget] = useState(goalvalue);
     const [goalTitle, setGoalTitle] = useState(title);
+    const [goalType, setGoalType] = useState(type);
+    const [endDate, setEndDate] = useState(date);
+    const [exerciseName, setExerciseName] = useState(name);
+    const [goalUnit, setGoalUnit] = useState(unit);
+
+    const [user, setUser] = useState({});
+    const [goalID, setGoalID] = useState(gid);
+
+    const exerciseList = [
+        "Deadlift",
+        "Squat",
+        "Bench Press",
+        "Pull-Up",
+        "Push-Up",
+        "Bent-Over Row",
+        "Overhead Press",
+        "Lunges",
+        "Plank",
+        "Leg Press",
+        "Barbell Curl",
+        "Tricep Dip",
+        "Shoulder Press",
+        "Lat Pull-Down",
+        "Russian Twist",
+        "Burpees"
+    ];
+
     const handleDelete = (e) => {
         setIsDeleteDialogOpen(true);
     }
@@ -23,14 +50,114 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
         setIsDeleteDialogOpen(false);
     };
 
-    const handleConfirmDelete = () => {
-        //
-        console.log('Delete confirmed');
-        setIsDeleteDialogOpen(false);
+
+    useEffect(() => {
+        //fetch user
+        async function fetchUser() {
+            try {
+                const url = `http://localhost:3001/user`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                setUser(data);
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        fetchUser();
+
+    }, [])
+
+    const handleConfirmDelete = async (e) => {
+        e.preventDefault();
+        const userId = user._id;
+        if (userId) {
+            let goalUrl = ``;
+            if (teamid) {
+                goalUrl = `http://localhost:3001/team-goal/${gid}`;
+            }
+            else {
+                goalUrl = `http://localhost:3001/goal/${gid}`;
+            }
+            try {
+                const response = await fetch(goalUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ teamId: teamid }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setIsDeleteDialogOpen(false);
+                    window.location.reload();
+                } else {
+                    throw new Error(data || 'Failed to delete goal');
+                }
+            } catch (error) {
+                console.error('Delete Goal Error:', error);
+            }
+        }
     };
 
-    const handleEdit = (e) => {
-        setIsEditDialogOpen(true);
+    const handleConfirmEdit = async (e) => {
+        e.preventDefault();
+        const userId = user._id;
+        if (userId) {
+            let goalUrl = ``;
+            if (teamid) {
+                goalUrl = `http://localhost:3001/team-goal/${gid}`;
+            }
+            else {
+                goalUrl = `http://localhost:3001/goal/${gid}`;
+            }
+            const updatedData = {
+                title: goalTitle,
+                description: goalDesc,
+                type: goalType,                
+                exercise: {
+                    name: exerciseName,
+                    amount: {
+                        unit: goalUnit,     
+                        value: goalTarget,
+                    }
+                },
+                progress: goalProgress,
+                endsAt: endDate,
+                teamId: teamid,
+            }
+            try {
+                const response = await fetch(goalUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(updatedData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('Successfully updated goal:', data);
+                    setIsEditDialogOpen(false);
+
+                } else {
+                    throw new Error(data.message || 'Failed to update goal');
+                }
+            } catch (error) {
+                console.error('Update Goal Error:', error);
+                // Handle update error here (e.g., showing an error message)
+            }
+        }
     }
 
     const handleCancelEdit = () => {
@@ -38,12 +165,13 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
         setIsEditDialogOpen(false);
     };
 
-    const handleConfirmEdit = () => {
+    const handleEdit = () => {
         console.log('Edit confirmed');
-        setIsEditDialogOpen(false);
+
+        setIsEditDialogOpen(true);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         const progress = (savedprogress / goalvalue) * 100
         const timer = setTimeout(() => setProgress(progress), 500);
         return () => clearTimeout(timer);
@@ -82,7 +210,7 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Are you absolutely sure?</Dialog.Title>
                                 <Dialog.Description class="descript-thing">This action cannot be undone. This will permanently delete your goal.</Dialog.Description>
-                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Dialog.Close asChild>
                                         <button onClick={handleCancelDelete} class="edit-goal-cancel">Cancel</button>
                                     </Dialog.Close>
@@ -98,54 +226,87 @@ const Goal = ({ title, description, savedprogress, goalvalue }) => {
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Edit Goal</Dialog.Title>
-                                <Dialog.Description id="descript-go">If you missed a workout post, update your progress here. Or, change your description / target value.</Dialog.Description>
+                                <Dialog.Description>If you missed a workout post, update your progress here. Or, change your goal. / target value.</Dialog.Description>
                                 <div>
-                                    <p class="titles-goals">Goal Title</p>
+                                    <p>Goal Title</p>
                                     <input
                                         className="Input"
                                         placeholder={title}
                                         value={goalTitle}
-                                        onChange={(e) => setGoalTitle(e.target.value)}
-                                        style={{width: '97%'}}
-                                    />
-                                </div>
-                                <div>
-                                    <p class="titles-goals">Goal Description</p>
-                                    <input
-                                        className="Input"
-                                        placeholder={description}
-                                        value={goalDesc}
-                                        onChange={(e) => setGoalDesc(e.target.value)}
-                                        style={{width: '97%'}}
-                                    />
-                                </div>
-                                <div>
-                                    <p class="titles-goals">Goal Progress</p>
+                                        onChange={(e) => setGoalTitle(e.target.value)} />
+                                    <select
+                                        className="Select"
+                                        value={exerciseName}
+                                        onChange={e => setExerciseName(e.target.value)}
+                                    >
+                                        <option disabled={true} value={name}>
+                                            {name}
+                                        </option>
+                                        {exerciseList.map((ex) => (
+                                            <option key={ex} value={ex}>
+                                                {ex}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div style={{ display: 'flex', }}>
+                                        <p>Goal Description</p>
+                                        <textarea
+                                            className="Input"
+                                            placeholder={description}
+                                            value={goalDesc}
+                                            onChange={(e) => setGoalDesc(e.target.value)}
+                                        />
+                                        <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
+                                            <option disabled={true} value={type}>
+                                                {type}
+                                            </option>
+                                            <option key="CARDIO" value="CST">CONSISTENCY</option>
+                                            <option key="STRENGTH" value="PR">PR</option>
+                                        </select>
+                                    </div>
+                                    <p>Goal Progress</p>
                                     <input
                                         className="Input"
                                         placeholder={savedprogress}
                                         value={goalProgress}
-                                        style={{width: '97%'}}
+                                        style={{ width: '97%' }}
                                         onChange={(e) => setGoalProgress(e.target.value)}
                                     />
-                                </div>
-                                <div style={{marginBottom:'35px'}}>
-                                    <p class="titles-goals">Goal Target</p>
+                                    <p>Goal Target</p>
                                     <input
                                         className="Input"
                                         placeholder={goalvalue}
                                         value={goalTarget}
-                                        style={{width: '97%'}}
+                                        style={{ width: '97%' }}
                                         onChange={(e) => setGoalTarget(e.target.value)}
                                     />
+                                    <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
+                                        <option disabled={true} value={unit}>
+                                            {unit}
+                                        </option>
+                                        {goalType === "CST" ? (
+                                            <>
+                                                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                                                <option key="SETS" value="SETS">SETS</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option key="LBS" value="LBS">WEIGHT (LBS)</option>
+                                                <option key="MPH" value="MPH">MPH</option>
+                                            </>
+                                        )}
+                                    </select>
+                                    {goalType === "CST" && <input
+                                        className="Input"
+                                        placeholder={date ? date : "End Date"}
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                    />}
                                 </div>
-                                <div style={{display:'flex', justifyContent:'space-between'}}>
-                                    <Dialog.Close asChild>
-                                        <button class="edit-goal-cancel" onClick={handleCancelEdit}>Cancel</button>
-                                    </Dialog.Close>
-                                    <button onClick={handleConfirmEdit} class="Button green">Save Changes</button>
-                                </div>
-                                
+                                <Dialog.Close asChild>
+                                    <button onClick={handleCancelEdit}>Cancel</button>
+                                </Dialog.Close>
+                                <button onClick={handleConfirmEdit}>Save Changes</button>
                             </Dialog.Content>
                         </Dialog.Overlay>
                     </Dialog.Portal>
