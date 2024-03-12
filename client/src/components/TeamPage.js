@@ -119,7 +119,7 @@ const TeamPage = () => {
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="DialogOverlay" >
-              <Dialog.Content className="DialogContent" class="adding">
+              <Dialog.Content className="DialogContent" class="adding2">
                 <Dialog.Title className="DialogTitle">Add a Team Update</Dialog.Title>
                 <TeamUpdateModal teamId={selectedTeam?.id} />
               </Dialog.Content>
@@ -144,7 +144,7 @@ const TeamPage = () => {
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="DialogOverlay" >
-              <Dialog.Content className="DialogContent" class="adding">
+              <Dialog.Content className="DialogContent" class="adding2">
                 <Dialog.Title className="DialogTitle">Add a Team Goal</Dialog.Title>
                 <GoalModal u={user} />
               </Dialog.Content>

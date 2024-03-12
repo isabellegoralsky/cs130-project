@@ -158,3 +158,36 @@
 .Button.green:focus {
   box-shadow: 0 0 0 2px #FF5A13;
 }
+
+.editing-g{
+  font-family: "Nanum Gothic", sans-serif;
+}
+
+.edit-g-title{
+  font-family: "Nanum Gothic", sans-serif;
+  margin-top:0;
+  margin-bottom: 20px;
+}
+
+.cancel-edit-g{
+  border:0;
+  background-color: rgb(255, 90, 19, .1);
+  color:#FF5A13;
+  height:35px;
+  width: 35px;
+  border-radius: 50%;
+  margin-top: 30px;
+  font-size: 16px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.selectors-goal-stuf{
+  display: flex;
+  justify-content: space-around;
+}
+
+.adding{
+  max-width: 450px;
+  width: 460px;
+}

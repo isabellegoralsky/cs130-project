@@ -226,87 +226,101 @@ const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name,
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
                                 <Dialog.Title className="DialogTitle">Edit Goal</Dialog.Title>
-                                <Dialog.Description>If you missed a workout post, update your progress here. Or, change your goal. / target value.</Dialog.Description>
-                                <div>
-                                    <p>Goal Title</p>
+                                <Dialog.Description class="edit-g-title">If you missed a workout post, update your progress here. Or change your goal / target value.</Dialog.Description>
+                                <div class='editing-g'>
+                                    <p style={{marginBottom: '5px'}}>Goal Title</p>
                                     <input
                                         className="Input"
                                         placeholder={title}
                                         value={goalTitle}
+                                        style={{ width: '95%' }}
                                         onChange={(e) => setGoalTitle(e.target.value)} />
-                                    <select
-                                        className="Select"
-                                        value={exerciseName}
-                                        onChange={e => setExerciseName(e.target.value)}
-                                    >
-                                        <option disabled={true} value={name}>
-                                            {name}
-                                        </option>
-                                        {exerciseList.map((ex) => (
-                                            <option key={ex} value={ex}>
-                                                {ex}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <div style={{ display: 'flex', }}>
-                                        <p>Goal Description</p>
-                                        <textarea
+                                    <p style={{marginBottom: '5px'}}>Goal Description</p>
+                                    <input
                                             className="Input"
                                             placeholder={description}
                                             value={goalDesc}
+                                            style={{ width: '95%' }}
                                             onChange={(e) => setGoalDesc(e.target.value)}
-                                        />
-                                        <select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
-                                            <option disabled={true} value={type}>
-                                                {type}
-                                            </option>
-                                            <option key="CARDIO" value="CST">CONSISTENCY</option>
-                                            <option key="STRENGTH" value="PR">PR</option>
-                                        </select>
-                                    </div>
-                                    <p>Goal Progress</p>
+                                    />
+                                    <p style={{marginBottom: '5px'}}>Goal Progress</p>
                                     <input
                                         className="Input"
                                         placeholder={savedprogress}
                                         value={goalProgress}
-                                        style={{ width: '97%' }}
+                                        style={{ width: '95%' }}
                                         onChange={(e) => setGoalProgress(e.target.value)}
                                     />
-                                    <p>Goal Target</p>
+                                    <p style={{marginBottom: '5px'}}>Goal Target</p>
                                     <input
                                         className="Input"
                                         placeholder={goalvalue}
                                         value={goalTarget}
-                                        style={{ width: '97%' }}
+                                        style={{ width: '95%' }}
                                         onChange={(e) => setGoalTarget(e.target.value)}
                                     />
-                                    <select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
-                                        <option disabled={true} value={unit}>
-                                            {unit}
-                                        </option>
-                                        {goalType === "CST" ? (
-                                            <>
-                                                <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
-                                                <option key="SETS" value="SETS">SETS</option>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <option key="LBS" value="LBS">WEIGHT (LBS)</option>
-                                                <option key="MPH" value="MPH">MPH</option>
-                                            </>
-                                        )}
-                                    </select>
-                                    {goalType === "CST" && <input
-                                        className="Input"
-                                        placeholder={date ? date : "End Date"}
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e.target.value)}
-                                    />}
+                                    <div class="selectors-goal-stuff" style={{marginTop:'20px'}}>
+                                        <div>
+                                        <select className="Select" style={{marginRight:22}} defaultValue="" onChange={e => setGoalType(e.target.value)}>
+                                                    <option disabled={true} value={type}>
+                                                        {type}
+                                                    </option>
+                                                    <option key="CARDIO" value="CST">CONSISTENCY</option>
+                                                    <option key="STRENGTH" value="PR">PR</option>
+                                            </select>
+                                            <select
+                                                className="Select"
+                                                style={{marginRight:22}}
+                                                value={exerciseName}
+                                                onChange={e => setExerciseName(e.target.value)}
+                                            >
+                                                <option disabled={true} value={name}>
+                                                    {name}
+                                                </option>
+                                                {exerciseList.map((ex) => (
+                                                    <option key={ex} value={ex}>
+                                                        {ex}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select style={{marginRight:0}} className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
+                                                <option disabled={true} value={unit}>
+                                                    {unit}
+                                                </option>
+                                                {goalType === "CST" ? (
+                                                    <>
+                                                        <option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)</option>
+                                                        <option key="SETS" value="SETS">SETS</option>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <option key="LBS" value="LBS">WEIGHT (LBS)</option>
+                                                        <option key="MPH" value="MPH">MPH</option>
+                                                    </>
+                                                )}
+                                            </select>
+                                        </div>
+                                            
+                                        
+                                        {goalType === "CST" && (<>
+                                            <div class="cst-goal-date">
+                                                <p>Complete By:</p>
+                                                <div>
+                                                    <input
+                                                    className="Input dateSS"
+                                                    placeholder={date ? date : "End Date"}
+                                                    value={endDate}
+                                                    onChange={(e) => setEndDate(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </>)}
+                                    </div>
                                 </div>
                                 <Dialog.Close asChild>
-                                    <button onClick={handleCancelEdit}>Cancel</button>
+                                    <button onClick={handleCancelEdit} class="cancel-edit-g">x</button>
                                 </Dialog.Close>
-                                <button onClick={handleConfirmEdit}>Save Changes</button>
+                                <button onClick={handleConfirmEdit} class ="Button green" style={{float:'right', marginTop:'30px'}}>Save Changes</button>
                             </Dialog.Content>
                         </Dialog.Overlay>
                     </Dialog.Portal>
