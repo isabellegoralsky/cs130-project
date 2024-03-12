@@ -163,13 +163,6 @@ const TeamPage = () => {
             unit={achievement.exercise.amount.unit}
             date={achievement.endsAt}></Goal>
         })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
-        <h2 class="teams-sections">Member Posts</h2>
-        <Carousel items={posts.length > 0 ? posts.map((post) => ({
-          content: <>
-            <p>{post.createDate}</p>
-            <p>{post.description}</p>
-          </>
-        })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} />
         <CreateTeamDialog></CreateTeamDialog>
         <JoinTeamDialog></JoinTeamDialog>
       </div>
@@ -272,11 +265,11 @@ const JoinTeamDialog = () => {
       <Dialog.Content className="DialogContent">
         <Dialog.Title className="DialogTitle">Join a Team</Dialog.Title>
         <Dialog.Description className="DialogDescription">
-          Enter Team ID.
+          Enter Team Name.
         </Dialog.Description>
         <fieldset className="Fieldset">
           <label className="Label" htmlFor="name">
-            ID
+            Name
           </label>
           <input
             className="teamId"

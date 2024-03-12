@@ -363,7 +363,7 @@ export default function ProfilePage() {
                        Personal Records
                    </Tabs.Trigger>
                    <Tabs.Trigger className="TabsTrigger" value="tab3">
-                       followers
+                       following
                    </Tabs.Trigger>
                </Tabs.List>
                <Tabs.Content className="TabsContent" id="workout-div" value="tab1">
@@ -426,16 +426,17 @@ export default function ProfilePage() {
                                    <div style={{ gap: 10 }}>
                                        <Dialog.Title className="DialogTitle">Add a pal!</Dialog.Title>
                                        <fieldset className="Fieldset">
-                                           <label className="Label" htmlFor="name">
-                                               Name
-                                           </label>
-                                           <input
-                                               className="Input"
-                                               placeholder="enter pal id..."
-                                               defaultValue="enter pal id..."
-                                               value={currPalName}
-                                               onChange={(e) => setCurrPalName(e.target.value)}
-                                           />
+                                            <label className="Label" htmlFor="name">
+                                                Email
+                                            </label>
+                                            <input
+                                                className="Input"
+                                                placeholder="enter pal email..."
+                                                defaultValue="enter pal email..."
+                                                value={currPalName}
+                                                onChange={(e) => setCurrPalName(e.target.value)}
+                                            />
+                                           
                                            <button className="Button green" onClick={addPal}>Add Pal</button>
                                        </fieldset>
 
