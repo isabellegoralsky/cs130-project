@@ -217,7 +217,7 @@ router.post("/createteam", async (req, res) => {
     }
 });
 
-router.post("/jointeam/:tid", async (req, res) => {
+router.post("/jointeam/:teamname", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -226,7 +226,7 @@ router.post("/jointeam/:tid", async (req, res) => {
     });
     if (!user) return res.status(400).send('User is not found.');
     const teamExists = await Team.findOne({
-        _id: req.params.tid
+        teamName: req.params.teamname
     });
     if (teamExists === null) return res.status(400).send('Team not found');
     Team.findOneAndUpdate({
@@ -345,7 +345,12 @@ router.get('/:uid/teams', async (req, res) => {
     const user = await User.findOne({ _id: req.params.uid });
     if (!user) return res.status(400).send('User was not found.');
     var teams = user.teams;
-    return res.status(200).json(teams);
+    var teaminfo = [];
+    for(let i=0; i<teams.length; i++){
+        var team = await Team.findOne({_id: teams[i]});
+        teaminfo.push({name: team.teamName, id: team._id});
+    }
+    return res.status(200).json(teaminfo);
 });
 
 router.get('/:tid/teammembers', async (req, res) => {

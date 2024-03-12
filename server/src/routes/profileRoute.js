@@ -51,6 +51,10 @@ router.post('/addtemplate', async (req, res) => {
             return res.status(400).send("Already have this template.");
         }
     }
+    var note = req.body.note;
+    if(note===undefined){
+        note="nullstring";
+    }
     Template.findOneAndUpdate({
         userId: userId
     }, {
