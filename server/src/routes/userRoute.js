@@ -340,11 +340,16 @@ router.post("/profile-picture", authenticateToken, upload.single('image'), async
     }
 });
 
-router.get('/:uid/teams', async (req, res) => {
+router.get('/:uid/teamname', async (req, res) => {
     const user = await User.findOne({ _id: req.params.uid });
     if (!user) return res.status(400).send('User was not found.');
     var teams = user.teams;
-    return res.status(200).json(teams);
+    var teamnames = [];
+    for(let i=0; i<teams.length; i++){
+        const found = await Team.findOne({_id: teams[i]});
+        teamnames.push(found.teamName);
+    }
+    return res.status(200).json(teamnames);
 });
 
 router.get('/:tid/teammembers', async (req, res) => {

@@ -21,7 +21,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 
     try {
         await post.save();
-        res.status(200).json('Successfully posted');
+        console.log("successfully posted");
     } catch (err) {
         console.log('Failed to post');
         res.status(400).json(err);
@@ -31,6 +31,22 @@ router.post('/addpost', authenticateToken, async (req, res) => {
     const personalrecords = await PersonalRecord.find({userId:user._id}).catch(err => {
         console.error('Error:', err);
     });
+    var names = [];
+    for(let i=0; i<personalrecords.length; i++){
+        names.push(personalrecords[i].exerciseName);
+    }
+    for(let i=0; i<post.exercises.exerciseName.length; i++){
+        if(names.includes(post.exercises.exerciseName[i])===false){
+            var newpost = new PersonalRecord({
+                exerciseName: post.exercises.exerciseName[i],
+                exerciseType: "weight",
+                record: post.exercises.weight[i],
+                userId: user._id
+            });
+            await newpost.save();
+            console.log('Successful new pr');
+        }
+    }
     for (let i = 0; i < personalrecords.length; i++) {
         for (let j = 0; j < post.exercises.exerciseName.length; j++) {
             if(personalrecords[i].exerciseName === post.exercises.exerciseName[j]){
@@ -120,7 +136,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 
         }
     }
-
+    res.status(200).json('Post completed');
 });
 
 router.post('/addteampost/:teamid', async (req, res) => {
