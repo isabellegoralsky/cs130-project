@@ -250,33 +250,33 @@ export default function ProfilePage() {
             reader.readAsDataURL(file);
             setAvatarFile(file); // Update the state with the selected file
             // You can also upload the file to a server here or in a separate function
-            uploadAvatar();
+            console.log("here")
+            const url = `http://localhost:3001/user/profile-picture`;
+            const formData = new FormData();
+            formData.append('image', file);
+            console.log("uploading")
+            try {
+                const response = fetch(url, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    console.log("Avatar uploaded successfully.");
+                } else {
+                    console.error("Failed to upload avatar.");
+                }
+            } catch (error) {
+                console.error("Error uploading avatar:", error);
+            }
         }
     };
 
     const uploadAvatar = async () => {
         if (!avatarFile) return;
 
-        const url = `http://localhost:3001/user/profile-picture`;
-        const formData = new FormData();
-        formData.append('image', avatarFile);
 
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
-                body: formData,
-            });
-
-            if (response.ok) {
-                console.log("Avatar uploaded successfully.");
-            } else {
-                console.error("Failed to upload avatar.");
-            }
-        } catch (error) {
-            console.error("Error uploading avatar:", error);
-        }
     };
 
     return (
@@ -291,21 +291,21 @@ export default function ProfilePage() {
                     Avatar Image Loading...
                 </Avatar.Fallback>
                 <input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                style={{ display: 'none' }}
-                id="avatarUpload"
-            />
-            <button
-                onClick={() => document.getElementById('avatarUpload').click()}
-                className="Button violet"
-                style={{ marginTop: '10px' }}
-            >
-                +
-            </button>
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    style={{ display: 'none' }}
+                    id="avatarUpload"
+                />
+                <button
+                    onClick={() => document.getElementById('avatarUpload').click()}
+                    className="Button violet"
+                    style={{ marginTop: '10px' }}
+                >
+                    +
+                </button>
             </Avatar.Root>
-            
+
             <h1 id="profile-name">{user.firstName + " " + user.lastName}</h1>
             <Tabs.Root className="TabsRoot" defaultValue="tab1">
                 <Tabs.List className="TabsList" aria-label="Profile Tabs">

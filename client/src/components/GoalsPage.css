@@ -44,3 +44,14 @@
 .goal-in{
   margin-right: 55px;
 }
+
+.cst-goal-date{
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  width:100%
+}
+
+.dateSS{
+  margin-right: 5px;
+}
