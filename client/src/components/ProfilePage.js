@@ -343,7 +343,7 @@ export default function ProfilePage() {
                />
                <button
                    onClick={() => document.getElementById('avatarUpload').click()}
-                   className="Button violet"
+                   className="add-pfp"
                    style={{ marginTop: '10px' }}
                >
                    +
