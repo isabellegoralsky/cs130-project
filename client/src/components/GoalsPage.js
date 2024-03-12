@@ -107,14 +107,14 @@ const GoalsPage = () => {
                     }
                 </div>
             </div>
-            <div style={{textAlign: 'center'}}>
+            <div style={{textAlign: 'center', marginTop: '20px'}}>
                 <Dialog.Root>
                     <Dialog.Trigger asChild>
-                        <span classname="ClickableText" id="another-goal">add another goal?</span>
+                        <span classname="ClickableText" id="another-goal" >add another goal?</span>
                     </Dialog.Trigger>
                     <Dialog.Portal>
                         <Dialog.Overlay className="DialogOverlay" >
-                            <Dialog.Content className="DialogContent" class="adding">
+                            <Dialog.Content className="DialogContent" class="adding2">
                                 <Dialog.Title className="DialogTitle">Add a Goal</Dialog.Title>
                                 <GoalModal u={user} />
                             </Dialog.Content>
