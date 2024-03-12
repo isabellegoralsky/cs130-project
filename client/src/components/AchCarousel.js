@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Carousel = ({ items, title }) => {
+const ACarousel = ({ items, title }) => {
   return (
     <div style={{ padding: '0px 200px 20px' }}>
       <div style={{
@@ -16,9 +16,9 @@ const Carousel = ({ items, title }) => {
             minHeight: '100px',
             display: 'flex',
             justifyContent: 'center',
-            background: 'rgb(255, 90, 19, .1)',
+            background: 'white',
             borderRadius: '8px',
-            padding: '15px'
+            padding: '0'
           }}>
             {item.content}
           </div>
@@ -28,11 +28,11 @@ const Carousel = ({ items, title }) => {
   );
 };
 
-Carousel.propTypes = {
+ACarousel.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     content: PropTypes.node.isRequired, // Expecting each item to have a 'content' property
   })).isRequired,
   title: PropTypes.string.isRequired,
 };
 
-export default Carousel;
+export default ACarousel;

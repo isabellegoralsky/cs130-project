@@ -1,6 +1,7 @@
 // TeamPage.js
 import React, { useState, useEffect } from 'react';
 import Carousel from './Carousel';
+import ACarousel from './AchCarousel';
 import * as Dialog from '@radix-ui/react-dialog';
 import './Teams.css';
 import Goal from './Goal.js';
@@ -124,10 +125,14 @@ const TeamPage = () => {
         </Dialog.Root>
         <Carousel items={updates.length > 0 ? updates.map((update) => ({
           content: <>
-            <p>{update.title}</p>
-            <p>{update.name}</p>
-          </>
-        })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} /*title="Announcements"*/ />
+            <div class="an-update">
+              <div class="update-title">{update.title}</div>
+              <div class="update-name">{update.name}</div>
+              <div class="update-note">{update.note}</div>
+            </div>
+            </>
+          })) : ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']} /*title="Announcements"*/ />
+        <h2 class="teams-sections">achievements</h2>
         <Dialog.Root class="pals-div">
           <Dialog.Trigger asChild>
             <button className="" class="teams-clicks">
@@ -197,9 +202,9 @@ const CreateTeamDialog = () => {
   }
   return <Dialog.Root>
     <Dialog.Trigger asChild>
-      <div id="create-team">
-        <span classname="ClickableText">create a new team?</span>
-      </div>
+        <div id="create-team" class="create-join" style={{marginTop: '40px'}}>
+            <span classname="ClickableText">create a new team?</span>
+        </div>
     </Dialog.Trigger>
     <Dialog.Portal>
       <Dialog.Overlay className="DialogOverlay" />
@@ -258,9 +263,9 @@ const JoinTeamDialog = () => {
 
   return <Dialog.Root>
     <Dialog.Trigger asChild>
-      <div id="create-team">
-        <span classname="ClickableText">join a team?</span>
-      </div>
+        <div id="create-team" class="create-join" style={{marginTop: '10px'}}>
+            <span classname="ClickableText">join a team?</span>
+        </div>
     </Dialog.Trigger>
     <Dialog.Portal>
       <Dialog.Overlay className="DialogOverlay" />
@@ -337,12 +342,6 @@ const TeamUpdateModal = ({ teamId }) => {
           onChange={(e) => setUpdateBody(e.target.value)}
         />
       </div>
-      <textarea
-        className="Input"
-        placeholder="Write an update here..."
-        value={updateBody}
-        onChange={(e) => setUpdateBody(e.target.value)}
-      />
       <Dialog.Close asChild>
         <button className="Button green" onClick={handleUpdate}>Post Update</button>
       </Dialog.Close>
