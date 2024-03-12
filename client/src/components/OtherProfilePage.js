@@ -165,7 +165,7 @@ export default function OtherProfilePage() {
                         Personal Records
                     </Tabs.Trigger>
                     <Tabs.Trigger className="TabsTrigger" value="tab3">
-                        My Pals
+                        followers
                     </Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content className="TabsContent" id="workout-div" value="tab1">
