@@ -152,6 +152,7 @@ const FeedPage = ({ }) => {
           credentials: 'include',
         });
         const data = await response.json();
+        console.log("desc data is ")
         console.log(data)
         const postData = data.map(post => {
           console.log(post)

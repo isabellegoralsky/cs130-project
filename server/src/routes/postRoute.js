@@ -239,7 +239,7 @@ router.get('/posts', async (req, res) => {
         var description = post[i].description;
         var date = (post[i].updatedAt.getMonth() + 1) + '/' + post[i].updatedAt.getDate() + '/' + post[i].updatedAt.getFullYear();
         var time = (post[i].updatedAt.getHours() + ':' + post[i].updatedAt.getMinutes() + ':' + post[i].updatedAt.getSeconds());
-        posts.push({ name: name, title: title, exercises: exercises, description: description, date: date, time: time });
+        posts.push({ name: name, title: title, exercises: exercises, description: description, date: date, time: time, userId: userid });
     }
     console.log(posts);
     return res.status(200).json(posts);
