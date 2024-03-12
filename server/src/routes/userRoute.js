@@ -140,11 +140,11 @@ router.post("/addfriend/:uid", async (req, res) => {
     }, (err, doc) => {
         if (err) {
             console.log("Something went wrong");
-            res.status(400).send(err);
+            res.status(400).json(err);
         }
     });
     console.log("Successfully followed user.");
-    res.status(200).send("Successfully followed user.");
+    res.status(200).json("Successfully followed user.");
 });
 
 router.post("/deletefriend/:uid", async (req, res) => {
