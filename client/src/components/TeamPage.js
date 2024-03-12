@@ -25,11 +25,29 @@ const TeamPage = () => {
     if (selectedTeam === '') {
       return;
     }
+    
     (async () => {
       try {
-        setUpdates(selectedTeam.announcements);
-        setPosts(selectedTeam.teampost)
-        setAchievements(selectedTeam.goals)
+        console.log("selectedTeam.id", selectedTeam.id);
+        const response = await fetch(`http://localhost:3001/user/${selectedTeam.id}/teampage`, {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        console.log("data", data);
+        setUpdates(data.announcements);
+        setPosts(data.teampost)
+        if (response.ok) {
+          const goalResponse = await fetch(`http://localhost:3001/team-goal/${selectedTeam.id}`, {
+            credentials: 'include'
+          });
+          const goalData = await goalResponse.json();
+          setAchievements(goalData);
+          
+        } else {
+          throw new Error(data.message || 'Failed to get team details');
+        }
+
+        
       } catch (error) {
         console.error('Error:', error);
         // Handle error here (e.g., showing an error message)
@@ -53,33 +71,18 @@ const TeamPage = () => {
         }
         setUser(data);
 
-        response = await fetch(`http://localhost:3001/user/${data._id}/teams`, {
+        response = await fetch(`http://localhost:3001/user/${data._id}/teamname`, {
           credentials: 'include',
         });
+
         data = await response.json();
+
         if (response.ok) {
           console.log('Get Teams Success:', data);
         } else {
           throw new Error(data.message || 'Failed to login');
         }
-
-        let teamsList = [];
-        for (const teamId of data) {
-          const response = await fetch(`http://localhost:3001/user/${teamId}/teampage`, {
-            credentials: 'include',
-          });
-          const data = await response.json();
-          if (response.ok) {
-            const goalResponse = await fetch(`http://localhost:3001/team-goal/${teamId}`, {
-              credentials: 'include'
-            });
-            const goalData = await goalResponse.json();
-            teamsList.push({ id: teamId, goals: goalData, ...data });
-          } else {
-            throw new Error(data.message || 'Failed to get team details');
-          }
-        }
-        setTeams(teamsList);
+        setTeams(data);
 
       } catch (error) {
         console.error('Error:', error);
@@ -89,7 +92,7 @@ const TeamPage = () => {
 
   const handleTeamChange = (event) => {
     const teamName = event.target.value;
-    const team = teams.find(t => t.teamName.toString() === teamName);
+    const team = teams.find(t => t.name.toString() === teamName);
     setSelectedTeam(team);
   };
 
@@ -97,12 +100,12 @@ const TeamPage = () => {
     <div className="team-page">
       <div className="team-selector">
         <label htmlFor="team-dropdown" id="label-drop">Select Team</label>
-        <select id="team-dropdown" onChange={handleTeamChange} value={selectedTeam?.teamName || ''}>
+        <select id="team-dropdown" onChange={handleTeamChange} value={selectedTeam?.name || ''}>
           <option disabled={true} value="">
             Select a Team
           </option>
           {(teams || []).map(team => (
-            <option key={team.teamName} value={team.teamName}>{team.teamName}</option>
+            <option key={team.name} value={team.name}>{team.name}</option>
           ))}
         </select>
       </div>
