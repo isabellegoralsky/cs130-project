@@ -115,7 +115,7 @@ const GoalsPage = () => {
                     <Dialog.Portal>
                         <Dialog.Overlay className="DialogOverlay" >
                             <Dialog.Content className="DialogContent" class="adding">
-                                <Dialog.Title className="DialogTitle">Add a Team Goal</Dialog.Title>
+                                <Dialog.Title className="DialogTitle">Add a Goal</Dialog.Title>
                                 <GoalModal u={user} />
                             </Dialog.Content>
                         </Dialog.Overlay>
