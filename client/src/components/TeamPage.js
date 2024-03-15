@@ -29,7 +29,7 @@ const TeamPage = () => {
     (async () => {
       try {
         console.log("selectedTeam.id", selectedTeam.id);
-        const response = await fetch(`http://localhost:3001/user/${selectedTeam.id}/teampage`, {
+        const response = await fetch(`/user/${selectedTeam.id}/teampage`, {
           credentials: 'include',
         });
         const data = await response.json();
@@ -37,7 +37,7 @@ const TeamPage = () => {
         setUpdates(data.announcements);
         setPosts(data.teampost)
         if (response.ok) {
-          const goalResponse = await fetch(`http://localhost:3001/team-goal/${selectedTeam.id}`, {
+          const goalResponse = await fetch(`/team-goal/${selectedTeam.id}`, {
             credentials: 'include'
           });
           const goalData = await goalResponse.json();
@@ -59,7 +59,7 @@ const TeamPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        let response = await fetch("http://localhost:3001/user/", {
+        let response = await fetch("/user/", {
           credentials: 'include',
         });
         let data = await response.json();
@@ -71,7 +71,7 @@ const TeamPage = () => {
         }
         setUser(data);
 
-        response = await fetch(`http://localhost:3001/user/${data._id}/teams`, {
+        response = await fetch(`/user/${data._id}/teams`, {
           credentials: 'include',
         });
 
@@ -174,7 +174,7 @@ const CreateTeamDialog = () => {
 
   const handleCreateTeam = async (event) => {
     try {
-      let response = await fetch('http://localhost:3001/user/createteam', {
+      let response = await fetch('/user/createteam', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ const JoinTeamDialog = () => {
   const handleJoinTeam = async (event) => {
 
     try {
-      let response = await fetch(`http://localhost:3001/user/jointeam/${teamId}`, {
+      let response = await fetch(`/user/jointeam/${teamId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ const TeamUpdateModal = ({ teamId }) => {
 
   const handleUpdate = async (event) => {
     try {
-      let response = await fetch(`http://localhost:3001/post/addteampost/${teamId}`, {
+      let response = await fetch(`/post/addteampost/${teamId}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -390,7 +390,7 @@ const GoalModal = ({ u }) => {
           endDate: new Date(endYear, endMonth, endDay)
       };
       console.log(formdata);
-      const registerUrl = 'http://localhost:3001/goal/';
+      const registerUrl = '/goal/';
       try {
           const response = await fetch(registerUrl, {
               method: 'POST',

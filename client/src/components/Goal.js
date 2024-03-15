@@ -55,7 +55,7 @@ const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name,
         //fetch user
         async function fetchUser() {
             try {
-                const url = `http://localhost:3001/user`;
+                const url = `/user`;
                 const response = await fetch(url, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -79,10 +79,10 @@ const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name,
         if (userId) {
             let goalUrl = ``;
             if (teamid) {
-                goalUrl = `http://localhost:3001/team-goal/${gid}`;
+                goalUrl = `/team-goal/${gid}`;
             }
             else {
-                goalUrl = `http://localhost:3001/goal/${gid}`;
+                goalUrl = `/goal/${gid}`;
             }
             try {
                 const response = await fetch(goalUrl, {

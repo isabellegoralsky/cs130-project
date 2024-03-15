@@ -21,7 +21,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Define the API endpoint
-    const loginUrl = `http://localhost:3001/user/login`; 
+    const loginUrl = '/user/login'; 
     try {
       const response = await fetch(loginUrl, {
         method: 'POST',
@@ -34,7 +34,7 @@ const LoginPage = () => {
         }),
         credentials: 'include', 
       });
-
+      console.log(response);
       const data = await response.json();
 
       if (response.ok) {
