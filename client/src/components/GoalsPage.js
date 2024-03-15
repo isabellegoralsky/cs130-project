@@ -12,7 +12,7 @@ const GoalsPage = () => {
         //fetch user
         async function fetchUser() {
             try {
-                const url = `http://localhost:3001/user`;
+                const url = `/user`;
                 const response = await fetch(url, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ const GoalsPage = () => {
         async function fetchGoals() {
             const userId = user._id;
             if (userId) {
-                const url = `http://localhost:3001/goal/`;
+                const url = `/goal/`;
 
                 try {
                     const response = await fetch(url, {
@@ -177,7 +177,7 @@ const GoalModal = ({ u }) => {
             endDate: new Date(endYear, endMonth, endDay)
         };
         console.log(formdata);
-        const registerUrl = 'http://localhost:3001/goal/';
+        const registerUrl = '/goal/';
         try {
             const response = await fetch(registerUrl, {
                 method: 'POST',

@@ -56,7 +56,7 @@ export default function ProfilePage() {
        //fetch user
        async function fetchUser() {
            try {
-               const url = `http://localhost:3001/user`;
+               const url = `/user`;
                const response = await fetch(url, {
                    headers: {
                        'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export default function ProfilePage() {
        console.log(user)
        console.log(userId);
        if (userId !== undefined && userId !== null) {
-           const url = `http://localhost:3001/profile/template/${userId}`;
+           const url = `/profile/template/${userId}`;
 
 
            fetch(url, {
@@ -106,7 +106,7 @@ export default function ProfilePage() {
        async function fetchPersonalRecords() {
            const userId = user._id;
            if (userId) {
-               const url = `http://localhost:3001/personalRecord`;
+               const url = `/personalRecord`;
 
 
                try {
@@ -143,7 +143,7 @@ export default function ProfilePage() {
        if (user._id === undefined) {
            return;
        }
-       const url = `http://localhost:3001/profile/${user._id}/profilepage`;
+       const url = `/profile/${user._id}/profilepage`;
        fetch(url, {
            method: 'GET',
            headers: {
@@ -242,7 +242,7 @@ export default function ProfilePage() {
        };
 
 
-       const url = `http://localhost:3001/profile/deletetemplate`;
+       const url = `/profile/deletetemplate`;
        try {
            const response = await fetch(url, {
                method: 'POST',
@@ -272,7 +272,7 @@ export default function ProfilePage() {
            setAvatarFile(file); // Update the state with the selected file
            // You can also upload the file to a server here or in a separate function
            console.log("here")
-           const url = `http://localhost:3001/user/profile-picture`;
+           const url = `/user/profile-picture`;
            const formData = new FormData();
            formData.append('image', file);
            console.log("uploading")
@@ -299,7 +299,7 @@ export default function ProfilePage() {
    const addPal = async () => {
     console.log("adding", currPalName)
     try {
-        let response = await fetch(`http://localhost:3001/user/addfriend/${currPalName}`, {
+        let response = await fetch(`/user/addfriend/${currPalName}`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -533,7 +533,7 @@ const WorkoutModal = () => {
            }
        };
        console.log(data)
-       const url = `http://localhost:3001/profile/addtemplate`;
+       const url = `/profile/addtemplate`;
 
 
 
