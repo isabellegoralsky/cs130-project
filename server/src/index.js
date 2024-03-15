@@ -10,7 +10,7 @@ const bcrypt = require('bcryptjs');
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
-const DEV = process.env.REACT_APP_HOST_DNS_NAME || true;
+const DEV = process.env.REACT_APP_HOST_DNS_NAME ? false : true;
 
 const app = express();
 
