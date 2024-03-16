@@ -5,7 +5,7 @@ const Goal = require('../models/Goal');
 /**
    * Creates and saves a goal to a user's account.
    *
-   * @name  /
+   * @name  CreateGoal
    * @route   {POST} routes/goalRoute/
    * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
    * @routeparam {request} req - contains fields (user, body) to access the user requesting and the request details.
@@ -37,7 +37,7 @@ router.post('/', authenticateToken, async (req, res) => {
 /**
    * Returns a user's goals.
    *
-   * @name  /
+   * @name  GetGoals
    * @route   {GET} routes/goalRoute/
    * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
    * @routeparam {request} req - contains field 'user' to access the user requesting.
@@ -59,7 +59,7 @@ router.get('/', authenticateToken, async (req, res) => {
 /**
    * Edits a user's goal.
    *
-   * @name /:gid
+   * @name EditGoal
    * @route   {PUT} routes/goalRoute/:gid
    * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
    * @routeparam {request} req - contains fields (user, body) to access the user requesting and the request details.
@@ -96,7 +96,7 @@ router.put('/:gid', authenticateToken, async (req, res) => {
 /**
    * Deletes a user's goal.
    *
-   * @name /:gid
+   * @name DeleteGoal
    * @route   {DELETE} routes/goalRoute/:gid
    * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
    * @routeparam {request} req - contains field 'user to access the user requesting.
