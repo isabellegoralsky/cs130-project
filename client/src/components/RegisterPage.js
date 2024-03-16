@@ -24,7 +24,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const registerUrl = 'http://localhost:3001/user/register';
+    const registerUrl = '/user/register';
     try {
       const response = await fetch(registerUrl, {
         method: 'POST',

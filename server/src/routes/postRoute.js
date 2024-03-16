@@ -29,12 +29,33 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 
     try {
         await post.save();
-        res.status(200).json('Successfully posted');
+        console.log('Posted');
     } catch (err) {
         console.log('Failed to post');
         res.status(400).json(err);
     }
 
+    //make new pr
+    console.log(user._id);
+    const personalrecord = await PersonalRecord.find({userId:user._id}).catch(err => {
+        console.error('Error:', err);
+    });
+    var prnames = [];
+    for(let i=0; i<personalrecord.length; i++){
+        prnames.push(personalrecord[i].exerciseName);
+    }
+    var postnames = post.exercises.exerciseName;
+    for(let i=0; i<postnames.length; i++){
+        if(prnames.includes(postnames[i])===false){
+            var newpr = new PersonalRecord({
+                exerciseName: postnames[i],
+                exerciseType: "weight",
+                record: post.exercises.weight[i],
+                userId: user._id
+            });
+            await newpr.save();
+        }
+    }
     //update pr 
     const personalrecords = await PersonalRecord.find({userId:user._id}).catch(err => {
         console.error('Error:', err);
@@ -99,6 +120,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
             }
         }
     }
+    res.status(200).send("Completed.");
 
     //Update team goal
     const teamIds = user.teams;

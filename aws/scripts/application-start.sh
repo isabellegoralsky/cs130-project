@@ -25,7 +25,8 @@ else
 fi
 export REACT_APP_HOST_DNS_NAME=$(curl http://169.254.169.254/latest/meta-data/public-hostname)
 npm i
-npm start 2&> a.out &
+npm run build
+# npm start 2&> a.out &
 
 cd /usr/local/server
 npm i
