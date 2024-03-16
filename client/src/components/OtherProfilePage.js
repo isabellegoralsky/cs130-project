@@ -21,7 +21,7 @@ export default function OtherProfilePage() {
     const [isNotPal, setIsNotPal] = useState(false);
     const addPal = async () => {
         setIsNotPal(false);
-        await fetch(`http://localhost:3001/user/addfriend/${userId}`, {
+        await fetch(`/addfriend/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export default function OtherProfilePage() {
             });
     }
     useEffect(() => {
-        const url = `http://localhost:3001/profile/${userId}/profilepage`;
+        const url = `/profile/${userId}/profilepage`;
         fetch(url, {
             method: 'GET',
             headers: {
@@ -72,7 +72,7 @@ export default function OtherProfilePage() {
         console.log(user)
         console.log(userId);
         if (userId !== undefined && userId !== null) {
-            const url = `http://localhost:3001/profile/template/${userId}`;
+            const url = `/profile/template/${userId}`;
 
             fetch(url, {
             })

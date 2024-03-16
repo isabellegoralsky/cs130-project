@@ -9,11 +9,18 @@ const bcrypt = require('bcryptjs');
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
+const DEV = process.env.REACT_APP_HOST_DNS_NAME ? false : true;
 
 const app = express();
+
+if(!DEV){
+    console.log("in deployment server");
+    app.use(express.static('/usr/local/client/build'));
+}
+
 const corsOptions = {
-    origin: ['http://localhost:8080', "http://codede-appli-fvdybbpwqa6p-642374602.us-east-1.elb.amazonaws.com:8080", "http://localhost:3000"], //  frontend origin
+    origin: ["http://localhost:3000"], //  frontend origin
     credentials: true,
   };
   app.use(cors(corsOptions));

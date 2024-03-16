@@ -129,7 +129,7 @@ const FeedPage = ({ }) => {
     //fetch user
     async function fetchUser() {
       try {
-        const url = `http://localhost:3001/user`;
+        const url = `/user`;
         const response = await fetch(url, {
           headers: {
             'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const FeedPage = ({ }) => {
   useEffect(() => { //fetch feed
     async function fetchFeed() {
       try {
-        const url = `http://localhost:3001/post/posts`;
+        const url = `/post/posts`;
         const response = await fetch(url, {
           headers: {
             'Content-Type': 'application/json',
@@ -270,7 +270,7 @@ const PostModal = () => {
 
     console.log("post is ", post);
     try {
-      const url = `http://localhost:3001/post/addpost`;
+      const url = `/post/addpost`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {

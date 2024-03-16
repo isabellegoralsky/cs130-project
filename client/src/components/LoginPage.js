@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Link } from 'react-router-dom';
 import p5 from 'p5';
 import sketch from './sketch.js';
-import { HOST_NAME } from '../index';
 
 /**
   * Construct the login page.
@@ -35,7 +34,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Define the API endpoint
-    const loginUrl = `http://${HOST_NAME}:3001/user/login`; 
+    const loginUrl = '/user/login'; 
     try {
       const response = await fetch(loginUrl, {
         method: 'POST',
@@ -48,7 +47,7 @@ const LoginPage = () => {
         }),
         credentials: 'include', 
       });
-
+      console.log(response);
       const data = await response.json();
 
       if (response.ok) {

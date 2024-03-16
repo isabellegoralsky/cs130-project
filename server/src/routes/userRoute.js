@@ -157,10 +157,10 @@ router.post("/logout", async (req, res) => {
    * Add a friend.
    *
    * @name  AddFriend
-   * @route   {POST} routes/userRoute/addfriend/:uid
-   * @routeparam {request} req - contains fields (cookies, params) to access the user's info and friend user id.
+   * @route   {POST} routes/userRoute/addfriend/:email
+   * @routeparam {request} req - contains fields (cookies, params) to access the user's info and friend by their email.
    */
-router.post("/addfriend/:uid", async (req, res) => {
+router.post("/addfriend/:email", async (req, res) => {
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.TokenSecret);
     var userId = decoded.id;
@@ -169,7 +169,7 @@ router.post("/addfriend/:uid", async (req, res) => {
     });
     if (!user) return res.status(400).json('User is not found.');
     const friend = await User.findOne({
-        _id: req.params.uid
+        email: req.params.email
     });
     if (!friend) return res.status(400).json('Friend is not found.');
     User.findOneAndUpdate({
