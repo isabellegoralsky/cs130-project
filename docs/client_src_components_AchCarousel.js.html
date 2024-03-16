@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: client/src/components/AchCarousel.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,65 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: client/src/components/AchCarousel.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import PropTypes from 'prop-types';
+
+/**
+   * Construct an 'achievement' style carousel.
+   *
+   * @name AchievementCarousel
+   * @constructor
+   * @param {any} items - items to display in the carousel
+   * @param {String} title - title field &lt;&lt;unused>>
+   */
+const ACarousel = ({ items, title }) => {
+  return (
+    &lt;div style={{ padding: '0px 200px 20px' }}>
+      &lt;div style={{
+        display: 'flex',
+        overflowX: 'auto',
+        gap: '10px',
+        padding: '10px 0'
+      }}>
+        {items.map((item, index) => (
+          &lt;div key={index} style={{
+            minWidth: '160px',
+            minHeight: '100px',
+            display: 'flex',
+            justifyContent: 'center',
+            background: 'white',
+            borderRadius: '8px',
+            padding: '0'
+          }}>
+            {item.content}
+          &lt;/div>
+        ))}
+      &lt;/div>
+    &lt;/div>
+  );
+};
 
 
-    <h3> </h3>
+ACarousel.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    content: PropTypes.node.isRequired, // Expecting each item to have a 'content' property
+  })).isRequired,
+  title: PropTypes.string.isRequired,
+};
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default ACarousel;
+</code></pre>
+        </article>
+    </section>
 
 
 

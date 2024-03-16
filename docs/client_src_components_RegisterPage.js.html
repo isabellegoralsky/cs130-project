@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: client/src/components/RegisterPage.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,143 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: client/src/components/RegisterPage.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import './LoginReg.css';
+import p5 from 'p5';
+import sketch from './sketch.js';
 
+/**
+  * Construct the register page.
+  *
+  * @name RegisterPage
+  * @constructor
+  */
+const RegisterPage = () => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
-    <h3> </h3>
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    verifypassword: '',
+    firstname: '',
+    lastname: ''
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-
-
-
-
-
-
-
-
+  /**
+    * Handle user request to register.
+    *
+    * @name handleSubmitRegister
+    * @function
+    * @param {e} e - event
+    */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
+    const registerUrl = 'http://localhost:3001/user/register';
+    try {
+      const response = await fetch(registerUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstname,
+          lastName: formData.lastname,
+          email: formData.email,
+          password: formData.password,
+        }),
+        credentials: 'include',
+      });
 
+      const data = await response.json();
 
+      if (response.ok) {
+        console.log(data);
+        navigate('/profile');
+      } else {
+        throw new Error(data || 'Failed to register');
+      }
+    } catch (error) {
+      console.error('Register Error:', error);
+    }
+    console.log('Form Data:', formData);
+  };
 
+    // create a reference to the container in which the p5 instance should place the canvas
+    const p5ContainerRef = useRef();
 
+    useEffect(() => {
+        // On component creation, instantiate a p5 object with the sketch and container reference 
+        const p5Instance = new p5(sketch, p5ContainerRef.current);
+  
+        // On component destruction, delete the p5 instance
+        return () => {
+            p5Instance.remove();
+        }
+    }, []);
 
+  return (
+    &lt;div class="login-div">
+      &lt;div class="left-login-side">
+        &lt;div className="App" ref={p5ContainerRef} />
+      &lt;/div>
+      &lt;div class="right-login-side">
+        &lt;h1 class="bold-text log-reg-title2">Register Account&lt;/h1>
+        &lt;form onSubmit={handleSubmit}>
+          &lt;div>
+            &lt;label class="login-label" htmlFor="firstname">First Name:&lt;/label>
+            &lt;input placeholder="first name" class="login-input" id="firstname" name="firstname" value={formData.firstname} onChange={handleChange} />
+            &lt;div class="reg-divider">&lt;/div>
+          &lt;/div>
+          &lt;div class="inputs-not-first-reg">
+            &lt;label class="login-label" htmlFor="lastname">Last Name:&lt;/label>
+            &lt;input placeholder="last name" class="login-input" id="lastname" name="lastname" value={formData.lastname} onChange={handleChange} />
+            &lt;div class="reg-divider">&lt;/div>
+          &lt;/div>
+          &lt;div class="inputs-not-first-reg">
+            &lt;label class="login-label" htmlFor="email">Email:&lt;/label>
+            &lt;input placeholder="email address" class="login-input" id="email" type="email" name="email" value={formData.email} onChange={handleChange} />
+            &lt;div class="reg-divider">&lt;/div>
+          &lt;/div>
+          &lt;div class="inputs-not-first-reg">
+            &lt;label class="login-label" htmlFor="password">Password:&lt;/label>
+            &lt;input placeholder="create password" class="login-input" id="password" type="password" name="password" value={formData.password} onChange={handleChange} />
+            &lt;div class="reg-divider">&lt;/div>
+          &lt;/div>
+          &lt;div class="inputs-not-first-reg">
+            &lt;label class="login-label" htmlFor="verifypassword">Verify Password:&lt;/label>
+            &lt;input placeholder="verify password" class="login-input" id="verifypassword" type="password" name="verifypassword" value={formData.verifypassword} onChange={handleChange} />
+            &lt;div class="reg-divider">&lt;/div>
+          &lt;/div>
+          &lt;div class="button-div">
+            &lt;button class="bold-text signin-button2" type="submit">sign up&lt;/button>
+          &lt;/div>
+        &lt;/form>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default RegisterPage;
+</code></pre>
+        </article>
+    </section>
 
 
 
