@@ -1,4 +1,32 @@
-const router = require('express').Router();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: postRoute.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: postRoute.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const { authenticateToken } = require('../middleware/auth');
 const User = require('../models/User');
@@ -39,10 +67,10 @@ router.post('/addpost', authenticateToken, async (req, res) => {
     const personalrecords = await PersonalRecord.find({userId:user._id}).catch(err => {
         console.error('Error:', err);
     });
-    for (let i = 0; i < personalrecords.length; i++) {
-        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+    for (let i = 0; i &lt; personalrecords.length; i++) {
+        for (let j = 0; j &lt; post.exercises.exerciseName.length; j++) {
             if(personalrecords[i].exerciseName === post.exercises.exerciseName[j]){
-                if(personalrecords[i].record<post.exercises.weight[j]){
+                if(personalrecords[i].record&lt;post.exercises.weight[j]){
                     try{ 
                             await PersonalRecord.findOneAndUpdate({
                             _id: personalrecords[i]._id,
@@ -67,12 +95,12 @@ router.post('/addpost', authenticateToken, async (req, res) => {
         console.error('Error:', err);
     });
 
-    for (let i = 0; i < indGoals.length; i++) {
-        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+    for (let i = 0; i &lt; indGoals.length; i++) {
+        for (let j = 0; j &lt; post.exercises.exerciseName.length; j++) {
             if (indGoals[i].exercise.name === post.exercises.exerciseName[j]) {
                 if (indGoals[i].type === 'PR') {
                     const amount = post.exercises.weight[j];
-                    if (indGoals[i].progress < amount) {
+                    if (indGoals[i].progress &lt; amount) {
                         try {
                             await Goal.updateOne({ _id: indGoals[i]._id }, { $set: { progress: amount } });
                             console.log('Updated PR Goal');
@@ -102,14 +130,14 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 
     //Update team goal
     const teamIds = user.teams;
-    for (let i = 0; i < teamIds.length; i++) {
-        for (let j = 0; j < post.exercises.exerciseName.length; j++) {
+    for (let i = 0; i &lt; teamIds.length; i++) {
+        for (let j = 0; j &lt; post.exercises.exerciseName.length; j++) {
             const teamGoals = await TeamGoal.find({
                 teamId: teamIds[i],
                 'exercise.name': post.exercises.exerciseName[j]
             });
 
-            for (let k = 0; k < teamGoals.length; k++) {
+            for (let k = 0; k &lt; teamGoals.length; k++) {
                 if (teamGoals[k].type === 'CST') {
                     const amount = post.exercises.reps[j] * post.exercises.sets[j];
                     try {
@@ -279,7 +307,7 @@ router.get('/posts', async (req, res) => {
         console.error('Error:', err);
     });
     var posts = [];
-    for (let i = 0; i < post.length; i++) {
+    for (let i = 0; i &lt; post.length; i++) {
         const userid = post[i].userId;
         const user = await User.findOne({ _id: userid });
         if (!user) return res.status(400).send('User was not found.');
@@ -309,7 +337,7 @@ router.get('/teamposts/:tid', async (req, res) => {
         console.error('Error:', err);
     });
     var posts = [];
-    for (let i = 0; i < teamposts.length; i++) {
+    for (let i = 0; i &lt; teamposts.length; i++) {
         const userid = teamposts[i].userId;
         const user = await User.findOne({ _id: userid });
         if (!user) return res.status(400).send('User was not found.');
@@ -338,7 +366,7 @@ router.get('/teampostsfeed/:tid', async (req, res) => {
         console.error('Error:', err);
     });
     var posts = [];
-    for (let i = 0; i < teamposts.length; i++) {
+    for (let i = 0; i &lt; teamposts.length; i++) {
         const userid = teamposts[i].userId;
         const user = await User.findOne({ _id: userid });
         if (!user) return res.status(400).send('User was not found.');
@@ -355,4 +383,26 @@ router.get('/teampostsfeed/:tid', async (req, res) => {
 
 });
 
-module.exports = router;
+module.exports = router;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#/posts">/posts</a></li><li><a href="global.html#/teamposts/:tid">/teamposts/:tid</a></li><li><a href="global.html#/teampostsfeed/:tid">/teampostsfeed/:tid</a></li><li><a href="global.html#addpost">addpost</a></li><li><a href="global.html#addteampost/:teamid">addteampost/:teamid</a></li><li><a href="global.html#deletepost/:postid">deletepost/:postid</a></li><li><a href="global.html#deleteteampost/:postid">deleteteampost/:postid</a></li><li><a href="global.html#editpost/:postid">editpost/:postid</a></li><li><a href="global.html#editteampost/:postid">editteampost/:postid</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Mar 15 2024 18:32:07 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

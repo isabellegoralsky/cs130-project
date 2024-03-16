@@ -1,6 +1,13 @@
 const router = require('express').Router();
 const Picture = require('../models/Picture');
 
+/**
+   * Return a user's profile picture.
+   *
+   * @name  /:id
+   * @route   {GET} routes/pictureRoute/:id
+   * @routeparam {request} req - contains field 'params' to access the request details.
+   */
 router.get('/:id', async (req, res) => {
     try {
         const picture = await Picture.findById(req.params.id);
