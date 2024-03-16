@@ -4,7 +4,7 @@ const Picture = require('../models/Picture');
 /**
    * Return a user's profile picture.
    *
-   * @name  /:id
+   * @name  GetUserProfilePicture
    * @route   {GET} routes/pictureRoute/:id
    * @routeparam {request} req - contains field 'params' to access the request details.
    */

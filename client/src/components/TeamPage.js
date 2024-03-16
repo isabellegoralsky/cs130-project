@@ -6,6 +6,12 @@ import * as Dialog from '@radix-ui/react-dialog';
 import './Teams.css';
 import Goal from './Goal.js';
 
+/**
+  * Construct the user's team page.
+  *
+  * @name TeamPage
+  * @constructor
+  */
 const TeamPage = () => {
   const [user, setUser] = useState({});
   const [teams, setTeams] = useState([]);
@@ -90,6 +96,13 @@ const TeamPage = () => {
     })();
   }, []);
 
+  /**
+  * Handle user request to switch the team they are viewing via the dropdown menu.
+  *
+  * @name handleTeamChange
+  * @function
+  * @param {e} e - event
+  */
   const handleTeamChange = (event) => {
     const teamName = event.target.value;
     const team = teams.find(t => t.name.toString() === teamName);
@@ -169,6 +182,12 @@ const TeamPage = () => {
     </div>)
 };
 
+/**
+  * Create the pop up for the user to be able to make a team.
+  *
+  * @name CreateTeamDialog
+  * @constructor
+  */
 const CreateTeamDialog = () => {
   const [teamName, setTeamName] = useState('');
 
@@ -230,6 +249,13 @@ const CreateTeamDialog = () => {
     </Dialog.Portal>
   </Dialog.Root>;
 }
+
+/**
+  * Create the pop up for the user to be able to join a team.
+  *
+  * @name JoinTeamDialog
+  * @constructor
+  */
 const JoinTeamDialog = () => {
   const [teamId, setTeamId] = useState('');
   const handleJoinTeam = async (event) => {
@@ -289,10 +315,25 @@ const JoinTeamDialog = () => {
     </Dialog.Portal>
   </Dialog.Root>;
 }
+
+/**
+  * Create the functionality for the user to be able to update a team.
+  *
+  * @name TeamUpdateModal
+  * @constructor
+  * @param {teamId} teamId - team ID of desired team to update.
+  */
 const TeamUpdateModal = ({ teamId }) => {
   const [updateTitle, setUpdateTitle] = useState('');
   const [updateBody, setUpdateBody] = useState('');
 
+  /**
+  * Create the pop up for the user to be able to make a team.
+  *
+  * @name handleUpdate
+  * @function
+  * @param {event} event - e
+  */
   const handleUpdate = async (event) => {
     try {
       let response = await fetch(`http://localhost:3001/post/addteampost/${teamId}`, {
@@ -341,6 +382,13 @@ const TeamUpdateModal = ({ teamId }) => {
   )
 };
 
+/**
+     * Create a pop up for user to be able to create a team goal.
+     *
+     * @name TeamGoalModal
+     * @constructor
+     * @param {u} u - user
+     */
 const GoalModal = ({ u }) => {
   const [exerciseName, setExerciseName] = useState('');
   const [goalTitle, setGoalTitle] = useState('');
@@ -372,6 +420,13 @@ const GoalModal = ({ u }) => {
       "Burpees"
   ];
 
+  /**
+         * Handle user request to create a goal.
+         *
+         * @name handleAddTeamGoal
+         * @function
+         * @param {e} e - event
+         */
   const handleAddGoal = async (e) => {
       e.preventDefault();
       const formdata = {

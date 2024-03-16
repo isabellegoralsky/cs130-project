@@ -12,7 +12,7 @@ const PersonalRecord = require('../models/PersonalRecord');
 /**
    * Add a user's post. Then, update the user's personal records, individual goals, and team goals if applicable.
    *
-   * @name  addpost
+   * @name  AddPost
    * @route   {POST} routes/postRoute/addpost
    * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
    * @routeparam {request} req - contains fields (user, body, cookies) to access the user requesting and the request details.
@@ -134,7 +134,7 @@ router.post('/addpost', authenticateToken, async (req, res) => {
 /**
    * Add a user's team post. Then, update the user's personal records, individual goals, and team goals if applicable.
    *
-   * @name  addteampost/:teamid
+   * @name  AddTeamPost
    * @route   {POST} routes/postRoute/addteampost/:teamid
    * @routeparam {request} req - contains fields (params, body, cookies) to access the user's team and request details.
    */
@@ -161,7 +161,7 @@ router.post('/addteampost/:teamid', async (req, res) => {
 /**
    * Edit a user's post.
    *
-   * @name  editpost/:postid
+   * @name  EditPost
    * @route   {POST} routes/postRoute/editpost/:postid
    * @routeparam {request} req - contains fields (params, body, cookies) to access the user's specific post and request details.
    */
@@ -192,7 +192,7 @@ router.post('/editpost/:postid', async (req, res) => {
 /**
    * Edit a user's team post.
    *
-   * @name  editteampost/:postid
+   * @name  EditTeamPost
    * @route   {POST} routes/postRoute/editteampost/:postid
    * @routeparam {request} req - contains fields (params, body, cookies) to access the user's specific team post and request details.
    */
@@ -221,7 +221,7 @@ router.post('/editteampost/:postid', async (req, res) => {
 /**
    * Delete a user's post.
    *
-   * @name  deletepost/:postid
+   * @name  DeletePost
    * @route   {DELETE} routes/postRoute/deletepost/:postid
    * @routeparam {request} req - contains 'params' to access the user's target post.
    */
@@ -242,7 +242,7 @@ router.delete('/deletepost/:postid', async (req, res) => {
 /**
    * Delete a user's team post.
    *
-   * @name  deleteteampost/:postid
+   * @name  DeleteTeamPost
    * @route   {DELETE} routes/postRoute/deleteteampost/:postid
    * @routeparam {request} req - contains 'params' to access the user's target team post.
    */
@@ -263,7 +263,7 @@ router.delete('/deleteteampost/:postid', async (req, res) => {
 /**
    * Return's posts from the user's following list.
    *
-   * @name  /posts
+   * @name  GetFeedPosts
    * @route   {GET} routes/postRoute/posts
    * @routeparam {request} req - contains field 'cookies' to access the user's token.
    */
@@ -298,7 +298,7 @@ router.get('/posts', async (req, res) => {
 /**
    * Return's team updates from the user's selected team.
    *
-   * @name  /teamposts/:tid
+   * @name  GetTeamUpdates
    * @route   {GET} routes/postRoute/teamposts/:tid
    * @routeparam {request} req - contains field 'params' to access the user's selected team ID and team updates.
    */
@@ -327,7 +327,7 @@ router.get('/teamposts/:tid', async (req, res) => {
 /**
    * Return's team posts from the user's selected team.
    *
-   * @name  /teampostsfeed/:tid
+   * @name  GetTeamPosts
    * @route   {GET} routes/postRoute/teampostsfeed/:tid
    * @routeparam {request} req - contains field 'params' to access the user's selected team ID and posts from the users.
    */

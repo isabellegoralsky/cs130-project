@@ -6,6 +6,12 @@ import p5 from 'p5';
 import sketch from './sketch.js';
 import { HOST_NAME } from '../index';
 
+/**
+  * Construct the login page.
+  *
+  * @name LoginPage
+  * @constructor
+  */
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -18,6 +24,13 @@ const LoginPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  /**
+  * Handle user request to login.
+  *
+  * @name handleSubmitLogin
+  * @function
+  * @param {e} e - event
+  */
   const handleSubmit = async (e) => {
     e.preventDefault();
 

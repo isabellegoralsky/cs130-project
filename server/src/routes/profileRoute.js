@@ -25,7 +25,7 @@ const createToken = (id) => {
 /**
    * Add template to user pinned post (template) on profile.
    *
-   * @name  /addtemplate
+   * @name  AddPinnedWorkout
    * @route   {POST} routes/profileRoute/addtemplate
    * @routeparam {request} req - contains fields (cookies, body) to access the user's auth token and templates.
    */
@@ -87,7 +87,7 @@ router.post('/addtemplate', async (req, res) => {
 /**
    * Edit pinned post (template) on user profile.
    *
-   * @name  /edittemplate
+   * @name  EditPinnedWorkout
    * @route   {POST} routes/profileRoute/edittemplate
    * @routeparam {request} req - contains fields (cookies, body) to access the user's auth token and requested template.
    */
@@ -135,7 +135,7 @@ router.post('/edittemplate', async (req, res) => {
 /**
    * Delete pinned post (template) on user profile.
    *
-   * @name  /deletetemplate
+   * @name  DeletePinnedWorkout
    * @route   {POST} routes/profileRoute/deletetemplate
    * @routeparam {request} req - contains fields (cookies, body) to access the user's auth token and desired template.
    */
@@ -185,7 +185,7 @@ router.post('/deletetemplate', async (req, res) => {
 /**
    * Return user template
    *
-   * @name  /template/:uid
+   * @name  GetPinnedWorkout
    * @route   {GET} routes/profileRoute/template/:uid
    * @routeparam {request} req - contains field 'params' to get user id and access the user's templates.
    */
@@ -214,7 +214,7 @@ router.get('/template/:uid', async (req, res) => {
 /**
    * Return user profile page
    *
-   * @name  /:uid/profilepage
+   * @name  GetUserProfile
    * @route   {GET} routes/profileRoute/:uid/profilepage
    * @routeparam {request} req - contains field 'params' to get user id and access the user's information such as following, profile pic, etc.
    */

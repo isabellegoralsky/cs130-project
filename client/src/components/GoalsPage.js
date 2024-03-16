@@ -4,6 +4,12 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import './GoalsPage.css'
 
+/**
+     * Construct the user's goals page.
+     *
+     * @name GoalsPage
+     * @constructor
+     */
 const GoalsPage = () => {
     const [user, setUser] = useState({});
     const [goals, setGoals] = useState([]);
@@ -126,8 +132,13 @@ const GoalsPage = () => {
     );
 };
 
-
-
+/**
+     * Create a pop up for user to be able to create a goal.
+     *
+     * @name GoalModal
+     * @constructor
+     * @param {u} u - user
+     */
 const GoalModal = ({ u }) => {
     const [exerciseName, setExerciseName] = useState('');
     const [goalTitle, setGoalTitle] = useState('');
@@ -159,6 +170,13 @@ const GoalModal = ({ u }) => {
         "Burpees"
     ];
 
+    /**
+         * Handle user request to create a goal.
+         *
+         * @name handleAddGoal
+         * @function
+         * @param {e} e - event
+         */
     const handleAddGoal = async (e) => {
         e.preventDefault();
         const formdata = {

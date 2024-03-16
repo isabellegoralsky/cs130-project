@@ -9,7 +9,7 @@ const PersonalRecord = require('../models/PersonalRecord');
 /**
    * Create and save a personal record to a user's account.
    *
-   * @name  /
+   * @name  CreatePersonalRecord
    * @route   {POST} routes/personalRecordRoute/
    * @routeparam {request} req - contains fields (user, body, cookies) to access the user requesting and the request details.
    */
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
 /**
    * Returns a user's personal records.
    *
-   * @name  /
+   * @name  GetPersonalRecords
    * @route   {GET} routes/personalRecordRoute/
    * @routeparam {request} req - contains fields 'cookies' to access the user requesting.
    */
@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
 /**
    * Edit a user's personal record.
    *
-   * @name  /:id
+   * @name  EditPersonalRecord
    * @route   {PUT} routes/personalRecordRoute/:id
    * @routeparam {request} req - contains fields (user, body, cookies, params) to access the user requesting and the request details.
    */
@@ -101,7 +101,7 @@ router.put('/:id', async (req, res) => {
 /**
    * Delete a user's personal record.
    *
-   * @name  /:id
+   * @name  DeletePersonalRecord
    * @route   {DELETE} routes/personalRecordRoute/:id
    * @routeparam {request} req - contains fields (params, cookies) to access the user requesting and the request details.
    */

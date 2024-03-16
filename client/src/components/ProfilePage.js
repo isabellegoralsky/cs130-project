@@ -25,9 +25,12 @@ const exerciseList = [
    "Burpees"
 ];
 
-
-
-
+/**
+  * Construct the user's profile page.
+  *
+  * @name ProfilePage
+  * @constructor
+  */
 export default function ProfilePage() {
    const [user, setUser] = useState({});
    const [pals, setPals] = useState(["Test Pal1", "Test Pal2", "Test Pal3"]);
@@ -260,7 +263,13 @@ export default function ProfilePage() {
        }
    };
 
-
+   /**
+     * Handle user request to change their profile picture.
+     *
+     * @name handleAvatarChange
+     * @function
+     * @param {event} event - event which contains information on the uploaded image
+     */
    const handleAvatarChange = (event) => {
        const file = event.target.files[0];
        if (file) {
@@ -295,7 +304,12 @@ export default function ProfilePage() {
        }
    };
 
-
+   /**
+     * Handle user request to add a pal.
+     *
+     * @name addPal
+     * @function
+     */
    const addPal = async () => {
     console.log("adding", currPalName)
     try {
@@ -461,7 +475,15 @@ export default function ProfilePage() {
    )
 }
 
-
+/**
+   * Construct the exercises listed on a pinned post.
+   *
+   * @name ExerciseInputPinnedPost
+   * @constructor
+   * @param {exerciseList} exerciseList - the dropdown menu of exercises to choose from
+   * @param {exercise} exercise - an exercise in the dropdown meny
+   * @param {setExercise} setExercise - add an exercise to the dropdown menu
+   */
 const ExerciseInput = ({ exerciseList, exercise, setExercise }) => (
    <div style={{ display: 'flex', marginTop: 10, marginBottom: 15, alignItems: 'flex-start' }}>
        <select
@@ -502,8 +524,12 @@ const ExerciseInput = ({ exerciseList, exercise, setExercise }) => (
 );
 
 
-
-
+/**
+   * Create a pop up for user to be able to create a pinned workout.
+   *
+   * @name WorkoutModal
+   * @constructor
+   */
 const WorkoutModal = () => {
    const [workoutName, setWorkoutName] = useState('');
    const [exercises, setExercises] = useState([{ name: '', sets: '', reps: '', notes: 'f' }]);

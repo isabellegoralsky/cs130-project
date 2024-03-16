@@ -23,6 +23,12 @@ const exerciseList = [
   "Burpees"
 ];
 
+/**
+   * Construct the user's feed page.
+   *
+   * @name FeedPage
+   * @constructor
+   */
 const FeedPage = ({ }) => {
   const navigate = useNavigate(); 
   const goToUserProfile = (userId) => {
@@ -226,7 +232,12 @@ const FeedPage = ({ }) => {
 
 export default FeedPage;
 
-
+/**
+   * Construct a pop up dialog for user to be able to create a post.
+   *
+   * @name PostModal
+   * @constructor
+   */
 const PostModal = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postDescription, setPostDescription] = useState('');
@@ -312,9 +323,15 @@ const PostModal = () => {
   );
 };
 
-
-
-
+/**
+   * Construct the exercises listed on a post.
+   *
+   * @name ExerciseInput
+   * @constructor
+   * @param {exerciseList} exerciseList - the dropdown menu of exercises to choose from
+   * @param {exercise} exercise - an exercise in the dropdown meny
+   * @param {setExercise} setExercise - add an exercise to the dropdown menu
+   */
 const ExerciseInput = ({ exerciseList, exercise, setExercise }) => (
   <div style={{ display: 'flex', marginTop: 10, marginBottom: 15, alignItems: 'flex-start' }}>
     <select
