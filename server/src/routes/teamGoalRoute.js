@@ -4,6 +4,14 @@ const { authenticateToken } = require('../middleware/auth');
 const TeamGoal = require('../models/TeamGoal');
 const Team = require('../models/Team');
 
+/**
+   * Create new team goal.
+   *
+   * @name  CreateTeamGoal
+   * @route   {POST} routes/teamGoalRoute/
+   * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
+   * @routeparam {request} req - contains field 'body' to access the details of the new goal.
+   */
 router.post('/', authenticateToken, async (req, res) => {
     const team = await Team.findById(req.body.teamId);
 
@@ -27,6 +35,14 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 });
 
+/**
+   * Return team goals.
+   *
+   * @name  ReturnTeamGoals
+   * @route   {GET} routes/teamGoalRoute/:tid
+   * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
+   * @routeparam {request} req - contains field 'params' to access the team id and get the team info.
+   */
 router.get('/:tid', authenticateToken, async (req, res) => {
     const team = await Team.findById(req.params.tid);
 
@@ -40,6 +56,14 @@ router.get('/:tid', authenticateToken, async (req, res) => {
     }
 });
 
+/**
+   * Edit a team goal.
+   *
+   * @name  EditTeamGoal
+   * @route   {PUT} routes/teamGoalRoute/:gid
+   * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
+   * @routeparam {request} req - contains fields (params, body) to access the team id, goal id, and get the details of the request.
+   */
 router.put('/:gid', authenticateToken, async (req, res) => {
     const team = await Team.findById(req.body.teamId);
 
@@ -68,6 +92,14 @@ router.put('/:gid', authenticateToken, async (req, res) => {
     }
 });
 
+/**
+   * Delete a team goal.
+   *
+   * @name  DeleteTeamGoal
+   * @route   {DELETE} routes/teamGoalRoute/:gid
+   * @routeparam {authenticateToken} authenticateToken - contains an access token for the user account.
+   * @routeparam {request} req - contains fields (body, params) to access the team id and goal id.
+   */
 router.delete('/:gid', authenticateToken, async (req, res) => {
     const team = await Team.findById(req.body.teamId);
 
