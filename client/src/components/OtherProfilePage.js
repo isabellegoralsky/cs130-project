@@ -5,6 +5,12 @@ import * as Tabs from '@radix-ui/react-tabs';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as Dialog from '@radix-ui/react-dialog';
 
+/**
+  * Display a users' friends' profile.
+  *
+  * @name OtherProfilePage
+  * @constructor
+  */
 export default function OtherProfilePage() {
     const { userId } = useParams();
     const [imageSrc, setImageSrc] = useState("");

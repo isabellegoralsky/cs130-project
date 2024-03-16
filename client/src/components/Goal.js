@@ -6,6 +6,22 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import './Goal.css';
 
+/**
+   * Construct a user goal.
+   *
+   * @name Goal
+   * @constructor
+   * @param {teamid} teamid - team id of where to add the goal to, if any
+   * @param {gid} gid - goal id
+   * @param {title} title - goal title
+   * @param {description} description - goal description
+   * @param {savedprogress} savedprogress - user's current progress on the goal
+   * @param {goalvalue} goalvalue - target of the goal
+   * @param {name} name - name of the exercise for the goal
+   * @param {type} type - type of goal (consistency, pr)
+   * @param {unit} unit - unit of the goal (lbs, mph...)
+   * @param {date} date - end date to finish the goal by
+   */
 const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name, type, unit, date }) => {
     const [progress, setProgress] = React.useState(13);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -73,6 +89,13 @@ const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name,
 
     }, [])
 
+    /**
+     * Handle user request to delete a goal.
+     *
+     * @name handleConfirmDeleteGoal
+     * @function
+     * @param {e} e - event
+     */
     const handleConfirmDelete = async (e) => {
         e.preventDefault();
         const userId = user._id;
@@ -108,6 +131,13 @@ const Goal = ({ teamid, gid, title, description, savedprogress, goalvalue, name,
         }
     };
 
+    /**
+     * Handle user request to update a goal.
+     *
+     * @name handleConfirmEditGoal
+     * @function
+     * @param {e} e - event
+     */
     const handleConfirmEdit = async (e) => {
         e.preventDefault();
         const userId = user._id;

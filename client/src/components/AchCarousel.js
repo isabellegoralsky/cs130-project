@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/**
+   * Construct an 'achievement' style carousel.
+   *
+   * @name AchievementCarousel
+   * @constructor
+   * @param {any} items - items to display in the carousel
+   * @param {String} title - title field <<unused>>
+   */
 const ACarousel = ({ items, title }) => {
   return (
     <div style={{ padding: '0px 200px 20px' }}>
@@ -27,6 +35,7 @@ const ACarousel = ({ items, title }) => {
     </div>
   );
 };
+
 
 ACarousel.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({

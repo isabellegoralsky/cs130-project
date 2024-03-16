@@ -5,6 +5,12 @@ import './LoginReg.css';
 import p5 from 'p5';
 import sketch from './sketch.js';
 
+/**
+  * Construct the register page.
+  *
+  * @name RegisterPage
+  * @constructor
+  */
 const RegisterPage = () => {
   const navigate = useNavigate(); // Initialize useNavigate hook
 
@@ -21,6 +27,13 @@ const RegisterPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  /**
+    * Handle user request to register.
+    *
+    * @name handleSubmitRegister
+    * @function
+    * @param {e} e - event
+    */
   const handleSubmit = async (e) => {
     e.preventDefault();
     

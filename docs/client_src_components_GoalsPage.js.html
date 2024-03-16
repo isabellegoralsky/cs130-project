@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/components/GoalsPage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/components/GoalsPage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import Goal from './Goal';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import './GoalsPage.css'
+
+/**
+     * Construct the user's goals page.
+     *
+     * @name GoalsPage
+     * @constructor
+     */
+const GoalsPage = () => {
+    const [user, setUser] = useState({});
+    const [goals, setGoals] = useState([]);
+
+    useEffect(() => {
+        //fetch user
+        async function fetchUser() {
+            try {
+                const url = `http://localhost:3001/user`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                setUser(data);
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        fetchUser();
+
+    }, [])
+
+    useEffect(() => {
+        async function fetchGoals() {
+            const userId = user._id;
+            if (userId) {
+                const url = `http://localhost:3001/goal/`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'include',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log("goals");
+                    setGoals(data);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        fetchGoals();
+    }, [user]);
+
+
+    return (
+        &lt;div className="goals-page">
+            &lt;h2 id="my-goals">MY GOALS&lt;/h2>
+            &lt;div id="goals-div">
+                &lt;div className="column">
+                    &lt;h2 class="goal-header">PERSONAL RECORD&lt;/h2>
+                    {goals
+                        .filter(goal => goal.type === 'PR') // Filter to include only goals with type === 'PR'
+                        .map((goal, index) => (
+                            &lt;Goal
+                                key={index}
+                                gid={goal._id}
+                                title={goal.title}
+                                description={goal.description}
+                                savedprogress={goal.progress}
+                                goalvalue={goal.exercise.amount.value}
+                                name={goal.exercise.name}
+                                type={goal.type}
+                                unit={goal.exercise.amount.unit}
+                                date={goal.endsAt}
+                            />
+                        ))
+                    }
+                &lt;/div>
+                &lt;div className="column">
+                    &lt;h2 class="goal-header">CONSISTENCY&lt;/h2>
+                    {goals
+                        .filter(goal => goal.type === 'CST') // Filter to include only goals with type === 'PR'
+                        .map((goal, index) => (
+                            &lt;Goal
+                                key={index}
+                                gid={goal._id}
+                                title={goal.title}
+                                description={goal.description}
+                                savedprogress={goal.progress}
+                                goalvalue={goal.exercise.amount.value}
+                                name={goal.exercise.name}
+                                type={goal.type}
+                                unit={goal.exercise.amount.unit}
+                                date={goal.endsAt}
+                            />
+                        ))
+                    }
+                &lt;/div>
+            &lt;/div>
+            &lt;div style={{textAlign: 'center', marginTop: '20px'}}>
+                &lt;Dialog.Root>
+                    &lt;Dialog.Trigger asChild>
+                        &lt;span classname="ClickableText" id="another-goal" >add another goal?&lt;/span>
+                    &lt;/Dialog.Trigger>
+                    &lt;Dialog.Portal>
+                        &lt;Dialog.Overlay className="DialogOverlay" >
+                            &lt;Dialog.Content className="DialogContent" class="adding2">
+                                &lt;Dialog.Title className="DialogTitle">Add a Goal&lt;/Dialog.Title>
+                                &lt;GoalModal u={user} />
+                            &lt;/Dialog.Content>
+                        &lt;/Dialog.Overlay>
+                    &lt;/Dialog.Portal>
+                &lt;/Dialog.Root>
+            &lt;/div>
+        &lt;/div>
+    );
+};
+
+/**
+     * Create a pop up for user to be able to create a goal.
+     *
+     * @name GoalModal
+     * @constructor
+     * @param {u} u - user
+     */
+const GoalModal = ({ u }) => {
+    const [exerciseName, setExerciseName] = useState('');
+    const [goalTitle, setGoalTitle] = useState('');
+    const [goalDesc, setGoalDesc] = useState('');
+    const [goalType, setGoalType] = useState('');
+    const [goalTarget, setGoalTarget] = useState('');
+    const [goalUnit, setGoalUnit] = useState('');
+    const [endMonth, setEndMonth] = useState('');
+    const [endDay, setEndDay] = useState('');
+    const [endYear, setEndYear] = useState('');
+
+
+    const exerciseList = [
+        "Deadlift",
+        "Squat",
+        "Bench Press",
+        "Pull-Up",
+        "Push-Up",
+        "Bent-Over Row",
+        "Overhead Press",
+        "Lunges",
+        "Plank",
+        "Leg Press",
+        "Barbell Curl",
+        "Tricep Dip",
+        "Shoulder Press",
+        "Lat Pull-Down",
+        "Russian Twist",
+        "Burpees"
+    ];
+
+    /**
+         * Handle user request to create a goal.
+         *
+         * @name handleAddGoal
+         * @function
+         * @param {e} e - event
+         */
+    const handleAddGoal = async (e) => {
+        e.preventDefault();
+        const formdata = {
+            userId: u._id,
+            title: goalTitle,
+            description: goalDesc,
+            type: goalType,
+            exercise: {
+                name: exerciseName,
+                amount: {
+                    unit: goalUnit,     // LB/MPH for PR. SET/MIN for CST
+                    value: goalTarget
+
+                }
+            },
+            endDate: new Date(endYear, endMonth, endDay)
+        };
+        console.log(formdata);
+        const registerUrl = 'http://localhost:3001/goal/';
+        try {
+            const response = await fetch(registerUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formdata),
+                credentials: 'include',
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log(data);
+                setGoalTitle('');
+                setGoalDesc('');
+                setGoalType('');
+                setExerciseName('');
+                setGoalTarget('');
+                setGoalUnit('');
+                setEndDay('');
+                setEndMonth('');
+                setEndYear('');
+                window.location.reload();
+            } else {
+                throw new Error(data || 'Failed to add goal');
+            }
+        } catch (error) {
+            console.error('Add Goal Error:', error);
+        }
+    };
+
+    return (
+        &lt;div>
+            &lt;div class="teams-goal-pop">
+                &lt;input
+                    className="Input goal-teams-in"
+                    placeholder="Goal Title"
+                    value={goalTitle}
+                    onChange={(e) => setGoalTitle(e.target.value)} />
+                &lt;input
+                    className="Input goal-teams-in"
+                    placeholder="Goal Description"
+                    value={goalDesc}
+                    onChange={(e) => setGoalDesc(e.target.value)}
+                />
+                &lt;input
+                    className="Input goal-teams-in"
+                    placeholder="Goal Target"
+                    value={goalTarget}
+                    onChange={(e) => setGoalTarget(e.target.value)}
+                />
+                &lt;div id="selections-goal">
+                    &lt;select
+                        className="Select"
+                        value={exerciseName}
+                        onChange={e => setExerciseName(e.target.value)}
+                    >
+                        &lt;option disabled={true} value="">
+                            SELECT EXERCISE
+                        &lt;/option>
+                        {exerciseList.map((ex) => (
+                            &lt;option key={ex} value={ex}>
+                                {ex}
+                            &lt;/option>
+                        ))}
+                    &lt;/select>
+                    &lt;select className="Select" defaultValue="" onChange={e => setGoalType(e.target.value)}>
+                        &lt;option disabled={true} value="">
+                            SELECT TYPE
+                        &lt;/option>
+                        &lt;option key="CARDIO" value="CST">CONSISTENCY&lt;/option>
+                        &lt;option key="STRENGTH" value="PR">PR&lt;/option>
+                    &lt;/select>
+                    &lt;select className="Select" defaultValue="" onChange={e => setGoalUnit(e.target.value)}>
+                        &lt;option disabled={true} value="">
+                            SELECT UNITS
+                        &lt;/option>
+                        {goalType === "CST" ? (
+                            &lt;>
+                                &lt;option key="DURATION_MIN" value="DURATION_MIN">DURATION (MINS)&lt;/option>
+                                &lt;option key="SETS" value="SETS">SETS&lt;/option>
+                            &lt;/>
+                        ) : (
+                            &lt;>
+                                &lt;option key="LBS" value="LBS">WEIGHT (LBS)&lt;/option>
+                                &lt;option key="MPH" value="MPH">MPH&lt;/option>
+                            &lt;/>
+                        )}
+                    &lt;/select>
+                &lt;/div>
+                &lt;div id="selections-goal" >
+                    {goalType === "CST" &amp;&amp; (
+                        &lt;>
+                        &lt;div class="cst-goal-date">
+                            &lt;p>Complete By:&lt;/p>
+                            &lt;div>
+                                &lt;input
+                                    className="Input dateSS"
+                                    placeholder="MM"
+                                    value={endMonth}
+                                    onChange={(e) => setEndMonth(e.target.value)}
+                                    style={{ width: '25px' }}
+                                />
+                                &lt;input
+                                    className="Input dateSS"
+                                    placeholder="DD"
+                                    value={endDay}
+                                    onChange={(e) => setEndDay(e.target.value)}
+                                    style={{ width: '25px' }}
+                                />
+                                &lt;input
+                                    className="Input dateSS"
+                                    placeholder="YYYY"
+                                    value={endYear}
+                                    onChange={(e) => setEndYear(e.target.value)}
+                                    style={{ width: '40px' }}
+                                />
+                            &lt;/div>
+                            
+                        &lt;/div>
+                        &lt;/>
+                    )}
+                &lt;/div>
+            &lt;/div>
+            &lt;Dialog.Close asChild>
+                &lt;button className="Button green" onClick={handleAddGoal}>Add Goal&lt;/button>
+            &lt;/Dialog.Close>
+        &lt;/div>
+    );
+};
+export default GoalsPage;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AchievementCarousel.html">AchievementCarousel</a></li><li><a href="Carousel.html">Carousel</a></li><li><a href="CreateTeamDialog.html">CreateTeamDialog</a></li><li><a href="ExerciseInput.html">ExerciseInput</a></li><li><a href="ExerciseInputPinnedPost.html">ExerciseInputPinnedPost</a></li><li><a href="FeedPage.html">FeedPage</a></li><li><a href="Goal.html">Goal</a></li><li><a href="GoalModal.html">GoalModal</a></li><li><a href="GoalsPage.html">GoalsPage</a></li><li><a href="JoinTeamDialog.html">JoinTeamDialog</a></li><li><a href="LoginPage.html">LoginPage</a></li><li><a href="OtherProfilePage.html">OtherProfilePage</a></li><li><a href="PostModal.html">PostModal</a></li><li><a href="ProfilePage.html">ProfilePage</a></li><li><a href="RegisterPage.html">RegisterPage</a></li><li><a href="TeamGoalModal.html">TeamGoalModal</a></li><li><a href="TeamPage.html">TeamPage</a></li><li><a href="TeamUpdateModal.html">TeamUpdateModal</a></li><li><a href="WorkoutModal.html">WorkoutModal</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddFriend">AddFriend</a></li><li><a href="global.html#AddPinnedWorkout">AddPinnedWorkout</a></li><li><a href="global.html#AddPost">AddPost</a></li><li><a href="global.html#AddTeamPost">AddTeamPost</a></li><li><a href="global.html#CreateGoal">CreateGoal</a></li><li><a href="global.html#CreatePersonalRecord">CreatePersonalRecord</a></li><li><a href="global.html#CreateTeam">CreateTeam</a></li><li><a href="global.html#CreateTeamGoal">CreateTeamGoal</a></li><li><a href="global.html#DeleteFriend">DeleteFriend</a></li><li><a href="global.html#DeleteGoal">DeleteGoal</a></li><li><a href="global.html#DeletePersonalRecord">DeletePersonalRecord</a></li><li><a href="global.html#DeletePinnedWorkout">DeletePinnedWorkout</a></li><li><a href="global.html#DeletePost">DeletePost</a></li><li><a href="global.html#DeleteTeamGoal">DeleteTeamGoal</a></li><li><a href="global.html#DeleteTeamPost">DeleteTeamPost</a></li><li><a href="global.html#EditGoal">EditGoal</a></li><li><a href="global.html#EditPersonalRecord">EditPersonalRecord</a></li><li><a href="global.html#EditPinnedWorkout">EditPinnedWorkout</a></li><li><a href="global.html#EditPost">EditPost</a></li><li><a href="global.html#EditTeamGoal">EditTeamGoal</a></li><li><a href="global.html#EditTeamPost">EditTeamPost</a></li><li><a href="global.html#GetFeedPosts">GetFeedPosts</a></li><li><a href="global.html#GetFollowing">GetFollowing</a></li><li><a href="global.html#GetGoals">GetGoals</a></li><li><a href="global.html#GetPersonalRecords">GetPersonalRecords</a></li><li><a href="global.html#GetPinnedWorkout">GetPinnedWorkout</a></li><li><a href="global.html#GetTeamMembers">GetTeamMembers</a></li><li><a href="global.html#GetTeamPage">GetTeamPage</a></li><li><a href="global.html#GetTeamPosts">GetTeamPosts</a></li><li><a href="global.html#GetTeamUpdates">GetTeamUpdates</a></li><li><a href="global.html#GetUser">GetUser</a></li><li><a href="global.html#GetUserProfile">GetUserProfile</a></li><li><a href="global.html#GetUserProfilePicture">GetUserProfilePicture</a></li><li><a href="global.html#GetUserTeams">GetUserTeams</a></li><li><a href="global.html#JoinTeam">JoinTeam</a></li><li><a href="global.html#LeaveTeam">LeaveTeam</a></li><li><a href="global.html#LoginUser">LoginUser</a></li><li><a href="global.html#LogoutUser">LogoutUser</a></li><li><a href="global.html#RegisterUser">RegisterUser</a></li><li><a href="global.html#ReturnTeamGoals">ReturnTeamGoals</a></li><li><a href="global.html#UpdateUser">UpdateUser</a></li><li><a href="global.html#UploadProfilePic">UploadProfilePic</a></li><li><a href="global.html#addPal">addPal</a></li><li><a href="global.html#handleAddGoal">handleAddGoal</a></li><li><a href="global.html#handleAddTeamGoal">handleAddTeamGoal</a></li><li><a href="global.html#handleAvatarChange">handleAvatarChange</a></li><li><a href="global.html#handleConfirmDeleteGoal">handleConfirmDeleteGoal</a></li><li><a href="global.html#handleConfirmEditGoal">handleConfirmEditGoal</a></li><li><a href="global.html#handleSubmitLogin">handleSubmitLogin</a></li><li><a href="global.html#handleSubmitRegister">handleSubmitRegister</a></li><li><a href="global.html#handleTeamChange">handleTeamChange</a></li><li><a href="global.html#handleUpdate">handleUpdate</a></li><li><a href="global.html#sketch">sketch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Mar 15 2024 21:18:29 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

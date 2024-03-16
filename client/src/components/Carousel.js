@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/**
+   * Construct a carousel.
+   *
+   * @name Carousel
+   * @constructor
+   * @param {items} items - items to display in the carousel
+   * @param {String} title - title field <<unused>>
+   */
 const Carousel = ({ items, title }) => {
   return (
     <div style={{ padding: '0px 200px 20px' }}>

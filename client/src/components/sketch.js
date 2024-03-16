@@ -1,5 +1,10 @@
-
-
+/**
+  * Handle user request to login.
+  *
+  * @name sketch
+  * @function
+  * @param {p} p - p5.js object to do styling on login and register page
+  */
 export default function sketch(p){
 
     let dots;

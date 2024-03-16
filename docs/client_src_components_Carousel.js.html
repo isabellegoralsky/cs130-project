@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: client/src/components/Carousel.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,64 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: client/src/components/Carousel.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import PropTypes from 'prop-types';
 
+/**
+   * Construct a carousel.
+   *
+   * @name Carousel
+   * @constructor
+   * @param {items} items - items to display in the carousel
+   * @param {String} title - title field &lt;&lt;unused>>
+   */
+const Carousel = ({ items, title }) => {
+  return (
+    &lt;div style={{ padding: '0px 200px 20px' }}>
+      &lt;div style={{
+        display: 'flex',
+        overflowX: 'auto',
+        gap: '10px',
+        padding: '10px 0'
+      }}>
+        {items.map((item, index) => (
+          &lt;div key={index} style={{
+            minWidth: '160px',
+            minHeight: '100px',
+            display: 'flex',
+            justifyContent: 'center',
+            background: 'rgb(255, 90, 19, .1)',
+            borderRadius: '8px',
+            padding: '15px'
+          }}>
+            {item.content}
+          &lt;/div>
+        ))}
+      &lt;/div>
+    &lt;/div>
+  );
+};
 
-    <h3> </h3>
+Carousel.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    content: PropTypes.node.isRequired, // Expecting each item to have a 'content' property
+  })).isRequired,
+  title: PropTypes.string.isRequired,
+};
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default Carousel;
+</code></pre>
+        </article>
+    </section>
 
 
 
